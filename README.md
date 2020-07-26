@@ -3,5 +3,5 @@ Coming soon.
 
 ## Changelogs
   * [Website](https://github.com/KararTY/BeFriendlier-Web/blob/master/CHANGELOG.md)
-  * [Bot](https://github.com/KararTY/BeFriendlier-Bot/blob/master/CHANGELOG.md)
-  * [Shared](CHANGELOG.md)
+  * [Bot](CHANGELOG.md)
+  * [Shared](https://github.com/KararTY/BeFriendlier-Shared/blob/master/CHANGELOG.md)
