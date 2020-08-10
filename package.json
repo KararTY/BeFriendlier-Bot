@@ -1,6 +1,6 @@
 {
   "name": "befriendlier-bot",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Twitch bot serving commands to the befriendlier.app service.",
   "private": true,
   "scripts": {
