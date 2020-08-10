@@ -32,7 +32,7 @@ const twitch = new Twitch(apiConfig, server, api, packageJSON, logger)
 
 // Add command handlers
 const commandDirectory = path.join(__dirname, 'src', 'Handlers')
-const commandFiles = readdirSync(commandDirectory, 'utf-8')
+const commandFiles = readdirSync(commandDirectory, 'utf-8').filter(fileName => fileName.endsWith('.js'))
 
 // eslint-disable-next-line no-void
 void (async function loadHandlers (): Promise<void> {
