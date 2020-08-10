@@ -78,7 +78,7 @@ export default class Client {
 
   private readonly name: string
 
-  private readonly commandPrefix: string
+  public readonly commandPrefix: string
 
   private reconnectAttempts: number = 0
 
@@ -97,6 +97,8 @@ export default class Client {
 
   public readonly handlers: DefaultHandler[] = []
 
+  public readonly admins: string[] | undefined
+
   constructor (config: TwitchConfig, ws: Ws, api: TwitchAuth, packageJSON: any, logger: Logger) {
     this.api = api
     this.ws = ws
@@ -108,6 +110,8 @@ export default class Client {
     this.name = config.user.name
 
     this.commandPrefix = config.commandPrefix
+
+    this.admins = config.admins
 
     this.ws.eventEmitter.on('WS.MESSAGE', (data: WsRes) => this.onServerResponse(data))
     this.ws.eventEmitter.on('WS.CLOSED', (data) => this.onServerClosed(data))

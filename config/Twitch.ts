@@ -8,6 +8,7 @@ export default class TwitchConfig {
   public scope: string[]
   public headers: { 'user-agent': string }
   public commandPrefix: string
+  public admins: string[] | undefined
 
   constructor (env: Env) {
     /**
@@ -49,5 +50,10 @@ export default class TwitchConfig {
      * Command prefix.
      */
     this.commandPrefix = env.getOrFail('COMMAND_PREFIX') as string
+
+    /**
+     * Admins with access to super commands.
+     */
+    this.admins = env.get('ADMINS')?.toString().split(',')
   }
 }
