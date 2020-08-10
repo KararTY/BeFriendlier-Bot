@@ -3,8 +3,6 @@ import { Env } from '@adonisjs/env/build/src/Env'
 export default class TwitchConfig {
   public clientToken: string
   public clientSecret: string
-  public superSecret: string
-  public refreshToken: string
   public redirectURI: string
   public user: { name: string, id: string }
   public scope: string[]

@@ -33,7 +33,7 @@ export default class DefaultHandler {
 
   public async onCommand (_msg?: PrivmsgMessage, _words?: string[]) {}
 
-  public async onServerResponse (_res, _raw?) {
+  public async onServerResponse (_res: any, _raw?: any) {
     if (_res.data.length > 0) {
       const data: BASE = JSON.parse(_res.data)
       this.logger.error(`${this.constructor.name}.onServerResponse(): RECEIVED UNHANDLED MESSAGETYPE [${String(_res.type)}]: %O`, _res)

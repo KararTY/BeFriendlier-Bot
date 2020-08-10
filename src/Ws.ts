@@ -29,6 +29,8 @@ export default class Bot {
     this.logger = logger
 
     this.eventEmitter = new EventEmitter()
+
+    this.client = new WS(this.url, { headers: this.headers })
   }
 
   public connect () {
@@ -106,7 +108,7 @@ export default class Bot {
     this.logger.debug(`Ws.onPing() ${prettySocketInfo(this.url)}${data.length > 0 ? `: ${data.toString()}` : ''}`)
   }
 
-  private onError (error) {
+  private onError (error: Error) {
     this.logger.error({ err: error }, `Ws.onError() ${prettySocketInfo(this.url)}`)
   }
 

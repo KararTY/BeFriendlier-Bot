@@ -38,7 +38,7 @@ class Message {
   public deleted = false
   public timer: NodeJS.Timeout
 
-  constructor (msg: PrivmsgMessage, clientRef) {
+  constructor (msg: PrivmsgMessage, clientRef: any) {
     this.msg = msg
 
     this.timer = setTimeout(() => {
@@ -87,7 +87,7 @@ export default class Client {
   private readonly generalQueue = new PQueue({ concurrency: 1 })
 
   public readonly api: TwitchAuth
-  public readonly packageJSON
+  public readonly packageJSON: any
   public token: Token
 
   public ircClient: ChatClient
@@ -97,7 +97,7 @@ export default class Client {
 
   public readonly handlers: DefaultHandler[] = []
 
-  constructor (config: TwitchConfig, ws: Ws, api: TwitchAuth, packageJSON, logger: Logger) {
+  constructor (config: TwitchConfig, ws: Ws, api: TwitchAuth, packageJSON: any, logger: Logger) {
     this.api = api
     this.ws = ws
 
@@ -111,6 +111,13 @@ export default class Client {
 
     this.ws.eventEmitter.on('WS.MESSAGE', (data: WsRes) => this.onServerResponse(data))
     this.ws.eventEmitter.on('WS.CLOSED', (data) => this.onServerClosed(data))
+
+    this.ircClient = new ChatClient()
+    this.token = {
+      expiration: new Date(Date.now() - 1),
+      superSecret: '',
+      refreshToken: '',
+    }
   }
 
   public async onMessage ({ msg, deleted }: Message) {
@@ -250,7 +257,7 @@ export default class Client {
     return this.ircClient.connect()
   }
 
-  public async checkReady () {
+  public async checkReady (): Promise<any> {
     if (!this.ready) {
       await new Promise(resolve => setTimeout(resolve, 500))
       this.generalQueue.concurrency++
