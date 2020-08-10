@@ -29,8 +29,6 @@ export default class Bot {
     this.logger = logger
 
     this.eventEmitter = new EventEmitter()
-
-    this.client = new WS(this.url, { headers: this.headers })
   }
 
   public connect () {

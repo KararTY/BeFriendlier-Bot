@@ -111,13 +111,6 @@ export default class Client {
 
     this.ws.eventEmitter.on('WS.MESSAGE', (data: WsRes) => this.onServerResponse(data))
     this.ws.eventEmitter.on('WS.CLOSED', (data) => this.onServerClosed(data))
-
-    this.ircClient = new ChatClient()
-    this.token = {
-      expiration: new Date(Date.now() - 1),
-      superSecret: '',
-      refreshToken: '',
-    }
   }
 
   public async onMessage ({ msg, deleted }: Message) {

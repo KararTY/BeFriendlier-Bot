@@ -10,11 +10,9 @@
   "extends": "./node_modules/adonis-preset-ts/tsconfig",
   "compilerOptions": {
     "outDir": "build",
-    "module": "ES2020",
-    "strict": true,
     "incremental": true,
     "rootDir": ".",
-    "sourceMap": true,
+    "declaration": true,
     "resolveJsonModule": true,
     "types": [
       "node"
