@@ -1,0 +1,21 @@
+{
+  "include": [
+    "**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "build",
+    "WIP"
+  ],
+  "extends": "./node_modules/adonis-preset-ts/tsconfig",
+  "compilerOptions": {
+    "outDir": "build",
+    "incremental": true,
+    "rootDir": ".",
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "types": [
+      "node"
+    ]
+  }
+}
