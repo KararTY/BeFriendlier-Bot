@@ -2,9 +2,10 @@
   "name": "befriendlier-bot",
   "version": "0.0.1",
   "description": "Twitch bot serving commands to the befriendlier.app service.",
+  "main": "Index.ts",
   "private": true,
   "scripts": {
-    "build-bot": "tsc && copyfiles .env build/",
+    "build": "rimraf build/ && tsc -b && copyfiles .env build/",
     "start": "node build/Index.js",
     "start-test": "ts-node-dev --respawn --clear --log-error --inspect=\"0\" -- Index.ts",
     "release": "standard-version && git push --follow-tags origin master"
@@ -33,6 +34,7 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "pino-pretty": "^4.1.0",
+    "rimraf": "^3.0.2",
     "standard-version": "^8.0.2",
     "ts-node-dev": "^1.0.0-pre.56",
     "typescript": "^3.9.7"

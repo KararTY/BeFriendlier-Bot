@@ -22,6 +22,7 @@ devDependencies:
   eslint-plugin-promise: 4.2.1
   eslint-plugin-standard: 4.0.1_eslint@7.5.0
   pino-pretty: 4.1.0
+  rimraf: 3.0.2
   standard-version: 8.0.2
   ts-node-dev: 1.0.0-pre.56_typescript@3.9.7
   typescript: 3.9.7
@@ -2913,6 +2914,13 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-uWjbaKIK3T1OSVptzX7Nl6PvQ3qAGtKEtVRjRuazjfL3Bx5eI409VZSqgND+4UNnmzLVdPj9FqFJNPqBZFve4w==
+  /rimraf/3.0.2:
+    dependencies:
+      glob: 7.1.6
+    dev: true
+    hasBin: true
+    resolution:
+      integrity: sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==
   /safe-buffer/5.1.2:
     dev: true
     resolution:
@@ -3627,6 +3635,7 @@ specifiers:
   eslint-plugin-standard: ^4.0.1
   p-queue: ^6.6.0
   pino-pretty: ^4.1.0
+  rimraf: ^3.0.2
   standard-version: ^8.0.2
   ts-node-dev: ^1.0.0-pre.56
   typescript: ^3.9.7
