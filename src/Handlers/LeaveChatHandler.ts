@@ -1,4 +1,4 @@
-import { JOINCHAT, MessageType, LEAVECHAT } from 'befriendlier-shared'
+import { MessageType, LEAVECHAT } from 'befriendlier-shared'
 import { PrivmsgMessage } from 'dank-twitch-irc'
 import DefaultHandler from './DefaultHandler'
 
@@ -8,17 +8,21 @@ export default class LeaveChannelHandler extends DefaultHandler {
   public prefix = ['join']
 
   public async onCommand (msg: PrivmsgMessage, words: string[]) {
-    const responseMessage = this.makeResponseMesage(msg) as JOINCHAT
+    if (this.twitch.admins === undefined || !this.twitch.admins.includes(msg.senderUsername)) {
+      return
+    }
+
+    const responseMessage = this.makeResponseMesage(msg) as LEAVECHAT
 
     // Get user details for provided user.
     const res = await this.twitch.api.getUser(this.twitch.token.superSecret, [words[1]])
     if (res !== null && res.length > 0) {
-      responseMessage.joinUserTwitch = {
+      responseMessage.leaveUserTwitch = {
         id: res[0].id,
         name: res[0].login,
       }
 
-      this.ws.sendMessage(MessageType.JOINCHAT, JSON.stringify(responseMessage))
+      this.ws.sendMessage(MessageType.LEAVECHAT, JSON.stringify(responseMessage))
     } else {
       this.twitch.sendMessage(msg.channelName, msg.senderUsername, 'could not find that user on Twitch.')
     }
