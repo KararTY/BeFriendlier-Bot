@@ -1,14 +1,14 @@
-import { MessageType, ADDEMOTES, BASE } from 'befriendlier-shared'
+import { MessageType, EMOTES, BASE } from 'befriendlier-shared'
 import { PrivmsgMessage } from 'dank-twitch-irc'
 import DefaultHandler from './DefaultHandler'
 
-export default class AddEmotesHandler extends DefaultHandler {
-  public messageType = MessageType.ADDEMOTES
+export default class EmotesHandler extends DefaultHandler {
+  public messageType = MessageType.EMOTES
 
   public prefix = ['emotes']
 
   public async onCommand (msg: PrivmsgMessage) {
-    const responseMessage = this.makeResponseMesage(msg) as ADDEMOTES
+    const responseMessage = this.makeResponseMesage(msg) as EMOTES
 
     // TODO: Add FFZ & BTTV emote detections.
 
@@ -24,7 +24,7 @@ export default class AddEmotesHandler extends DefaultHandler {
       }
     }).slice(0, 5)
 
-    this.ws.sendMessage(MessageType.ADDEMOTES, JSON.stringify(responseMessage))
+    this.ws.sendMessage(MessageType.EMOTES, JSON.stringify(responseMessage))
   }
 
   public async onServerResponse ({ channelTwitch, userTwitch, result }: BASE) {
