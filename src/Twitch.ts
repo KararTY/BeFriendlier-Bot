@@ -41,9 +41,10 @@ class Message {
   constructor (msg: PrivmsgMessage, clientRef: any) {
     this.msg = msg
 
+    // All messages are delayed by 1100ms for time-out checking.
     this.timer = setTimeout(() => {
       clientRef.onMessage(this)
-    }, 1000)
+    }, 1100)
   }
 }
 
@@ -125,7 +126,6 @@ export default class Client {
     }
 
     // Filter bad words.
-    // TODO: Add a global filter.
     if (msg.flags instanceof Array) {
       for (let index = 0; index < msg.flags.length; index++) {
         const word = msg.flags[index].word
@@ -228,32 +228,34 @@ export default class Client {
     })
     this.ircClient.on('error', (error) => this.onError(error))
 
-    // All messages are delayed by 1000ms for time-out checking.
-    this.ircClient.on('PRIVMSG', (msg) => {
-      if (!msg.messageText.startsWith(this.commandPrefix)) {
-        return
-      }
-
-      const foundChannel = this.channels.get(msg.channelID)
-
-      if (foundChannel === undefined) {
-        this.leaveChannel({ id: msg.channelID, name: msg.channelName })
-        return
-      } else if (foundChannel.cooldown.getTime() > Date.now()) {
-        return
-      }
-
-      foundChannel.cooldown = new Date(Date.now() + 5000)
-
-      // Message class has a "clientRef" to "this" so it can call clientRef.onMessage().
-      this.msgs.set(msg.messageID, new Message(msg, this))
-    })
+    this.ircClient.on('PRIVMSG', (msg) => this.prepareMsg(msg))
 
     this.ircClient.on('CLEARCHAT', (msg) => this.deleteMessage(msg))
     this.ircClient.on('CLEARMSG', (msg) => this.deleteMessage(msg))
 
     // Finally, connect to Twitch IRC.
     return this.ircClient.connect()
+  }
+
+  private prepareMsg (msg: PrivmsgMessage): void {
+
+    if (!msg.messageText.startsWith(this.commandPrefix)) {
+      return
+    }
+
+    const foundChannel = this.channels.get(msg.channelID)
+
+    if (foundChannel === undefined) {
+      this.leaveChannel({ id: msg.channelID, name: msg.channelName })
+      return
+    } else if (foundChannel.cooldown.getTime() > Date.now()) {
+      return
+    }
+
+    foundChannel.cooldown = new Date(Date.now() + 5000)
+
+    // Message class has a "clientRef" to "this" so it can call clientRef.onMessage().
+    this.msgs.set(msg.messageID, new Message(msg, this))
   }
 
   public async checkReady (): Promise<any> {
