@@ -7,7 +7,7 @@ export default class BotHandler extends DefaultHandler {
   public prefix = ['bot', 'befriendlier']
 
   public async onCommand (msg: PrivmsgMessage) {
-    const message = `${String(this.twitch.packageJSON.description)} By n\u{0000}otkarar. Version: ${String(this.twitch.packageJSON.version)}`
+    const message = `${String(this.twitch.packageJSON.description)} By N\u{E0000}otKarar. Version: ${String(this.twitch.packageJSON.version)}`
 
     this.twitch.sendMessage(msg.channelName, msg.senderUsername, message)
   }
