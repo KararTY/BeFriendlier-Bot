@@ -132,7 +132,7 @@ export default class Client {
       }
     }
 
-    const words = msg.messageText.substring(this.commandPrefix.length).split(' ')
+    const words = msg.messageText.split(' ')
 
     void this.generalQueue?.add(async () =>
       await this.handlers.find(command => command.prefix.includes(words[0].toLowerCase()))?.onCommand(msg, words))

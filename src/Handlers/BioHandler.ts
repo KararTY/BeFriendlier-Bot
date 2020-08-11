@@ -12,8 +12,7 @@ export default class BioHandler extends DefaultHandler {
 
     // TODO: Add FFZ & BTTV emote detections.
 
-    responseMessage.bio = msg.messageText.substring(this.twitch.commandPrefix.length)
-      .split(' ').slice(1).join(' ').substr(0, 128)
+    responseMessage.bio = msg.messageText.split(' ').slice(1).join(' ').substr(0, 128)
 
     this.ws.sendMessage(MessageType.BIO, JSON.stringify(responseMessage))
   }
