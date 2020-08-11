@@ -238,6 +238,27 @@ export default class Client {
   }
 
   private prepareMsg (msg: PrivmsgMessage): void {
+    // TODO: REFACTOR THIS LATER.
+    if (msg.messageText === '!befriendlier') {
+      const msgBot = {
+        senderUserID: msg.senderUserID,
+        senderUsername: msg.senderUsername,
+        messageText: '@@bot',
+      }
+
+      const foundChannel = this.channels.get(msg.channelID)
+
+      if (foundChannel === undefined) {
+        this.leaveChannel({ id: msg.channelID, name: msg.channelName })
+        return
+      } else if (foundChannel.cooldown.getTime() > Date.now()) {
+        return
+      }
+
+      foundChannel.cooldown = new Date(Date.now() + 5000)
+      this.msgs.set(msg.messageID, new Message(msgBot as PrivmsgMessage, this))
+      return
+    }
 
     if (!msg.messageText.startsWith(this.commandPrefix)) {
       return
