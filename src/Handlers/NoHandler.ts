@@ -7,7 +7,7 @@ export default class NoHandler extends DefaultHandler {
 
   public prefix = ['no', 'mismatch']
 
-  public async onCommand (msg: PrivmsgMessage, words: string[]) {
+  public async onCommand (msg: PrivmsgMessage) {
     const responseMessage = this.makeResponseMesage(msg)
 
     const foundUserRoll = this.twitch.getUserInstance(msg)

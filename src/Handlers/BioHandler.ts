@@ -7,12 +7,17 @@ export default class BioHandler extends DefaultHandler {
 
   public prefix = ['bio']
 
-  public async onCommand (msg: PrivmsgMessage) {
+  public async onCommand (msg: PrivmsgMessage, words: string[]) {
     const responseMessage = this.makeResponseMesage(msg) as BIO
 
     // TODO: Add FFZ & BTTV emote detections.
+    let msgText = msg.messageText
+    if (words[1] === 'global') {
+      msgText = words.slice(1).join(' ')
+      responseMessage.global = true
+    }
 
-    responseMessage.bio = msg.messageText.split(' ').slice(1).join(' ').substr(0, 128)
+    responseMessage.bio = msgText.split(' ').slice(1).join(' ').substr(0, 128)
 
     this.ws.sendMessage(MessageType.BIO, JSON.stringify(responseMessage))
   }
