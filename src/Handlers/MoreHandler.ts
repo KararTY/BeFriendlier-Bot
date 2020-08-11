@@ -7,7 +7,7 @@ export default class MoreHandler extends DefaultHandler {
 
   public prefix = ['more']
 
-  public async onCommand (msg: PrivmsgMessage) {
+  public async onCommand (msg: PrivmsgMessage, words: string[]) {
     const responseMessage = this.makeResponseMesage(msg) as ROLLMATCH
 
     const foundUserRoll = this.twitch.getUserInstance(msg)
@@ -17,6 +17,10 @@ export default class MoreHandler extends DefaultHandler {
     }
 
     foundUserRoll.nextType()
+
+    if (foundUserRoll.global) {
+      responseMessage.global = true
+    }
 
     responseMessage.more = foundUserRoll.type
     this.ws.sendMessage(MessageType.ROLLMATCH, JSON.stringify(responseMessage))

@@ -2,7 +2,7 @@ dependencies:
   '@adonisjs/env': 1.0.18
   '@adonisjs/logger': 2.1.0
   '@adonisjs/validator': 7.4.0
-  befriendlier-shared: github.com/kararty/BeFriendlier-Shared/32c6d82ecedda9b1946dbbfe10e6dbea695889a0
+  befriendlier-shared: github.com/kararty/BeFriendlier-Shared/98c9dacbf999197732ee134e5e5f761306a6a88c
   dank-twitch-irc: github.com/kararty/dank-twitch-irc/8dcdac2a6ee0a273a1d0490c59a82bf38e29569c
   p-queue: 6.6.0
   ws: 7.3.1_5290a7aab7631971258e1bd11475725e
@@ -3580,15 +3580,15 @@ packages:
       node: '>=6'
     resolution:
       integrity: sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==
-  github.com/kararty/BeFriendlier-Shared/32c6d82ecedda9b1946dbbfe10e6dbea695889a0:
+  github.com/kararty/BeFriendlier-Shared/98c9dacbf999197732ee134e5e5f761306a6a88c:
     dependencies:
       '@adonisjs/logger': 2.1.0
       got: 11.5.1
     dev: false
     name: befriendlier-shared
     resolution:
-      tarball: 'https://codeload.github.com/kararty/BeFriendlier-Shared/tar.gz/32c6d82ecedda9b1946dbbfe10e6dbea695889a0'
-    version: 6.0.0
+      tarball: 'https://codeload.github.com/kararty/BeFriendlier-Shared/tar.gz/98c9dacbf999197732ee134e5e5f761306a6a88c'
+    version: 6.0.1
   github.com/kararty/dank-twitch-irc/8dcdac2a6ee0a273a1d0490c59a82bf38e29569c:
     dependencies:
       '@types/debug': 4.1.5
@@ -3620,7 +3620,7 @@ specifiers:
   '@typescript-eslint/eslint-plugin': ^3.7.1
   '@typescript-eslint/parser': ^3.7.1
   adonis-preset-ts: ^1.0.4
-  befriendlier-shared: 'github:kararty/BeFriendlier-Shared#semver:6.0.0'
+  befriendlier-shared: 'github:kararty/BeFriendlier-Shared#semver:6.0.1'
   bufferutil: ^4.0.1
   copyfiles: ^2.3.0
   dank-twitch-irc: 'github:kararty/dank-twitch-irc'

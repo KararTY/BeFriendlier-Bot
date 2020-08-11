@@ -7,13 +7,17 @@ export default class MatchHandler extends DefaultHandler {
 
   public prefix = ['match', 'yes']
 
-  public async onCommand (msg: PrivmsgMessage) {
+  public async onCommand (msg: PrivmsgMessage, words: string[]) {
     const responseMessage = this.makeResponseMesage(msg)
 
     const foundUserRoll = this.twitch.getUserInstance(msg)
 
     if (foundUserRoll === undefined) {
       return
+    }
+
+    if (foundUserRoll.global) {
+      responseMessage.global = true
     }
 
     this.ws.sendMessage(MessageType.MATCH, JSON.stringify(responseMessage))

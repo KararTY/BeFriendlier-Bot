@@ -7,7 +7,7 @@ export default class EmotesHandler extends DefaultHandler {
 
   public prefix = ['emotes']
 
-  public async onCommand (msg: PrivmsgMessage) {
+  public async onCommand (msg: PrivmsgMessage, words: string[]) {
     const responseMessage = this.makeResponseMesage(msg) as EMOTES
 
     // TODO: Add FFZ & BTTV emote detections.
@@ -23,6 +23,9 @@ export default class EmotesHandler extends DefaultHandler {
         id: emote.id,
       }
     }).slice(0, 5)
+
+    // If user is trying to change their global emotes.
+    responseMessage.global = words[1] === 'global'
 
     this.ws.sendMessage(MessageType.EMOTES, JSON.stringify(responseMessage))
   }

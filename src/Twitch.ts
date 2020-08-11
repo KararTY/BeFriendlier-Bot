@@ -49,9 +49,11 @@ class Message {
 
 export class RollInstance {
   public type: More
+  public global: boolean
 
-  constructor () {
+  constructor (global = false) {
     this.type = More.NONE
+    this.global = global
   }
 
   public nextType () {
@@ -159,8 +161,8 @@ export default class Client {
       error => this.logger.error({ err: error }, 'Twitch.leaveChannel() -> Twitch.PART'))
   }
 
-  public createAndGetUserInstance (msg: PrivmsgMessage) {
-    this.channels.get(msg.channelID)?.userRolls.set(msg.senderUserID, new RollInstance())
+  public createAndGetUserInstance (msg: PrivmsgMessage, global = false) {
+    this.channels.get(msg.channelID)?.userRolls.set(msg.senderUserID, new RollInstance(global))
     return this.getUserInstance(msg) as RollInstance
   }
 

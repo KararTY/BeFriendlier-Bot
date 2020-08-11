@@ -7,7 +7,7 @@ export default class RollMatchHandler extends DefaultHandler {
 
   public prefix = ['swipe', 'roll']
 
-  public async onCommand (msg: PrivmsgMessage) {
+  public async onCommand (msg: PrivmsgMessage, words: string[]) {
     const responseMessage = this.makeResponseMesage(msg) as ROLLMATCH
 
     let foundUserRoll = this.twitch.getUserInstance(msg)
@@ -16,7 +16,13 @@ export default class RollMatchHandler extends DefaultHandler {
       return
     }
 
-    foundUserRoll = this.twitch.createAndGetUserInstance(msg)
+    let isGlobal = false
+    if (words[1] === 'global') {
+      isGlobal = true
+      responseMessage.global = true
+    }
+
+    foundUserRoll = this.twitch.createAndGetUserInstance(msg, isGlobal)
 
     responseMessage.more = foundUserRoll.type
 

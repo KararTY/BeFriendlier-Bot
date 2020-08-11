@@ -7,13 +7,17 @@ export default class NoHandler extends DefaultHandler {
 
   public prefix = ['no', 'mismatch']
 
-  public async onCommand (msg: PrivmsgMessage) {
+  public async onCommand (msg: PrivmsgMessage, words: string[]) {
     const responseMessage = this.makeResponseMesage(msg)
 
     const foundUserRoll = this.twitch.getUserInstance(msg)
 
     if (foundUserRoll === undefined) {
       return
+    }
+
+    if (foundUserRoll.global) {
+      responseMessage.global = true
     }
 
     this.ws.sendMessage(MessageType.MISMATCH, JSON.stringify(responseMessage))
