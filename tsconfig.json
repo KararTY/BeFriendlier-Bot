@@ -13,6 +13,7 @@
     "incremental": true,
     "rootDir": ".",
     "declaration": true,
+    "sourceMap": true,
     "resolveJsonModule": true,
     "types": [
       "node"
