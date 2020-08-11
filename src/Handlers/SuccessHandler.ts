@@ -13,14 +13,14 @@ export default class SuccessHandler extends DefaultHandler {
     this.twitch./* TODO: whisper */sendMessage(
       /** TODO. REMOVE */channelTwitch.name,
       userTwitch.name,
-      String(result.value).replace('%s', `@${String(result.matchUsername)}`),
+      String(result.value).replace('%s%', `@${String(result.matchUsername)}`),
     )
 
     // // Send to matched user.
     // this.twitch./* TODO: whisper */sendMessage(
     //   /** TODO. REMOVE */channelTwitch.name,
     //   result.matchUsername,
-    //   String(result.value).replace('%s', `@${String(userTwitch.name)}`),
+    //   String(result.value).replace('%s%', `@${String(userTwitch.name)}`),
     // )
 
     this.twitch.removeUserInstance({ channelTwitch, userTwitch })

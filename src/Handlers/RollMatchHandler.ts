@@ -1,4 +1,4 @@
-import { MessageType, ROLLMATCH } from 'befriendlier-shared'
+import { MessageType, ROLLMATCH, More } from 'befriendlier-shared'
 import { PrivmsgMessage } from 'dank-twitch-irc'
 import DefaultHandler from './DefaultHandler'
 
@@ -29,7 +29,14 @@ export default class RollMatchHandler extends DefaultHandler {
     this.ws.sendMessage(MessageType.ROLLMATCH, JSON.stringify(responseMessage))
   }
 
-  public async onServerResponse ({ channelTwitch, userTwitch, result }: ROLLMATCH) {
+  public async onServerResponse ({ channelTwitch, userTwitch, result, more }: ROLLMATCH) {
+    if (more === More.NONE) {
+      result.value = result.value
+        .replace('%prefix%', '@@')
+        .replace('%prefix%', '@@')
+        .replace('%prefix%', '@@')
+    }
+
     this.twitch.sendMessage(channelTwitch.name, userTwitch.name, String(result.value))
   }
 }
