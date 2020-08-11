@@ -9,7 +9,7 @@
     "start": "node build/Index.js",
     "start-test": "ts-node-dev --respawn --clear --log-error --inspect=\"0\" -- Index.ts",
     "release": "standard-version && git push --follow-tags origin master",
-    "update": "git pull && npm run build && pm2 restart Bot"
+    "update": "git pull && pnpm i --shamefully-hoist && npm run build && pm2 restart Bot"
   },
   "repository": {
     "type": "git",
