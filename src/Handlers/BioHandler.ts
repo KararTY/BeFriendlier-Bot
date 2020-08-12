@@ -21,7 +21,7 @@ export default class BioHandler extends DefaultHandler {
     }
 
     // TODO: Add FFZ & BTTV emote detections.
-    if (words[1] === 'global') {
+    if (words[0] === 'global') {
       message.messageText = words.slice(1).join(' ')
       responseMessage.global = true
     }

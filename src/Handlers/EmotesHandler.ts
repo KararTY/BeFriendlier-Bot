@@ -25,7 +25,7 @@ export default class EmotesHandler extends DefaultHandler {
     }).slice(0, 5)
 
     // If user is trying to change their global emotes.
-    responseMessage.global = words[1] === 'global'
+    responseMessage.global = words[0] === 'global'
 
     this.ws.sendMessage(MessageType.EMOTES, JSON.stringify(responseMessage))
   }

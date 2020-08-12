@@ -130,8 +130,8 @@ export default class Client {
 
     const words = msg.messageText.substring(this.commandPrefix.length).split(' ')
 
-    void this.generalQueue?.add(async () =>
-      await this.handlers.find(command => command.prefix.includes(words[0].toLowerCase()))?.onCommand(msg, words))
+    void this.generalQueue?.add(async () => await this.handlers
+      .find(command => command.prefix.includes(words[0].toLowerCase()))?.onCommand(msg, words.slice(1)))
   }
 
   public sendMessage (channelName: string, username: string, message: string) {

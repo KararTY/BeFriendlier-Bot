@@ -11,7 +11,7 @@ export default class UnmatchHandler extends DefaultHandler {
     const responseMessage = this.makeResponseMesage(msg) as UNMATCH
 
     // Get user details for provided user.
-    const res = await this.twitch.api.getUser(this.twitch.token.superSecret, [words[1]])
+    const res = await this.twitch.api.getUser(this.twitch.token.superSecret, [words[0]])
     if (res !== null && res.length > 0) {
       responseMessage.matchUserTwitch = {
         id: res[0].id,

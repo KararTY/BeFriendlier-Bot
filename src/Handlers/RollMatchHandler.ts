@@ -17,7 +17,7 @@ export default class RollMatchHandler extends DefaultHandler {
     }
 
     let isGlobal = false
-    if (words[1] === 'global') {
+    if (words[0] === 'global') {
       isGlobal = true
       responseMessage.global = true
     }
