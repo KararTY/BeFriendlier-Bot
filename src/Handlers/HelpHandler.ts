@@ -8,7 +8,7 @@ export default class HelpHandler extends DefaultHandler {
   public helpText = () => 'rubber ducky 🦆 Never lucky.'
 
   public async onCommand (msg: PrivmsgMessage, words: string[]) {
-    const commands = this.twitch.handlers.filter(command => !command.adminOnly || command.prefix.length === 0)
+    const commands = this.twitch.handlers.filter(command => !command.adminOnly || command.prefix.length !== 0)
 
     let message: string = ''
     if (words.length === 0) {
