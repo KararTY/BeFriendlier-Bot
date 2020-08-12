@@ -99,7 +99,10 @@ export default class DailyHoroscopeHandler extends DefaultHandler {
       nextRequest.setDate(new Date().getDate() + 1)
       body.nextRequest = nextRequest.toUTCString()
 
-      console.log(path.join(this.horoscopesDirPath.toString(), `horoscope_${sign}.json`))
+      if (!fs.existsSync(this.horoscopesDirPath)) {
+        fs.mkdirSync(this.horoscopesDirPath, { recursive: true })
+      }
+
       fs.writeFileSync(path.join(this.horoscopesDirPath.toString(), `horoscope_${sign}.json`), JSON.stringify(body), 'utf-8')
 
       return body as Horoscope
