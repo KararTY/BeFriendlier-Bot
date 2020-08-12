@@ -5,7 +5,7 @@ import DefaultHandler from './DefaultHandler'
 export default class LeaveChannelHandler extends DefaultHandler {
   public messageType = MessageType.LEAVECHAT
 
-  public prefix = ['join']
+  public prefix = ['leave']
 
   public async onCommand (msg: PrivmsgMessage, words: string[]) {
     if (this.twitch.admins === undefined || !this.twitch.admins.includes(msg.senderUsername)) {
