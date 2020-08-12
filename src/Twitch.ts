@@ -131,8 +131,15 @@ export default class Client {
 
     const words = msg.messageText.substring(this.commandPrefix.length).split(' ')
 
-    void this.generalQueue?.add(async () => await this.handlers
-      .find(command => command.prefix.includes(words[0].toLowerCase()))?.onCommand(msg, words.slice(1)))
+    const foundCommand = this.handlers
+      .find(command => command.prefix.includes(words[0].toLowerCase()))
+
+    if (foundCommand?.adminOnly !== undefined &&
+      (this.admins === undefined || !this.admins.includes(msg.senderUsername))) {
+      return
+    }
+
+    void this.generalQueue?.add(async () => await foundCommand?.onCommand(msg, words.slice(1)))
   }
 
   public sendMessage (channelName: string, username: string, message: string) {

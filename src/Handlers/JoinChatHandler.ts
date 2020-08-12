@@ -6,12 +6,9 @@ export default class JoinChannelHandler extends DefaultHandler {
   public messageType = MessageType.JOINCHAT
 
   public prefix = ['join']
+  public adminOnly = true
 
   public async onCommand (msg: PrivmsgMessage, words: string[]) {
-    if (this.twitch.admins === undefined || !this.twitch.admins.includes(msg.senderUsername)) {
-      return
-    }
-
     const responseMessage = this.makeResponseMesage(msg) as JOINCHAT
 
     // Get user details for provided user.

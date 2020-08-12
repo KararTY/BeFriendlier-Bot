@@ -11,6 +11,7 @@ export default class DefaultHandler {
 
   public messageType = 'DEFAULT'
   public prefix = ['*']
+  public adminOnly = false
 
   constructor (twitch: Client, ws: Ws, logger: Logger) {
     this.twitch = twitch

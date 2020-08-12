@@ -6,12 +6,9 @@ export default class LeaveChannelHandler extends DefaultHandler {
   public messageType = MessageType.LEAVECHAT
 
   public prefix = ['leave']
+  public adminOnly = true
 
   public async onCommand (msg: PrivmsgMessage, words: string[]) {
-    if (this.twitch.admins === undefined || !this.twitch.admins.includes(msg.senderUsername)) {
-      return
-    }
-
     // When the bot gets banned, the userTwitch's variables are empty.
     const responseMessage = this.makeResponseMesage(msg) as LEAVECHAT
 
