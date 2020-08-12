@@ -8,7 +8,7 @@ export default class HelpHandler extends DefaultHandler {
   public helpText = () => 'rubber ducky 🦆 Never lucky.'
 
   public async onCommand (msg: PrivmsgMessage, words: string[]) {
-    const commands = this.twitch.handlers.filter(command => !command.adminOnly || command.prefix.length !== 0)
+    const commands = this.twitch.handlers.filter(command => !command.adminOnly && command.prefix.length !== 0)
 
     let message: string = ''
     if (words.length === 0) {
@@ -17,7 +17,7 @@ export default class HelpHandler extends DefaultHandler {
       const command = commands.find(command => command.prefix.includes(words[0]))
 
       if (command !== undefined) {
-        message = `${command.prefix[0]} help text: ${command.helpText()}`
+        message = `${command.prefix[0]}: ${command.helpText()}`
       }
 
       // TODO: Make it paginate.
