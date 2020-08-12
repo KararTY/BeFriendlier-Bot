@@ -7,6 +7,8 @@ export default class NoHandler extends DefaultHandler {
 
   public prefix = ['no', 'mismatch']
 
+  public helpText = () => 'will add the rolled profile to your mismatches.'
+
   public async onCommand (msg: PrivmsgMessage) {
     const responseMessage = this.makeResponseMesage(msg)
 

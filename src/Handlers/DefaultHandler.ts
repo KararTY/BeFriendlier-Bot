@@ -13,6 +13,8 @@ export default class DefaultHandler {
   public prefix = ['*']
   public adminOnly = false
 
+  public helpText = () => 'This command has no help usage.'
+
   constructor (twitch: Client, ws: Ws, logger: Logger) {
     this.twitch = twitch
     this.ws = ws

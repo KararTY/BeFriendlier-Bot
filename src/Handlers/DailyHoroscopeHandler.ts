@@ -31,6 +31,11 @@ export default class DailyHoroscopeHandler extends DefaultHandler {
 
   public prefix = ['dailyhoroscope', 'horoscope']
 
+  public helpText = () => {
+    const signs = Object.values(Sign).map(sign => String(sign))
+    return `shows daily horoscope. Available signs: ${signs.join(', ')}.`
+  }
+
   private readonly horoscopes: Horoscope[] = []
 
   private readonly horoscopesDirPath: string = path.join(os.homedir(), 'horoscopes')

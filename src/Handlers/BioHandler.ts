@@ -7,6 +7,8 @@ export default class BioHandler extends DefaultHandler {
 
   public prefix = ['bio']
 
+  public helpText = () => 'sets your profile bio. Add "global" in the beginning to change your global profile\'s bio.'
+
   public async onCommand (msg: PrivmsgMessage, words: string[]) {
     const responseMessage = this.makeResponseMesage(msg) as BIO
 

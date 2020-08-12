@@ -7,6 +7,10 @@ export default class UnmatchHandler extends DefaultHandler {
 
   public prefix = ['unmatch']
 
+  public helpText = () => {
+    return 'unmatches with the provided user. Append "global" to unmatch with a user in your global profile.'
+  }
+
   public async onCommand (msg: PrivmsgMessage, words: string[]) {
     const responseMessage = this.makeResponseMesage(msg) as UNMATCH
 

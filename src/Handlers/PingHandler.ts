@@ -7,6 +7,8 @@ export default class PingHandler extends DefaultHandler {
 
   public prefix = ['ping']
 
+  public helpText = () => 'returns ping info about Twitch IRC & Website.'
+
   public async onCommand (msg: PrivmsgMessage) {
     const responseMessage = this.makeResponseMesage(msg)
 

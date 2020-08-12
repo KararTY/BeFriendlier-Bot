@@ -7,6 +7,8 @@ export default class MatchHandler extends DefaultHandler {
 
   public prefix = ['match', 'yes']
 
+  public helpText = () => 'attempts to match with the profile.'
+
   public async onCommand (msg: PrivmsgMessage) {
     const responseMessage = this.makeResponseMesage(msg)
 

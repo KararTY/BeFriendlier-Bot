@@ -7,6 +7,8 @@ export default class MoreHandler extends DefaultHandler {
 
   public prefix = ['more']
 
+  public helpText = () => 'returns more information about the rolled profile.'
+
   public async onCommand (msg: PrivmsgMessage) {
     const responseMessage = this.makeResponseMesage(msg) as ROLLMATCH
 

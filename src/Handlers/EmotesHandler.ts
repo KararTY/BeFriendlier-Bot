@@ -7,6 +7,11 @@ export default class EmotesHandler extends DefaultHandler {
 
   public prefix = ['emotes']
 
+  public helpText = () => {
+    return 'sets your favorite emotes for your profile. ' +
+      'Add "global" in the beginning to change your global profile\'s bio.'
+  }
+
   public async onCommand (msg: PrivmsgMessage, words: string[]) {
     const responseMessage = this.makeResponseMesage(msg) as EMOTES
 

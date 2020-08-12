@@ -7,6 +7,11 @@ export default class RollMatchHandler extends DefaultHandler {
 
   public prefix = ['swipe', 'roll']
 
+  public helpText = () => {
+    return 'initiates a match! Good luck, rubber ducky 🦆' +
+      'Append "global" to initiate a match with global profiles.'
+  }
+
   public async onCommand (msg: PrivmsgMessage, words: string[]) {
     const responseMessage = this.makeResponseMesage(msg) as ROLLMATCH
 
