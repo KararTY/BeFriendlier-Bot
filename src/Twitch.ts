@@ -16,10 +16,6 @@ import TwitchConfig from '../config/Twitch'
 import DefaultHandler from './Handlers/DefaultHandler'
 import Ws, { WsRes } from './Ws'
 
-function escapeRegExp (text: string) {
-  return text.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&')
-}
-
 interface Token {
   expiration: Date
   superSecret: string
@@ -123,15 +119,6 @@ export default class Client {
   public async onMessage ({ msg, deleted }: Message) {
     if (deleted) {
       return
-    }
-
-    // Filter bad words.
-    if (msg.flags instanceof Array) {
-      for (let index = 0; index < msg.flags.length; index++) {
-        const word = msg.flags[index].word
-        const censorStars = Array(word.length).fill('*').join('')
-        msg.messageText.replace(new RegExp(escapeRegExp(word)), censorStars)
-      }
     }
 
     const words = msg.messageText.substring(this.commandPrefix.length).split(' ')
