@@ -100,6 +100,7 @@ export default class Client {
   public readonly handlers: DefaultHandler[] = []
 
   public readonly admins: string[] | undefined
+  public readonly headers: { 'user-agent': string }
 
   constructor (config: TwitchConfig, ws: Ws, api: TwitchAuth, packageJSON: any, logger: Logger) {
     this.api = api
@@ -115,6 +116,8 @@ export default class Client {
     this.commandPrefix = config.commandPrefix
 
     this.admins = config.admins
+
+    this.headers = config.headers
 
     this.ws.eventEmitter.on('WS.MESSAGE', (data: WsRes) => this.onServerResponse(data))
     this.ws.eventEmitter.on('WS.CLOSED', (data) => this.onServerClosed(data))

@@ -4,6 +4,7 @@ dependencies:
   '@adonisjs/validator': 7.4.0
   befriendlier-shared: github.com/kararty/BeFriendlier-Shared/2c39a5eae5e5bec911597a7558b12b4c3f18facd
   dank-twitch-irc: github.com/kararty/dank-twitch-irc/8dcdac2a6ee0a273a1d0490c59a82bf38e29569c
+  got: 11.5.2
   p-queue: 6.6.0
   ws: 7.3.1_5290a7aab7631971258e1bd11475725e
 devDependencies:
@@ -3587,6 +3588,7 @@ packages:
     dev: false
     name: befriendlier-shared
     resolution:
+      registry: 'https://registry.npmjs.org/'
       tarball: 'https://codeload.github.com/kararty/BeFriendlier-Shared/tar.gz/2c39a5eae5e5bec911597a7558b12b4c3f18facd'
     version: 6.2.0
   github.com/kararty/dank-twitch-irc/8dcdac2a6ee0a273a1d0490c59a82bf38e29569c:
@@ -3632,6 +3634,7 @@ specifiers:
   eslint-plugin-node: ^11.1.0
   eslint-plugin-promise: ^4.2.1
   eslint-plugin-standard: ^4.0.1
+  got: ^11.5.2
   p-queue: ^6.6.0
   pino-pretty: ^4.1.0
   rimraf: ^3.0.2

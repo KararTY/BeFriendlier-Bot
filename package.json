@@ -46,6 +46,7 @@
     "@adonisjs/validator": "^7.4.0",
     "befriendlier-shared": "github:kararty/BeFriendlier-Shared#dev",
     "dank-twitch-irc": "github:kararty/dank-twitch-irc",
+    "got": "^11.5.2",
     "p-queue": "^6.6.0",
     "ws": "^7.3.1"
   },
