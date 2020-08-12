@@ -2,6 +2,7 @@ import { PrivmsgMessage } from 'dank-twitch-irc'
 import fs from 'fs'
 import path from 'path'
 import fetch from 'got'
+import os from 'os'
 import DefaultHandler from './DefaultHandler'
 
 enum Sign {
@@ -32,6 +33,8 @@ export default class DailyHoroscopeHandler extends DefaultHandler {
 
   private readonly horoscopes: Horoscope[] = []
 
+  private readonly horoscopesDirPath: string = path.join(os.homedir(), 'horoscopes')
+
   public async onCommand (msg: PrivmsgMessage, words: string[]) {
     let horoscopeName = Sign.LE.toString()
 
@@ -50,7 +53,7 @@ export default class DailyHoroscopeHandler extends DefaultHandler {
       let fileContent: string
       try {
         // Load JSON
-        fileContent = fs.readFileSync(path.join(__dirname, '..', `horoscope_${horoscopeName}.json`), 'utf-8')
+        fileContent = fs.readFileSync(path.join(this.horoscopesDirPath.toString(), `horoscope_${horoscopeName}.json`), 'utf-8')
       } catch (error) {
         // Create file.
         const response = await this.requestHoroscope(horoscopeName)
@@ -96,8 +99,8 @@ export default class DailyHoroscopeHandler extends DefaultHandler {
       nextRequest.setDate(new Date().getDate() + 1)
       body.nextRequest = nextRequest.toUTCString()
 
-      console.log(path.join(__dirname, '..', `horoscope_${sign}.json`))
-      fs.writeFileSync(path.join(__dirname, '..', `horoscope_${sign}.json`), JSON.stringify(body), 'utf-8')
+      console.log(path.join(this.horoscopesDirPath.toString(), `horoscope_${sign}.json`))
+      fs.writeFileSync(path.join(this.horoscopesDirPath.toString(), `horoscope_${sign}.json`), JSON.stringify(body), 'utf-8')
 
       return body as Horoscope
     } catch (error) {
