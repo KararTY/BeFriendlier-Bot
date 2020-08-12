@@ -96,6 +96,7 @@ export default class Client {
 
   public readonly msgs: Map<string, Message> = new Map()
   public readonly channels: Map<string, Channel> = new Map()
+  public readonly userCooldowns: Map<string, Date> = new Map()
 
   public readonly handlers: DefaultHandler[] = []
 
@@ -237,17 +238,12 @@ export default class Client {
       const msgBot = { ...msg }
       msgBot.messageText = '@@bot'
 
-      const foundChannel = this.channels.get(msg.channelID)
+      const hasSetCooldown = this.cooldown(msg)
 
-      if (foundChannel === undefined) {
-        this.leaveChannel({ id: msg.channelID, name: msg.channelName })
-        return
-      } else if (foundChannel.cooldown.getTime() > Date.now()) {
-        return
+      if (hasSetCooldown) {
+        this.msgs.set(msg.messageID, new Message(msgBot as PrivmsgMessage, this))
       }
 
-      foundChannel.cooldown = new Date(Date.now() + 5000)
-      this.msgs.set(msg.messageID, new Message(msgBot as PrivmsgMessage, this))
       return
     }
 
@@ -255,19 +251,34 @@ export default class Client {
       return
     }
 
+    const hasSetCooldown = this.cooldown(msg)
+
+    if (hasSetCooldown) {
+      // Message class has a "clientRef" to "this" so it can call clientRef.onMessage().
+      this.msgs.set(msg.messageID, new Message(msg, this))
+    }
+  }
+
+  private cooldown (msg: PrivmsgMessage) {
     const foundChannel = this.channels.get(msg.channelID)
 
     if (foundChannel === undefined) {
       this.leaveChannel({ id: msg.channelID, name: msg.channelName })
-      return
+      return false
     } else if (foundChannel.cooldown.getTime() > Date.now()) {
-      return
+      return false
+    }
+
+    const foundUserCooldown = this.userCooldowns.get(msg.senderUserID)
+
+    if (foundUserCooldown === undefined) {
+      this.userCooldowns.set(msg.senderUserID, new Date(Date.now() + 15000))
+    } else if (foundUserCooldown.getTime() > Date.now()) {
+      return false
     }
 
     foundChannel.cooldown = new Date(Date.now() + 5000)
-
-    // Message class has a "clientRef" to "this" so it can call clientRef.onMessage().
-    this.msgs.set(msg.messageID, new Message(msg, this))
+    return true
   }
 
   private onServerResponse (res: WsRes) {
