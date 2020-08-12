@@ -269,18 +269,18 @@ export default class Client {
   private cooldown (msg: PrivmsgMessage) {
     const foundChannel = this.channels.get(msg.channelID)
 
-    if (foundChannel === undefined) {
-      this.leaveChannel({ id: msg.channelID, name: msg.channelName })
-      return false
-    } else if (foundChannel.cooldown.getTime() > Date.now()) {
-      return false
-    }
-
     const foundUserCooldown = this.userCooldowns.get(msg.senderUserID)
 
     if (foundUserCooldown === undefined) {
       this.userCooldowns.set(msg.senderUserID, new Date(Date.now() + 15000))
     } else if (foundUserCooldown.getTime() > Date.now()) {
+      return false
+    }
+
+    if (foundChannel === undefined) {
+      this.leaveChannel({ id: msg.channelID, name: msg.channelName })
+      return false
+    } else if (foundChannel.cooldown.getTime() > Date.now()) {
       return false
     }
 
