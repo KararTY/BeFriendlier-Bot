@@ -2,7 +2,6 @@
 import { Logger } from '@adonisjs/logger/build/standalone'
 import { BASE, MessageType, More, NameAndId, TwitchAuth } from 'befriendlier-shared'
 import {
-  AlternateMessageModifier,
   ChatClient,
   ClearchatMessage,
   ClearmsgMessage,
@@ -86,6 +85,9 @@ export default class Client {
 
   private readonly generalQueue = new PQueue({ concurrency: 1 })
 
+  private readonly invisibleSuffix = '\u{000e0000}'
+  private addInvisibleSuffix = true
+
   public readonly api: TwitchAuth
   public readonly packageJSON: any
   public token: Token
@@ -130,7 +132,9 @@ export default class Client {
   }
 
   public sendMessage (channelName: string, username: string, message: string) {
-    this.ircClient.say(channelName, `@${username}, ${message}`)
+    this.addInvisibleSuffix = !this.addInvisibleSuffix // Flip
+
+    this.ircClient.say(channelName, `@${username}, ${message}${this.addInvisibleSuffix ? this.invisibleSuffix : ''}`)
       .catch(error => this.logger.error({ err: error }, 'Twitch.sendMessage()'))
   }
 
@@ -197,7 +201,6 @@ export default class Client {
       },
     })
 
-    this.ircClient.use(new AlternateMessageModifier(this.ircClient))
     this.ircClient.use(new SlowModeRateLimiter(this.ircClient))
     this.ircClient.use(new PrivmsgMessageRateLimiter(this.ircClient))
 
