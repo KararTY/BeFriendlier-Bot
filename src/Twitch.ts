@@ -131,7 +131,7 @@ export default class Client {
 
     const words = msg.messageText.substring(this.commandPrefix.length).split(' ')
 
-    const foundCommand = this.handlers
+    const foundCommand = this.handlers.filter(command => command.prefix.length === 0)
       .find(command => command.prefix.includes(words[0].toLowerCase()))
 
     if (foundCommand?.adminOnly !== undefined &&

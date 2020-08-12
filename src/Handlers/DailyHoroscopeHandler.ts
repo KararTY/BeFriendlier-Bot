@@ -29,7 +29,7 @@ interface Horoscope {
 export default class DailyHoroscopeHandler extends DefaultHandler {
   // public messageType = MessageType
 
-  public prefix = ['dailyhoroscope', 'horoscope']
+  public prefix = ['horoscope', 'dailyhoroscope']
 
   public helpText = () => {
     const signs = Object.values(Sign).map(sign => String(sign))

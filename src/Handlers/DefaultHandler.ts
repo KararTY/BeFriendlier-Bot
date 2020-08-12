@@ -10,7 +10,7 @@ export default class DefaultHandler {
   protected readonly logger: Logger
 
   public messageType = 'DEFAULT'
-  public prefix = ['*']
+  public prefix: string[] = []
   public adminOnly = false
 
   public helpText = () => 'This command has no help usage.'

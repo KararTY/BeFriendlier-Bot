@@ -4,11 +4,11 @@ import DefaultHandler from './DefaultHandler'
 export default class HelpHandler extends DefaultHandler {
   // public messageType = MessageType
 
-  public prefix = ['commands', 'help']
+  public prefix = ['help', 'commands']
   public helpText = () => 'rubber ducky 🦆 Never lucky.'
 
   public async onCommand (msg: PrivmsgMessage, words: string[]) {
-    const commands = this.twitch.handlers.filter(command => !command.adminOnly)
+    const commands = this.twitch.handlers.filter(command => !command.adminOnly || command.prefix.length === 0)
 
     let message: string = ''
     if (words.length === 0) {
@@ -19,6 +19,7 @@ export default class HelpHandler extends DefaultHandler {
       if (command !== undefined) {
         message = `${command.prefix[0]} help text: ${command.helpText()}`
       }
+
       // TODO: Make it paginate.
     }
 

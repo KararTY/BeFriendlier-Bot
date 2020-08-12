@@ -1,7 +1,6 @@
 import { PrivmsgMessage } from 'dank-twitch-irc'
-import DefaultHandler from './DefaultHandler'
-
 import os from 'os'
+import DefaultHandler from './DefaultHandler'
 
 export default class BotHandler extends DefaultHandler {
   // public messageType = MessageType
