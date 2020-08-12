@@ -165,20 +165,15 @@ export default class Client {
     }
   }
 
-  private onServerResponse (res: WsRes) {
-    const command = this.handlers.find(command => command.messageType === res.type)
-
-    if (command === undefined || res.data === undefined) {
-      void this.generalQueue.add(async () =>
-        await this.handlers.find(command => command.messageType === 'DEFAULT')?.onServerResponse(res),
-      { priority: Date.now() })
-
-      return
+  public async checkReady (): Promise<any> {
+    if (!this.ready) {
+      await new Promise(resolve => setTimeout(resolve, 500))
+      this.generalQueue.concurrency++
+      return await this.checkReady()
+    } else {
+      this.generalQueue.concurrency = 1
+      return await Promise.resolve()
     }
-
-    const data = JSON.parse(res.data)
-
-    void this.generalQueue.add(async () => await command.onServerResponse(data, res), { priority: Date.now() })
   }
 
   public async loginToTwitch () {
@@ -215,7 +210,7 @@ export default class Client {
     })
     this.ircClient.on('error', (error) => this.onError(error))
 
-    this.ircClient.on('PRIVMSG', (msg) => this.prepareMsg(msg))
+    this.ircClient.on('PRIVMSG', (msg) => void this.prepareMsg(msg))
 
     this.ircClient.on('CLEARCHAT', (msg) => this.deleteMessage(msg))
     this.ircClient.on('CLEARMSG', (msg) => this.deleteMessage(msg))
@@ -224,7 +219,7 @@ export default class Client {
     return this.ircClient.connect()
   }
 
-  private prepareMsg (msg: PrivmsgMessage): void {
+  private async prepareMsg (msg: PrivmsgMessage): Promise<void> {
     // TODO: REFACTOR THIS LATER.
     if (msg.messageText === '!befriendlier') {
       const msgBot = {
@@ -266,15 +261,20 @@ export default class Client {
     this.msgs.set(msg.messageID, new Message(msg, this))
   }
 
-  public async checkReady (): Promise<any> {
-    if (!this.ready) {
-      await new Promise(resolve => setTimeout(resolve, 500))
-      this.generalQueue.concurrency++
-      return await this.checkReady()
-    } else {
-      this.generalQueue.concurrency = 1
-      return await Promise.resolve()
+  private onServerResponse (res: WsRes) {
+    const command = this.handlers.find(command => command.messageType === res.type)
+
+    if (command === undefined || res.data === undefined) {
+      void this.generalQueue.add(async () =>
+        await this.handlers.find(command => command.messageType === 'DEFAULT')?.onServerResponse(res),
+      { priority: Date.now() })
+
+      return
     }
+
+    const data = JSON.parse(res.data)
+
+    void this.generalQueue.add(async () => await command.onServerResponse(data, res), { priority: Date.now() })
   }
 
   private onServerClosed (data: { type: MessageType, data: string, state: 0 | 2 | 3 }) {
