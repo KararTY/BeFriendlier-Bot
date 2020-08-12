@@ -77,7 +77,7 @@ export default class DailyHoroscopeHandler extends DefaultHandler {
       }
     }
 
-    const message = `${this.horoscope.sign} horoscope for date ${this.horoscope.date}: ${this.horoscope.horoscope}`
+    const message = `${this.horoscope.sign} horoscope for date ${this.horoscope.date}: ${this.horoscope.horoscope.split('. ')[0]}...`
 
     this.twitch.sendMessage(msg.channelName, msg.senderUsername, message)
   }
@@ -101,5 +101,6 @@ export default class DailyHoroscopeHandler extends DefaultHandler {
       return null
     }
   }
+
   // public onServerResponse (res) {}
 }
