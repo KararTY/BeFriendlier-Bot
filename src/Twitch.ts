@@ -76,6 +76,7 @@ export default class Client {
   private readonly logger: Logger
 
   private readonly name: string
+  private readonly id: string
 
   public readonly commandPrefix: string
 
@@ -107,6 +108,7 @@ export default class Client {
     this.logger = logger
 
     this.name = config.user.name
+    this.id = config.user.id
 
     this.commandPrefix = config.commandPrefix
 
