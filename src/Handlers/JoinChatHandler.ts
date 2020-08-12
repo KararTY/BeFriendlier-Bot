@@ -41,7 +41,7 @@ export default class JoinChannelHandler extends DefaultHandler {
     return await this.twitch.ircClient.join(joinUserTwitch.name).then(() => {
       this.logger.info(`Twitch.JOIN: Joined ${joinUserTwitch.name}.`)
 
-      // if (channelTwitch !== undefined && userTwitch !== undefined) {
+      // if (userTwitch.id.length > 0 && userTwitch.name.length > 0) {
       // this.twitch.sendMessage(
       //   joinUserTwitch.name,
       //   userTwitch.name,

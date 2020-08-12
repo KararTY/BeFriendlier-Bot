@@ -12,6 +12,7 @@ export default class LeaveChannelHandler extends DefaultHandler {
       return
     }
 
+    // When the bot gets banned, the userTwitch's variables are empty.
     const responseMessage = this.makeResponseMesage(msg) as LEAVECHAT
 
     // Get user details for provided user.
@@ -28,14 +29,15 @@ export default class LeaveChannelHandler extends DefaultHandler {
     }
   }
 
-  public async onServerResponse ({ /* channelTwitch, userTwitch, */ leaveUserTwitch }: LEAVECHAT) {
-    // if (channelTwitch !== undefined && userTwitch !== undefined) {
-    // this.twitch.sendMessage(
-    //   joinUserTwitch.name,
-    //   userTwitch.name,
-    //   `from channel @${channelTwitch.name}, has issued me to leave this channel. FeelsBadMan Good bye!`,
-    // )
-    // }
+  public async onServerResponse ({ channelTwitch, userTwitch, leaveUserTwitch }: LEAVECHAT) {
+    // When the bot gets banned, it doesn't need to announce that it's leaving, so userTwitch's variables are empty.
+    if (userTwitch.name.length > 0 && userTwitch.id.length > 0) {
+      this.twitch.sendMessage(
+        leaveUserTwitch.name,
+        userTwitch.name,
+        `from channel @${channelTwitch.name}, has issued me to leave this channel. FeelsBadMan Good bye!`,
+      )
+    }
 
     this.twitch.leaveChannel(leaveUserTwitch)
   }

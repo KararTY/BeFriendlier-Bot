@@ -298,6 +298,31 @@ export default class Client {
   }
 
   private deleteMessage (msg: ClearchatMessage | ClearmsgMessage) {
+    if (msg instanceof ClearchatMessage) {
+      if (typeof msg.targetUsername === 'string' && msg.targetUsername === this.name) {
+        const channelFound =
+          [...this.channels].find(([_id, channel]) => channel.name === msg.channelName)?.[1] as Channel
+
+        if (msg.banDuration === undefined) {
+          // We've been banned, leave chat.
+          // When the bot gets banned, the senderUsername & senderUserID variables must be empty.
+          const leaveChat = {
+            senderUsername: '', // These will make userTwitch's variables empty strings.
+            senderUserID: '', // =/= Same as above.
+            channelName: msg.channelName,
+            channelID: channelFound.id,
+          }
+
+          void this.handlers
+            .find(command => command.messageType === MessageType.LEAVECHAT)?.onCommand(leaveChat as PrivmsgMessage)
+
+          return
+        }
+
+        this.channels.get(channelFound.id)?.cooldown.setTime(Date.now() + msg.banDuration)
+        return
+      }
+    }
     for (const [, cachedMsg] of this.msgs) {
       const removeMsgBool = msg instanceof ClearchatMessage
         ? cachedMsg.msg.channelName === msg.channelName
