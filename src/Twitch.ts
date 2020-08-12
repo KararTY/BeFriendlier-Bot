@@ -220,13 +220,14 @@ export default class Client {
   }
 
   private async prepareMsg (msg: PrivmsgMessage): Promise<void> {
+    if (msg.senderUserID === this.id) {
+      return
+    }
+
     // TODO: REFACTOR THIS LATER.
     if (msg.messageText === '!befriendlier') {
-      const msgBot = {
-        senderUserID: msg.senderUserID,
-        senderUsername: msg.senderUsername,
-        messageText: '@@bot',
-      }
+      const msgBot = { ...msg }
+      msgBot.messageText = '@@bot'
 
       const foundChannel = this.channels.get(msg.channelID)
 
