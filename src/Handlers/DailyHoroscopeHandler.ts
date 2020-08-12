@@ -30,7 +30,7 @@ export default class DailyHoroscopeHandler extends DefaultHandler {
 
   public prefix = ['dailyhoroscope', 'horoscope']
 
-  private readonly horoscopes: Horoscope[]
+  private readonly horoscopes: Horoscope[] = []
 
   public async onCommand (msg: PrivmsgMessage, words: string[]) {
     let horoscopeName = Sign.LE.toString()
