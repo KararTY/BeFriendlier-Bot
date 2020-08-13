@@ -9,7 +9,6 @@ Looking to match with POG Twitch friends?
   * Copy `.env.example`, to a new file named `.env`.
   * Change the environment values in the new `.env` file.
   * Check `config/` directory for other configurations to change. Default config values should be sufficient for development, however.
-  * If your `DB_CONNECTION` is not set to `sqlite`, make sure to create a database with the same name under `DB_NAME`.
   * `npm start-test` to start bot client in watch mode (Reloads on file change) with debugging websocket enabled.
   * Or alternatively `npm start` to start bot client in "production" mode (No reloading on file change and no debugging websocket).
   * The bot will not join any channels by default unless the bot receives JOINCHAT messagetype from the website.
