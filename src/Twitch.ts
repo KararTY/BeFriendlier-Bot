@@ -193,6 +193,7 @@ export default class Client {
   }
 
   public async loginToTwitch () {
+    this.logger.info('Logging in to Twitch...')
     // We clean off all events, just for precautionary measures.
     if (this.ircClient !== undefined) {
       this.ircClient.removeAllListeners()
@@ -363,7 +364,7 @@ export default class Client {
   }
 
   private onClose (error: Error | undefined) {
-    this.logger.error({ err: error }, 'Twitch.onClose()')
+    this.logger.error({ err: error ?? { message: 'Closed without any reason.' } }, 'Twitch.onClose()')
 
     this.reconnectAttempts++
 
