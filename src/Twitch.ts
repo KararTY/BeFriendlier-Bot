@@ -5,7 +5,6 @@ import {
   ChatClient,
   ClearchatMessage,
   ClearmsgMessage,
-  ConnectionError,
   PrivmsgMessage,
   PrivmsgMessageRateLimiter,
   SlowModeRateLimiter,
@@ -223,8 +222,13 @@ export default class Client {
     this.ircClient.once('ready', () => {
       this.logger.info('Twitch.READY: Successfully connected to Twitch IRC.')
       this.ready = true
+      this.ircClient.removeListener('ready')
     })
-    this.ircClient.on('error', (error) => this.onError(error))
+
+    this.ircClient.on('close', (error) => this.onClose(error))
+
+    // Connection errors will trigger close event.
+    this.ircClient.on('error', (error) => this.logger.error({ err: error }, 'Twitch.onError()'))
 
     this.ircClient.on('PRIVMSG', (msg) => void this.prepareMsg(msg))
 
@@ -358,23 +362,21 @@ export default class Client {
     }
   }
 
-  private onError (error: Error) {
-    this.logger.error({ err: error }, 'Twitch.onError()')
+  private onClose (error: Error | undefined) {
+    this.logger.error({ err: error }, 'Twitch.onClose()')
 
-    if (error instanceof ConnectionError) {
-      this.reconnectAttempts++
+    this.reconnectAttempts++
 
-      const timeSeconds = this.reconnectAttempts > 50 ? 60 : (this.reconnectAttempts + 9)
+    const timeSeconds = this.reconnectAttempts > 50 ? 60 : (this.reconnectAttempts + 9)
 
-      this.logger.info(`TWITCH.CLOSE: ATTEMPT #${this.reconnectAttempts}. Reconnecting in ${timeSeconds} seconds...`)
+    this.logger.info(`TWITCH.CLOSE: ATTEMPT #${this.reconnectAttempts}. Reconnecting in ${timeSeconds} seconds...`)
 
-      this.channels.clear()
+    this.channels.clear()
 
-      this.ready = false
+    this.ready = false
 
-      setTimeout(() => {
-        void this.loginToTwitch()
-      }, timeSeconds * 1000)
-    }
+    setTimeout(() => {
+      void this.loginToTwitch()
+    }, timeSeconds * 1000)
   }
 }
