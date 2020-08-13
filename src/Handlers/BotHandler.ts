@@ -1,5 +1,4 @@
 import { PrivmsgMessage } from 'dank-twitch-irc'
-import os from 'os'
 import DefaultHandler from './DefaultHandler'
 
 export default class BotHandler extends DefaultHandler {
@@ -8,10 +7,8 @@ export default class BotHandler extends DefaultHandler {
   public prefix = ['bot', 'befriendlier']
 
   public helpText = () => {
-    const total = os.totalmem() / (1024 * 1024)
     const heapUsed = process.memoryUsage().heapUsed / (1024 * 1024)
-    const rss = process.memoryUsage().rss / (1024 * 1024 * 100)
-    return `alloc mem: ${rss / total}, mem used: ${heapUsed / total}`
+    return `mem used: ~${heapUsed.toFixed(2)} mibibyte.`
   }
 
   public async onCommand (msg: PrivmsgMessage) {

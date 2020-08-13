@@ -95,7 +95,7 @@ export default class DailyHoroscopeHandler extends DefaultHandler {
 
   private async requestHoroscope (sign: string) {
     try {
-      const { body }: any = await fetch.get(`http://ohmanda.com/api/horoscope/${sign}/`, {
+      const { body }: any = await fetch.get(`https://ohmanda.com/api/horoscope/${sign}/`, {
         headers: this.twitch.headers,
         responseType: 'json',
       })
