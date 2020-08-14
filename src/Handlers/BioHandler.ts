@@ -28,7 +28,19 @@ export default class BioHandler extends DefaultHandler {
       responseMessage.global = true
     }
 
-    responseMessage.bio = message.messageText.split(' ').slice(1).join(' ').substr(0, 128)
+    const bioText = message.messageText.split(' ').slice(1)
+
+    if (bioText.length > 1) {
+      if (bioText.length > 127) {
+        this.twitch.sendMessage(msg.channelName, msg.senderUsername, 'your bio is too long. 128 characters max.')
+        return
+      } else if (bioText.length < 3) {
+        this.twitch.sendMessage(msg.channelName, msg.senderUsername, 'your bio is too long. 3 minimum characters.')
+        return
+      }
+    }
+
+    responseMessage.bio = bioText.join(' ').substr(0, 128)
 
     this.ws.sendMessage(MessageType.BIO, JSON.stringify(responseMessage))
   }
