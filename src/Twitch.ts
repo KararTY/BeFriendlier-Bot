@@ -25,6 +25,7 @@ export interface Channel {
   name: string
   cooldown: Date
   userRolls: Map<string, RollInstance>
+  addInvisibleSuffix: boolean
 }
 
 class Message {
@@ -85,7 +86,6 @@ export default class Client {
   private readonly generalQueue = new PQueue({ concurrency: 1 })
 
   private readonly invisibleSuffix = '\u{000e0000}'
-  private addInvisibleSuffix = true
 
   public readonly api: TwitchAuth
   public readonly packageJSON: any
@@ -143,10 +143,12 @@ export default class Client {
     }
   }
 
-  public sendMessage (channelName: string, username: string, message: string) {
-    this.addInvisibleSuffix = !this.addInvisibleSuffix // Flip
+  public sendMessage (channel: NameAndId, user: NameAndId, message: string) {
+    const foundChannel = this.channels.get(channel.id) as Channel
 
-    this.ircClient.say(channelName, `@${username}, ${message}${this.addInvisibleSuffix ? this.invisibleSuffix : ''}`)
+    foundChannel.addInvisibleSuffix = !foundChannel.addInvisibleSuffix // Flip
+
+    this.ircClient.say(channel.name, `@${user.name}, ${message}${(foundChannel.addInvisibleSuffix) ? this.invisibleSuffix : ''}`)
       .catch(error => this.logger.error({ err: error }, 'Twitch.sendMessage()'))
   }
 
@@ -156,6 +158,7 @@ export default class Client {
       name: name,
       cooldown: new Date(),
       userRolls: new Map(),
+      addInvisibleSuffix: true,
     })
   }
 
@@ -312,15 +315,15 @@ export default class Client {
   }
 
   private onServerClosed (data: { type: MessageType, data: string, state: 0 | 2 | 3 }) {
-    const responseMessage = data.state === this.ws.client.CONNECTING
+    const responseMessage = (data.state === this.ws.client.CONNECTING)
       ? 'Please wait, service is currently in the process of starting. Try again in a bit!'
-      : data.state === this.ws.client.CLOSING
+      : (data.state === this.ws.client.CLOSING)
         ? 'service is currently shutting down. Check the website for status updates!'
         : 'service is currently down! Check the website for status updates!'
 
     const res: BASE = JSON.parse(data.data)
 
-    this.sendMessage(res.channelTwitch.name, res.userTwitch.name, responseMessage)
+    this.sendMessage(res.channelTwitch, res.userTwitch, responseMessage)
 
     this.removeUserInstance(res)
   }
@@ -352,9 +355,9 @@ export default class Client {
       }
     }
     for (const [, cachedMsg] of this.msgs) {
-      const removeMsgBool = msg instanceof ClearchatMessage
+      const removeMsgBool = (msg instanceof ClearchatMessage)
         ? cachedMsg.msg.channelName === msg.channelName
-        : msg instanceof ClearmsgMessage
+        : (msg instanceof ClearmsgMessage)
           ? cachedMsg.msg.messageID === msg.targetMessageID
           : false
 
@@ -367,14 +370,14 @@ export default class Client {
 
   private onClose (error: Error | undefined) {
     this.logger.error({
-      err: error !== undefined
+      err: (error !== undefined)
         ? error
         : { message: 'Closed without any reason.' },
     }, 'Twitch.onClose()')
 
     this.reconnectAttempts++
 
-    const timeSeconds = this.reconnectAttempts > 50 ? 60 : (this.reconnectAttempts + 9)
+    const timeSeconds = (this.reconnectAttempts) > 50 ? 60 : (this.reconnectAttempts + 9)
 
     this.logger.info(`TWITCH.CLOSE: ATTEMPT #${this.reconnectAttempts}. Reconnecting in ${timeSeconds} seconds...`)
 

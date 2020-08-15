@@ -10,7 +10,7 @@ export default class BioHandler extends DefaultHandler {
   public helpText = () => 'sets your profile bio. Add "global" in the beginning to change your global profile\'s bio.'
 
   public async onCommand (msg: PrivmsgMessage, words: string[]) {
-    const responseMessage = this.makeResponseMesage(msg) as BIO
+    const responseMessage = this.getNameAndIds(msg) as BIO
 
     // Filter bad words.
     const message = { ...msg }
@@ -32,10 +32,18 @@ export default class BioHandler extends DefaultHandler {
 
     if (bioText.length > 1) {
       if (bioText.length > 127) {
-        this.twitch.sendMessage(msg.channelName, msg.senderUsername, 'your bio is too long. 128 characters max.')
+        this.twitch.sendMessage(
+          responseMessage.channelTwitch,
+          responseMessage.userTwitch,
+          'your bio is too long. 128 characters max.',
+        )
         return
       } else if (bioText.length < 3) {
-        this.twitch.sendMessage(msg.channelName, msg.senderUsername, 'your bio is too long. 3 minimum characters.')
+        this.twitch.sendMessage(
+          responseMessage.channelTwitch,
+          responseMessage.userTwitch,
+          'your bio is too long. 3 minimum characters.',
+        )
         return
       }
     }
@@ -46,7 +54,7 @@ export default class BioHandler extends DefaultHandler {
   }
 
   public async onServerResponse ({ channelTwitch, userTwitch, result }: BASE) {
-    this.twitch.sendMessage(channelTwitch.name, userTwitch.name, String(result.value))
+    this.twitch.sendMessage(channelTwitch, userTwitch, String(result.value))
   }
 
   private escapeRegExp (text: string) {

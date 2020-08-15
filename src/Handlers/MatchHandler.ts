@@ -10,7 +10,7 @@ export default class MatchHandler extends DefaultHandler {
   public helpText = () => 'attempts to match with the profile.'
 
   public async onCommand (msg: PrivmsgMessage) {
-    const responseMessage = this.makeResponseMesage(msg)
+    const responseMessage = this.getNameAndIds(msg)
 
     const foundUserRoll = this.twitch.getUserInstance(msg)
 
@@ -26,7 +26,7 @@ export default class MatchHandler extends DefaultHandler {
   }
 
   public async onServerResponse ({ channelTwitch, userTwitch, result }: BASE) {
-    this.twitch.sendMessage(channelTwitch.name, userTwitch.name, String(result.value))
+    this.twitch.sendMessage(channelTwitch, userTwitch, String(result.value))
 
     this.twitch.removeUserInstance({ channelTwitch, userTwitch })
   }

@@ -9,7 +9,7 @@ export default class ErrorHandler extends DefaultHandler {
   // public async onCommand (msg: PrivmsgMessage) {}
 
   public async onServerResponse ({ channelTwitch, userTwitch, result }: BASE) {
-    this.twitch.sendMessage(channelTwitch.name, userTwitch.name, result.value)
+    this.twitch.sendMessage(channelTwitch, userTwitch, result.value)
 
     this.twitch.removeUserInstance({ userTwitch, channelTwitch })
   }

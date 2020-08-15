@@ -10,7 +10,7 @@ export default class MoreHandler extends DefaultHandler {
   public helpText = () => 'returns more information about the rolled profile.'
 
   public async onCommand (msg: PrivmsgMessage) {
-    const responseMessage = this.makeResponseMesage(msg) as ROLLMATCH
+    const responseMessage = this.getNameAndIds(msg) as ROLLMATCH
 
     const foundUserRoll = this.twitch.getUserInstance(msg)
 

@@ -13,22 +13,22 @@ export default class SuccessHandler extends DefaultHandler {
     if (result.matchUsername !== undefined) {
       // Send to this user.
       this.twitch./* TODO: whisper */sendMessage(
-        /** TODO. REMOVE */channelTwitch.name,
-        userTwitch.name,
+        /** TODO. REMOVE */channelTwitch,
+        userTwitch,
         String(result.value).replace('%s%', `@${String(result.matchUsername)}`),
       )
 
       // // Send to matched user.
       // this.twitch./* TODO: whisper */sendMessage(
-      //   /** TODO. REMOVE */channelTwitch.name,
-      //   result.matchUsername,
+      //   /** TODO. REMOVE */channelTwitch,
+      //   result,
       //   String(result.value).replace('%s%', `@${String(userTwitch.name)}`),
       // )
 
       this.twitch.removeUserInstance({ channelTwitch, userTwitch })
     } else {
       // This is a general acknowledgement message from the server.
-      this.twitch.sendMessage(channelTwitch.name, userTwitch.name, String(result.value))
+      this.twitch.sendMessage(channelTwitch, userTwitch, String(result.value))
     }
   }
 }

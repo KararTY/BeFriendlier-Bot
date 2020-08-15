@@ -10,7 +10,7 @@ export default class NoHandler extends DefaultHandler {
   public helpText = () => 'will add the rolled profile to your mismatches.'
 
   public async onCommand (msg: PrivmsgMessage) {
-    const responseMessage = this.makeResponseMesage(msg)
+    const responseMessage = this.getNameAndIds(msg)
 
     const foundUserRoll = this.twitch.getUserInstance(msg)
 

@@ -10,7 +10,7 @@ export default class LeaveChannelHandler extends DefaultHandler {
 
   public async onCommand (msg: PrivmsgMessage, words: string[]) {
     // When the bot gets banned, the userTwitch's variables are empty.
-    const responseMessage = this.makeResponseMesage(msg) as LEAVECHAT
+    const responseMessage = this.getNameAndIds(msg) as LEAVECHAT
 
     // Get user details for provided user.
     const res = await this.twitch.api.getUser(this.twitch.token.superSecret, [words[0]])
@@ -22,7 +22,11 @@ export default class LeaveChannelHandler extends DefaultHandler {
 
       this.ws.sendMessage(MessageType.LEAVECHAT, JSON.stringify(responseMessage))
     } else {
-      this.twitch.sendMessage(msg.channelName, msg.senderUsername, 'could not find that user on Twitch.')
+      this.twitch.sendMessage(
+        responseMessage.channelTwitch,
+        responseMessage.userTwitch,
+        'could not find that user on Twitch.',
+      )
     }
   }
 
@@ -30,8 +34,8 @@ export default class LeaveChannelHandler extends DefaultHandler {
     // When the bot gets banned, it doesn't need to announce that it's leaving, so userTwitch's variables are empty.
     if (userTwitch.name.length > 0 && userTwitch.id.length > 0) {
       this.twitch.sendMessage(
-        leaveUserTwitch.name,
-        userTwitch.name,
+        leaveUserTwitch,
+        userTwitch,
         `from channel @${channelTwitch.name}, has issued me to leave this channel. FeelsBadMan Good bye!`,
       )
     }

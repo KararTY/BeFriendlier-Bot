@@ -21,7 +21,7 @@ export default class DefaultHandler {
     this.logger = logger
   }
 
-  public makeResponseMesage (msg: PrivmsgMessage): BASE {
+  public getNameAndIds (msg: PrivmsgMessage): BASE {
     return {
       userTwitch: {
         name: msg.senderUsername,

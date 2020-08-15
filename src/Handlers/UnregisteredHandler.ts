@@ -9,11 +9,7 @@ export default class UnregisteredHandler extends DefaultHandler {
   // public async onCommand (msg: PrivmsgMessage) {}
 
   public async onServerResponse ({ channelTwitch, userTwitch }: BASE) {
-    this.twitch.sendMessage(
-      channelTwitch.name,
-      userTwitch.name,
-      'you\'re not registered! Browse to the website to register.',
-    )
+    this.twitch.sendMessage(channelTwitch, userTwitch, 'you\'re not registered! Browse to the website to register.')
 
     this.twitch.removeUserInstance({ channelTwitch, userTwitch })
   }

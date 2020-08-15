@@ -13,7 +13,7 @@ export default class RollMatchHandler extends DefaultHandler {
   }
 
   public async onCommand (msg: PrivmsgMessage, words: string[]) {
-    const responseMessage = this.makeResponseMesage(msg) as ROLLMATCH
+    const responseMessage = this.getNameAndIds(msg) as ROLLMATCH
 
     let foundUserRoll = this.twitch.getUserInstance(msg)
 
@@ -42,6 +42,6 @@ export default class RollMatchHandler extends DefaultHandler {
         .replace('%prefix%', '@@')
     }
 
-    this.twitch.sendMessage(channelTwitch.name, userTwitch.name, String(result.value))
+    this.twitch.sendMessage(channelTwitch, userTwitch, String(result.value))
   }
 }

@@ -41,6 +41,8 @@ export default class DailyHoroscopeHandler extends DefaultHandler {
   private readonly horoscopesDirPath: string = path.join(os.homedir(), 'horoscopes')
 
   public async onCommand (msg: PrivmsgMessage, words: string[]) {
+    const responseMessage = this.getNameAndIds(msg)
+
     let horoscopeName = Sign.LE.toString()
 
     if (words[0] !== undefined) {
@@ -66,7 +68,11 @@ export default class DailyHoroscopeHandler extends DefaultHandler {
         if (response !== null) {
           fileContent = JSON.stringify(response)
         } else {
-          this.twitch.sendMessage(msg.channelName, msg.senderUsername, 'no horoscope today! Check back tomorrow?')
+          this.twitch.sendMessage(
+            responseMessage.channelTwitch,
+            responseMessage.userTwitch,
+            'no horoscope today! Check back tomorrow?',
+          )
           return
         }
       }
@@ -83,14 +89,18 @@ export default class DailyHoroscopeHandler extends DefaultHandler {
       if (response !== null) {
         horoscope = response
       } else {
-        this.twitch.sendMessage(msg.channelName, msg.senderUsername, 'no horoscope today! Check back tomorrow?')
+        this.twitch.sendMessage(
+          responseMessage.channelTwitch,
+          responseMessage.userTwitch,
+          'no horoscope today! Check back tomorrow?',
+        )
         return
       }
     }
 
     const message = `${horoscope.sign} horoscope for date ${horoscope.date}: ${horoscope.horoscope.split('. ')[0]}...`
 
-    this.twitch.sendMessage(msg.channelName, msg.senderUsername, message)
+    this.twitch.sendMessage(responseMessage.channelTwitch, responseMessage.userTwitch, message)
   }
 
   private async requestHoroscope (sign: string) {

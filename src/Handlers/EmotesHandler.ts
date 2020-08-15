@@ -13,7 +13,7 @@ export default class EmotesHandler extends DefaultHandler {
   }
 
   public async onCommand (msg: PrivmsgMessage, words: string[]) {
-    const responseMessage = this.makeResponseMesage(msg) as EMOTES
+    const responseMessage = this.getNameAndIds(msg) as EMOTES
 
     // TODO: Add FFZ & BTTV emote detections.
 
@@ -36,6 +36,6 @@ export default class EmotesHandler extends DefaultHandler {
   }
 
   public async onServerResponse ({ channelTwitch, userTwitch, result }: BASE) {
-    this.twitch.sendMessage(channelTwitch.name, userTwitch.name, String(result.value))
+    this.twitch.sendMessage(channelTwitch, userTwitch, String(result.value))
   }
 }

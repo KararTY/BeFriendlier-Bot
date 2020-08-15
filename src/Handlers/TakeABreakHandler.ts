@@ -10,8 +10,8 @@ export default class TakeABreakHandler extends DefaultHandler {
 
   public async onServerResponse ({ channelTwitch, userTwitch, result }: BASE) {
     this.twitch.sendMessage(
-      channelTwitch.name,
-      userTwitch.name,
+      channelTwitch,
+      userTwitch,
       result !== undefined && result.value.length > 0
         ? result.value : 'take a break! You\'re currently on a cooldown period.',
     )

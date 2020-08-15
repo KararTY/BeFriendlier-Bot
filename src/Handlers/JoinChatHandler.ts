@@ -9,7 +9,7 @@ export default class JoinChannelHandler extends DefaultHandler {
   public adminOnly = true
 
   public async onCommand (msg: PrivmsgMessage, words: string[]) {
-    const responseMessage = this.makeResponseMesage(msg) as JOINCHAT
+    const responseMessage = this.getNameAndIds(msg) as JOINCHAT
 
     // Get user details for provided user.
     const res = await this.twitch.api.getUser(this.twitch.token.superSecret, [words[0]])
@@ -21,7 +21,11 @@ export default class JoinChannelHandler extends DefaultHandler {
 
       this.ws.sendMessage(MessageType.JOINCHAT, JSON.stringify(responseMessage))
     } else {
-      this.twitch.sendMessage(msg.channelName, msg.senderUsername, 'could not find that user on Twitch.')
+      this.twitch.sendMessage(
+        responseMessage.channelTwitch,
+        responseMessage.userTwitch,
+        'could not find that user on Twitch.',
+      )
     }
   }
 
@@ -40,8 +44,8 @@ export default class JoinChannelHandler extends DefaultHandler {
 
       // if (userTwitch.id.length > 0 && userTwitch.name.length > 0) {
       // this.twitch.sendMessage(
-      //   joinUserTwitch.name,
-      //   userTwitch.name,
+      //   joinUserTwitch,
+      //   userTwitch,
       //   `from channel @${channelTwitch.name}, has added this channel to the service!` +
       //   'BeFriendlier.app for more information.`,
       // )
