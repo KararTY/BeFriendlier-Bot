@@ -366,7 +366,11 @@ export default class Client {
   }
 
   private onClose (error: Error | undefined) {
-    this.logger.error({ err: error ?? { message: 'Closed without any reason.' } }, 'Twitch.onClose()')
+    this.logger.error({
+      err: error !== undefined
+        ? error
+        : { message: 'Closed without any reason.' },
+    }, 'Twitch.onClose()')
 
     this.reconnectAttempts++
 
