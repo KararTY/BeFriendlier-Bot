@@ -29,14 +29,14 @@ export default class JoinChannelHandler extends DefaultHandler {
     const foundExistingChannel = this.twitch.channels.get(joinUserTwitch.name)
 
     if (foundExistingChannel !== undefined) {
-      this.logger.warn(`Twitch.joinChannel(): Tried to join a channel already in cached, named ${joinUserTwitch.name}.`)
+      this.logger.warn(`JoinChatHandler.onServerResponse(): Tried to join a channel already in cache, named ${joinUserTwitch.name}.`)
       return
     }
 
     await this.twitch.checkReady()
 
     return await this.twitch.ircClient.join(joinUserTwitch.name).then(() => {
-      this.logger.info(`Twitch.JOIN: Joined ${joinUserTwitch.name}.`)
+      this.logger.info(`JoinChatHandler.onServerResponse() -> Twitch.JOIN: Joined ${joinUserTwitch.name}.`)
 
       // if (userTwitch.id.length > 0 && userTwitch.name.length > 0) {
       // this.twitch.sendMessage(
@@ -53,7 +53,7 @@ export default class JoinChannelHandler extends DefaultHandler {
       // eslint-disable-next-line no-void
       void this.twitch.handlers.find(command => command.messageType === MessageType.CHATS)?.onCommand()
     }).catch(error => {
-      this.logger.error({ err: error }, 'Twitch.joinChannel() -> Twitch.JOIN')
+      this.logger.error({ err: error }, 'JoinChatHandler.onServerResponse() -> Twitch.JOIN')
     })
   }
 }
