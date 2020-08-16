@@ -12,18 +12,24 @@ export default class SuccessHandler extends DefaultHandler {
     // This is a match "success".
     if (result.matchUsername !== undefined) {
       // Send to this user.
-      this.twitch./* TODO: whisper */sendMessage(
-        /** TODO. REMOVE */channelTwitch,
+      await this.twitch.sendWhisper(
         userTwitch,
         String(result.value).replace('%s%', `@${String(result.matchUsername)}`),
-      )
+      ).catch(error => {
+        this.logger.error({ err: error }, 'SuccessHandler.onServerResponse() -> Twitch.sendWhisper()')
 
-      // // Send to matched user.
-      // this.twitch./* TODO: whisper */sendMessage(
-      //   /** TODO. REMOVE */channelTwitch,
-      //   result,
-      //   String(result.value).replace('%s%', `@${String(userTwitch.name)}`),
-      // )
+        this.twitch.sendMessage(
+          channelTwitch,
+          userTwitch,
+          `whispers disabled, ${String(result.value).replace('%s%', `@${String(result.matchUsername)}`)}`,
+        )
+      })
+
+      // Send to matched user.
+      await this.twitch.sendWhisper(result, String(result.value).replace('%s%', `@${String(userTwitch.name)}`),
+      ).catch(error => {
+        this.logger.error({ err: error }, 'SuccessHandler.onServerResponse() -> #2 Twitch.sendWhisper()')
+      })
 
       this.twitch.removeUserInstance({ channelTwitch, userTwitch })
     } else {

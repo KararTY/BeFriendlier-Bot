@@ -152,6 +152,10 @@ export default class Client {
       .catch(error => this.logger.error({ err: error }, 'Twitch.sendMessage()'))
   }
 
+  public async sendWhisper (user: NameAndId, message: string) {
+    return await this.ircClient.whisper(user.id, `${message}`)
+  }
+
   public joinChannel ({ id, name }: NameAndId) {
     this.channels.set(id, {
       id,
