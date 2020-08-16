@@ -123,73 +123,6 @@ export default class Client {
     this.ws.eventEmitter.on('WS.CLOSED', (data) => this.onServerClosed(data))
   }
 
-  public async onMessage ({ msg, deleted }: Message) {
-    if (deleted) {
-      return
-    }
-
-    const words = msg.messageText.substring(this.commandPrefix.length).split(' ')
-
-    const foundCommand = this.handlers.filter(command => command.prefix.length !== 0)
-      .find(command => command.prefix.includes(words[0].toLowerCase()))
-
-    if (foundCommand !== undefined) {
-      if (foundCommand.adminOnly &&
-        (this.admins === undefined || !this.admins.includes(msg.senderUsername))) {
-        return
-      }
-
-      void this.generalQueue.add(async () => await foundCommand.onCommand(msg, words.slice(1)))
-    }
-  }
-
-  public sendMessage (channel: NameAndId, user: NameAndId, message: string) {
-    const foundChannel = this.channels.get(channel.id) as Channel
-
-    foundChannel.addInvisibleSuffix = !foundChannel.addInvisibleSuffix // Flip
-
-    this.ircClient.say(channel.name, `@${user.name}, ${message}${(foundChannel.addInvisibleSuffix) ? this.invisibleSuffix : ''}`)
-      .catch(error => this.logger.error({ err: error }, 'Twitch.sendMessage()'))
-  }
-
-  public async sendWhisper (user: NameAndId, message: string) {
-    return await this.ircClient.whisper(user.id, `${message}`)
-  }
-
-  public joinChannel ({ id, name }: NameAndId) {
-    this.channels.set(id, {
-      id,
-      name: name,
-      cooldown: new Date(),
-      userRolls: new Map(),
-      addInvisibleSuffix: true,
-    })
-  }
-
-  public leaveChannel ({ id, name }: NameAndId) {
-    this.channels.delete(id)
-
-    this.ircClient.part(name).then(() => this.logger.info(`Twitch.leaveChannel() -> Twitch.PART: ${name}`)).catch(
-      error => this.logger.error({ err: error }, 'Twitch.leaveChannel() -> Twitch.PART'))
-  }
-
-  public createAndGetUserInstance (msg: PrivmsgMessage, global = false) {
-    this.channels.get(msg.channelID)?.userRolls.set(msg.senderUserID, new RollInstance(global))
-    return this.getUserInstance(msg) as RollInstance
-  }
-
-  public getUserInstance (msg: PrivmsgMessage) {
-    return this.channels.get(msg.channelID)?.userRolls.get(msg.senderUserID)
-  }
-
-  public removeUserInstance ({ channelTwitch, userTwitch }: BASE) {
-    const userInstance = this.channels.get(channelTwitch.id)?.userRolls.get(userTwitch.id)
-
-    if (userInstance !== undefined) {
-      this.channels.get(channelTwitch.id)?.userRolls.delete(userTwitch.id)
-    }
-  }
-
   public async checkReady (): Promise<any> {
     if (!this.ready) {
       await new Promise(resolve => setTimeout(resolve, 500))
@@ -247,6 +180,73 @@ export default class Client {
 
     // Finally, connect to Twitch IRC.
     return this.ircClient.connect()
+  }
+
+  public sendMessage (channel: NameAndId, user: NameAndId, message: string) {
+    const foundChannel = this.channels.get(channel.id) as Channel
+
+    foundChannel.addInvisibleSuffix = !foundChannel.addInvisibleSuffix // Flip
+
+    this.ircClient.say(channel.name, `@${user.name}, ${message}${(foundChannel.addInvisibleSuffix) ? this.invisibleSuffix : ''}`)
+      .catch(error => this.logger.error({ err: error }, 'Twitch.sendMessage()'))
+  }
+
+  public async sendWhisper (user: NameAndId, message: string) {
+    return await this.ircClient.whisper(user.id, `${message}`)
+  }
+
+  public joinChannel ({ id, name }: NameAndId) {
+    this.channels.set(id, {
+      id,
+      name: name,
+      cooldown: new Date(),
+      userRolls: new Map(),
+      addInvisibleSuffix: true,
+    })
+  }
+
+  public leaveChannel ({ id, name }: NameAndId) {
+    this.channels.delete(id)
+
+    this.ircClient.part(name).then(() => this.logger.info(`Twitch.leaveChannel() -> Twitch.PART: ${name}`)).catch(
+      error => this.logger.error({ err: error }, 'Twitch.leaveChannel() -> Twitch.PART'))
+  }
+
+  public createAndGetUserInstance (msg: PrivmsgMessage, global = false) {
+    this.channels.get(msg.channelID)?.userRolls.set(msg.senderUserID, new RollInstance(global))
+    return this.getUserInstance(msg) as RollInstance
+  }
+
+  public getUserInstance (msg: PrivmsgMessage) {
+    return this.channels.get(msg.channelID)?.userRolls.get(msg.senderUserID)
+  }
+
+  public removeUserInstance ({ channelTwitch, userTwitch }: BASE) {
+    const userInstance = this.channels.get(channelTwitch.id)?.userRolls.get(userTwitch.id)
+
+    if (userInstance !== undefined) {
+      this.channels.get(channelTwitch.id)?.userRolls.delete(userTwitch.id)
+    }
+  }
+
+  public async onMessage ({ msg, deleted }: Message) {
+    if (deleted) {
+      return
+    }
+
+    const words = msg.messageText.substring(this.commandPrefix.length).split(' ')
+
+    const foundCommand = this.handlers.filter(command => command.prefix.length !== 0)
+      .find(command => command.prefix.includes(words[0].toLowerCase()))
+
+    if (foundCommand !== undefined) {
+      if (foundCommand.adminOnly &&
+        (this.admins === undefined || !this.admins.includes(msg.senderUsername))) {
+        return
+      }
+
+      void this.generalQueue.add(async () => await foundCommand.onCommand(msg, words.slice(1)))
+    }
   }
 
   private async prepareMsg (msg: PrivmsgMessage): Promise<void> {
