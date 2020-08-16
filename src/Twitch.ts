@@ -283,10 +283,11 @@ export default class Client {
   private cooldown (msg: PrivmsgMessage) {
     const foundChannel = this.channels.get(msg.channelID)
 
-    const foundUserCooldown = this.userCooldowns.get(msg.senderUserID)
+    let foundUserCooldown = this.userCooldowns.get(msg.senderUserID)
 
     if (foundUserCooldown === undefined) {
       this.userCooldowns.set(msg.senderUserID, new Date(Date.now() + 15000))
+      foundUserCooldown = this.userCooldowns.get(msg.senderUserID) as Date
     } else if (foundUserCooldown.getTime() > Date.now()) {
       return false
     }
@@ -299,6 +300,7 @@ export default class Client {
     }
 
     foundChannel.cooldown = new Date(Date.now() + 5000)
+    foundUserCooldown = new Date(Date.now() + 15000)
     return true
   }
 
