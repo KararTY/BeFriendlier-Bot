@@ -37,7 +37,7 @@ export default class TwitchConfig {
     /**
      * Scopes to ask for.
      */
-    this.scope = ['chat:read', 'chat:edit', 'whispers:read', 'whispers:edit']
+    this.scope = []
 
     /**
      * HTTP request headers.
