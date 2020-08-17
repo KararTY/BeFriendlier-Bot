@@ -1,6 +1,6 @@
 {
   "name": "befriendlier-bot",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Twitch bot serving commands to the befriendlier.app service.",
   "main": "Index.ts",
   "private": true,
@@ -8,7 +8,7 @@
     "build": "rimraf build/ && tsc -b && copyfiles .env build/",
     "start": "node build/Index.js",
     "start-test": "ts-node-dev --respawn --clear --log-error --inspect=\"0\" -- Index.ts",
-    "release": "standard-version && git push --follow-tags origin master",
+    "release": "standard-version",
     "update": "git pull && pnpm i --shamefully-hoist && npm run build && pm2 restart Bot"
   },
   "repository": {
