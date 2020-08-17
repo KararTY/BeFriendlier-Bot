@@ -7,11 +7,15 @@ export default class UnmatchHandler extends DefaultHandler {
 
   public prefix = ['unmatch']
 
+  public helpText = () => {
+    return 'unmatches with the provided user. Append "global" to unmatch with a user in your global profile.'
+  }
+
   public async onCommand (msg: PrivmsgMessage, words: string[]) {
-    const responseMessage = this.makeResponseMesage(msg) as UNMATCH
+    const responseMessage = this.getNameAndIds(msg) as UNMATCH
 
     // Get user details for provided user.
-    const res = await this.twitch.api.getUser(this.twitch.token.superSecret, [words[1]])
+    const res = await this.twitch.api.getUser(this.twitch.token.superSecret, [words[0]])
     if (res !== null && res.length > 0) {
       responseMessage.matchUserTwitch = {
         id: res[0].id,
@@ -20,11 +24,15 @@ export default class UnmatchHandler extends DefaultHandler {
 
       this.ws.sendMessage(MessageType.UNMATCH, JSON.stringify(responseMessage))
     } else {
-      this.twitch.sendMessage(msg.channelName, msg.senderUsername, 'could not find that user on Twitch.')
+      this.twitch.sendMessage(
+        responseMessage.channelTwitch,
+        responseMessage.userTwitch,
+        'could not find that user on Twitch.',
+      )
     }
   }
 
   public async onServerResponse ({ channelTwitch, userTwitch, result }: UNMATCH) {
-    this.twitch.sendMessage(channelTwitch.name, userTwitch.name, String(result.value))
+    this.twitch.sendMessage(channelTwitch, userTwitch, String(result.value))
   }
 }

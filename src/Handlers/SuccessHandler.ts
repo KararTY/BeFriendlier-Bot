@@ -9,20 +9,32 @@ export default class SuccessHandler extends DefaultHandler {
   // public async onCommand (msg: PrivmsgMessage) {}
 
   public async onServerResponse ({ channelTwitch, userTwitch, result }: BASE) {
-    // Send to this user.
-    this.twitch./* TODO: whisper */sendMessage(
-      /** TODO. REMOVE */channelTwitch.name,
-      userTwitch.name,
-      String(result.value).replace('%s', `@${String(result.matchUsername)}`),
-    )
+    // This is a match "success".
+    if (result.matchUsername !== undefined) {
+      // Send to this user.
+      await this.twitch.sendWhisper(
+        userTwitch,
+        String(result.value).replace('%s%', `@${String(result.matchUsername)}`),
+      ).catch(error => {
+        this.logger.error({ err: error }, 'SuccessHandler.onServerResponse() -> Twitch.sendWhisper()')
 
-    // // Send to matched user.
-    // this.twitch./* TODO: whisper */sendMessage(
-    //   /** TODO. REMOVE */channelTwitch.name,
-    //   result.matchUsername,
-    //   String(result.value).replace('%s', `@${String(userTwitch.name)}`),
-    // )
+        this.twitch.sendMessage(
+          channelTwitch,
+          userTwitch,
+          `whispers disabled, ${String(result.value).replace('%s%', `@${String(result.matchUsername)}`)}`,
+        )
+      })
 
-    this.twitch.removeUserInstance({ channelTwitch, userTwitch })
+      // Send to matched user.
+      await this.twitch.sendWhisper(result, String(result.value).replace('%s%', `@${String(userTwitch.name)}`),
+      ).catch(error => {
+        this.logger.error({ err: error }, 'SuccessHandler.onServerResponse() -> #2 Twitch.sendWhisper()')
+      })
+
+      this.twitch.removeUserInstance({ channelTwitch, userTwitch })
+    } else {
+      // This is a general acknowledgement message from the server.
+      this.twitch.sendMessage(channelTwitch, userTwitch, String(result.value))
+    }
   }
 }

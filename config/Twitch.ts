@@ -3,13 +3,12 @@ import { Env } from '@adonisjs/env/build/src/Env'
 export default class TwitchConfig {
   public clientToken: string
   public clientSecret: string
-  public superSecret: string
-  public refreshToken: string
   public redirectURI: string
   public user: { name: string, id: string }
   public scope: string[]
   public headers: { 'user-agent': string }
   public commandPrefix: string
+  public admins: string[] | undefined
 
   constructor (env: Env) {
     /**
@@ -38,7 +37,7 @@ export default class TwitchConfig {
     /**
      * Scopes to ask for.
      */
-    this.scope = ['chat:read', 'chat:edit', 'whispers:read', 'whispers:edit']
+    this.scope = []
 
     /**
      * HTTP request headers.
@@ -51,5 +50,10 @@ export default class TwitchConfig {
      * Command prefix.
      */
     this.commandPrefix = env.getOrFail('COMMAND_PREFIX') as string
+
+    /**
+     * Admins with access to super commands.
+     */
+    this.admins = env.get('ADMINS')?.toString().split(',')
   }
 }

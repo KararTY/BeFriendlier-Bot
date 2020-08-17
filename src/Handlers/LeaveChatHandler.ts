@@ -1,37 +1,44 @@
-import { JOINCHAT, MessageType, LEAVECHAT } from 'befriendlier-shared'
+import { MessageType, LEAVECHAT } from 'befriendlier-shared'
 import { PrivmsgMessage } from 'dank-twitch-irc'
 import DefaultHandler from './DefaultHandler'
 
 export default class LeaveChannelHandler extends DefaultHandler {
   public messageType = MessageType.LEAVECHAT
 
-  public prefix = ['join']
+  public prefix = ['leave']
+  public adminOnly = true
 
   public async onCommand (msg: PrivmsgMessage, words: string[]) {
-    const responseMessage = this.makeResponseMesage(msg) as JOINCHAT
+    // When the bot gets banned, the userTwitch's variables are empty.
+    const responseMessage = this.getNameAndIds(msg) as LEAVECHAT
 
     // Get user details for provided user.
-    const res = await this.twitch.api.getUser(this.twitch.token.superSecret, [words[1]])
+    const res = await this.twitch.api.getUser(this.twitch.token.superSecret, [words[0]])
     if (res !== null && res.length > 0) {
-      responseMessage.joinUserTwitch = {
+      responseMessage.leaveUserTwitch = {
         id: res[0].id,
         name: res[0].login,
       }
 
-      this.ws.sendMessage(MessageType.JOINCHAT, JSON.stringify(responseMessage))
+      this.ws.sendMessage(MessageType.LEAVECHAT, JSON.stringify(responseMessage))
     } else {
-      this.twitch.sendMessage(msg.channelName, msg.senderUsername, 'could not find that user on Twitch.')
+      this.twitch.sendMessage(
+        responseMessage.channelTwitch,
+        responseMessage.userTwitch,
+        'could not find that user on Twitch.',
+      )
     }
   }
 
-  public async onServerResponse ({ /* channelTwitch, userTwitch, */ leaveUserTwitch }: LEAVECHAT) {
-    // if (channelTwitch !== undefined && userTwitch !== undefined) {
-    // this.twitch.sendMessage(
-    //   joinUserTwitch.name,
-    //   userTwitch.name,
-    //   `from channel @${channelTwitch.name}, has issued me to leave this channel. FeelsBadMan Good bye!`,
-    // )
-    // }
+  public async onServerResponse ({ channelTwitch, userTwitch, leaveUserTwitch }: LEAVECHAT) {
+    // When the bot gets banned, it doesn't need to announce that it's leaving, so userTwitch's variables are empty.
+    if (userTwitch.name.length > 0 && userTwitch.id.length > 0) {
+      this.twitch.sendMessage(
+        leaveUserTwitch,
+        userTwitch,
+        `from channel @${channelTwitch.name}, has issued me to leave this channel. FeelsBadMan Good bye!`,
+      )
+    }
 
     this.twitch.leaveChannel(leaveUserTwitch)
   }

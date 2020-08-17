@@ -6,12 +6,13 @@ export default class JoinChannelHandler extends DefaultHandler {
   public messageType = MessageType.JOINCHAT
 
   public prefix = ['join']
+  public adminOnly = true
 
   public async onCommand (msg: PrivmsgMessage, words: string[]) {
-    const responseMessage = this.makeResponseMesage(msg) as JOINCHAT
+    const responseMessage = this.getNameAndIds(msg) as JOINCHAT
 
     // Get user details for provided user.
-    const res = await this.twitch.api.getUser(this.twitch.token.superSecret, [words[1]])
+    const res = await this.twitch.api.getUser(this.twitch.token.superSecret, [words[0]])
     if (res !== null && res.length > 0) {
       responseMessage.joinUserTwitch = {
         id: res[0].id,
@@ -20,7 +21,11 @@ export default class JoinChannelHandler extends DefaultHandler {
 
       this.ws.sendMessage(MessageType.JOINCHAT, JSON.stringify(responseMessage))
     } else {
-      this.twitch.sendMessage(msg.channelName, msg.senderUsername, 'could not find that user on Twitch.')
+      this.twitch.sendMessage(
+        responseMessage.channelTwitch,
+        responseMessage.userTwitch,
+        'could not find that user on Twitch.',
+      )
     }
   }
 
@@ -28,19 +33,19 @@ export default class JoinChannelHandler extends DefaultHandler {
     const foundExistingChannel = this.twitch.channels.get(joinUserTwitch.name)
 
     if (foundExistingChannel !== undefined) {
-      this.logger.warn(`Twitch.joinChannel(): Tried to join a channel already in cached, named ${joinUserTwitch.name}.`)
+      this.logger.warn(`JoinChatHandler.onServerResponse(): Tried to join a channel already in cache, named ${joinUserTwitch.name}.`)
       return
     }
 
     await this.twitch.checkReady()
 
     return await this.twitch.ircClient.join(joinUserTwitch.name).then(() => {
-      this.logger.info(`Twitch.JOIN: Joined ${joinUserTwitch.name}.`)
+      this.logger.info(`JoinChatHandler.onServerResponse() -> Twitch.JOIN: Joined ${joinUserTwitch.name}.`)
 
-      // if (channelTwitch !== undefined && userTwitch !== undefined) {
+      // if (userTwitch.id.length > 0 && userTwitch.name.length > 0) {
       // this.twitch.sendMessage(
-      //   joinUserTwitch.name,
-      //   userTwitch.name,
+      //   joinUserTwitch,
+      //   userTwitch,
       //   `from channel @${channelTwitch.name}, has added this channel to the service!` +
       //   'BeFriendlier.app for more information.`,
       // )
@@ -52,7 +57,7 @@ export default class JoinChannelHandler extends DefaultHandler {
       // eslint-disable-next-line no-void
       void this.twitch.handlers.find(command => command.messageType === MessageType.CHATS)?.onCommand()
     }).catch(error => {
-      this.logger.error({ err: error }, 'Twitch.joinChannel() -> Twitch.JOIN')
+      this.logger.error({ err: error }, 'JoinChatHandler.onServerResponse() -> Twitch.JOIN')
     })
   }
 }

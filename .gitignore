@@ -52,3 +52,5 @@ build/
 
 # macosx
 .DS_STORE
+
+pnpm-lock.yaml

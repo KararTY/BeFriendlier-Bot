@@ -1,13 +1,15 @@
 {
   "name": "befriendlier-bot",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Twitch bot serving commands to the befriendlier.app service.",
+  "main": "Index.ts",
   "private": true,
   "scripts": {
-    "build-bot": "tsc && copyfiles .env build/",
+    "build": "rimraf build/ && tsc -b && copyfiles .env build/",
     "start": "node build/Index.js",
     "start-test": "ts-node-dev --respawn --clear --log-error --inspect=\"0\" -- Index.ts",
-    "release": "standard-version && git push --follow-tags origin master"
+    "release": "standard-version",
+    "update": "git pull && pnpm i --shamefully-hoist && npm run build && pm2 restart Bot"
   },
   "repository": {
     "type": "git",
@@ -33,6 +35,7 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "pino-pretty": "^4.1.0",
+    "rimraf": "^3.0.2",
     "standard-version": "^8.0.2",
     "ts-node-dev": "^1.0.0-pre.56",
     "typescript": "^3.9.7"
@@ -41,8 +44,9 @@
     "@adonisjs/env": "^1.0.18",
     "@adonisjs/logger": "^2.1.0",
     "@adonisjs/validator": "^7.4.0",
-    "befriendlier-shared": "github:kararty/BeFriendlier-Shared#semver:5.4.1",
+    "befriendlier-shared": "github:kararty/BeFriendlier-Shared#dev",
     "dank-twitch-irc": "github:kararty/dank-twitch-irc",
+    "got": "^11.5.2",
     "p-queue": "^6.6.0",
     "ws": "^7.3.1"
   },

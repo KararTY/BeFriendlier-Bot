@@ -10,7 +10,10 @@ export default class DefaultHandler {
   protected readonly logger: Logger
 
   public messageType = 'DEFAULT'
-  public prefix = ['*']
+  public prefix: string[] = []
+  public adminOnly = false
+
+  public helpText = () => 'This command has no help usage.'
 
   constructor (twitch: Client, ws: Ws, logger: Logger) {
     this.twitch = twitch
@@ -18,7 +21,7 @@ export default class DefaultHandler {
     this.logger = logger
   }
 
-  public makeResponseMesage (msg: PrivmsgMessage): BASE {
+  public getNameAndIds (msg: PrivmsgMessage): BASE {
     return {
       userTwitch: {
         name: msg.senderUsername,
@@ -33,7 +36,7 @@ export default class DefaultHandler {
 
   public async onCommand (_msg?: PrivmsgMessage, _words?: string[]) {}
 
-  public async onServerResponse (_res, _raw?) {
+  public async onServerResponse (_res: any, _raw?: any) {
     if (_res.data.length > 0) {
       const data: BASE = JSON.parse(_res.data)
       this.logger.error(`${this.constructor.name}.onServerResponse(): RECEIVED UNHANDLED MESSAGETYPE [${String(_res.type)}]: %O`, _res)
