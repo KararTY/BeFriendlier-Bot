@@ -5,7 +5,7 @@
   "main": "Index.ts",
   "private": true,
   "scripts": {
-    "build": "rimraf build/ && tsc -b && copyfiles -e \"./**/*.json\" \"./node_modules/\" .env build/",
+    "build": "rimraf build/ && tsc -b && copyfiles .env build/",
     "start": "node build/Index.js",
     "start-test": "ts-node-dev --respawn --clear --log-error --inspect=\"0\" -- Index.ts",
     "release": "standard-version && git push --follow-tags origin master",
