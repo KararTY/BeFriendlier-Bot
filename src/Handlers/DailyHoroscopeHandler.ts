@@ -1,8 +1,9 @@
 import { PrivmsgMessage } from 'dank-twitch-irc'
 import fs from 'fs'
-import path from 'path'
 import fetch from 'got'
 import os from 'os'
+import path from 'path'
+import messagesText from 'src/messagesText'
 import DefaultHandler from './DefaultHandler'
 
 enum Sign {
@@ -33,7 +34,7 @@ export default class DailyHoroscopeHandler extends DefaultHandler {
 
   public helpText = () => {
     const signs = Object.values(Sign).map(sign => String(sign))
-    return `shows daily horoscope. Available signs: ${signs.join(', ')}.`
+    return messagesText.helpText.horoscope.replace('%s', signs.join(', '))
   }
 
   private readonly horoscopes: Horoscope[] = []
@@ -71,7 +72,7 @@ export default class DailyHoroscopeHandler extends DefaultHandler {
           this.twitch.sendMessage(
             responseMessage.channelTwitch,
             responseMessage.userTwitch,
-            'no horoscope today! Check back tomorrow?',
+            messagesText.noHoroscope,
           )
           return
         }
@@ -92,7 +93,7 @@ export default class DailyHoroscopeHandler extends DefaultHandler {
         this.twitch.sendMessage(
           responseMessage.channelTwitch,
           responseMessage.userTwitch,
-          'no horoscope today! Check back tomorrow?',
+          messagesText.noHoroscope,
         )
         return
       }

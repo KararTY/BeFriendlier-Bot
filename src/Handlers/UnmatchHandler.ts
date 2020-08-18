@@ -1,6 +1,7 @@
 import { UNMATCH, MessageType } from 'befriendlier-shared'
 import { PrivmsgMessage } from 'dank-twitch-irc'
 import DefaultHandler from './DefaultHandler'
+import messagesText from 'src/messagesText'
 
 export default class UnmatchHandler extends DefaultHandler {
   public messageType = MessageType.UNMATCH
@@ -8,7 +9,7 @@ export default class UnmatchHandler extends DefaultHandler {
   public prefix = ['unmatch']
 
   public helpText = () => {
-    return 'unmatches with the provided user. Append "global" to unmatch with a user in your global profile.'
+    return messagesText.helpText.unmatch
   }
 
   public async onCommand (msg: PrivmsgMessage, words: string[]) {
@@ -27,7 +28,7 @@ export default class UnmatchHandler extends DefaultHandler {
       this.twitch.sendMessage(
         responseMessage.channelTwitch,
         responseMessage.userTwitch,
-        'could not find that user on Twitch.',
+        messagesText.twitchUserNotFound,
       )
     }
   }

@@ -1,5 +1,6 @@
-import { MessageType, EMOTES, BASE } from 'befriendlier-shared'
+import { BASE, EMOTES, MessageType } from 'befriendlier-shared'
 import { PrivmsgMessage } from 'dank-twitch-irc'
+import messagesText from 'src/messagesText'
 import DefaultHandler from './DefaultHandler'
 
 export default class EmotesHandler extends DefaultHandler {
@@ -8,8 +9,7 @@ export default class EmotesHandler extends DefaultHandler {
   public prefix = ['emotes']
 
   public helpText = () => {
-    return 'sets your favorite emotes for your profile. ' +
-      'Add "global" in the beginning to change your global profile\'s bio.'
+    return messagesText.helpText.emotes
   }
 
   public async onCommand (msg: PrivmsgMessage, words: string[]) {

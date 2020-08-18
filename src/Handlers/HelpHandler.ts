@@ -1,11 +1,12 @@
 import { PrivmsgMessage } from 'dank-twitch-irc'
+import messagesText from 'src/messagesText'
 import DefaultHandler from './DefaultHandler'
 
 export default class HelpHandler extends DefaultHandler {
   // public messageType = MessageType
 
   public prefix = ['help', 'commands']
-  public helpText = () => 'rubber ducky 🦆 Never lucky.'
+  public helpText = () => messagesText.helpText.help
 
   public async onCommand (msg: PrivmsgMessage, words: string[]) {
     const responseMessage = this.getNameAndIds(msg)

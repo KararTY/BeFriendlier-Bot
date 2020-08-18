@@ -1,5 +1,6 @@
 import { BASE, MessageType } from 'befriendlier-shared'
 import { PrivmsgMessage } from 'dank-twitch-irc'
+import messagesText from 'src/messagesText'
 import DefaultHandler from './DefaultHandler'
 
 export default class PingHandler extends DefaultHandler {
@@ -7,7 +8,7 @@ export default class PingHandler extends DefaultHandler {
 
   public prefix = ['ping']
 
-  public helpText = () => 'returns ping info about Twitch IRC & Website.'
+  public helpText = () => messagesText.helpText.ping
 
   public async onCommand (msg: PrivmsgMessage) {
     const responseMessage = this.getNameAndIds(msg)
@@ -25,7 +26,7 @@ export default class PingHandler extends DefaultHandler {
         data.channelTwitch,
         data.userTwitch,
         `ping from Bot to Twitch: ~${String(data.result.pingFromBotToTwitch)} ms. ` +
-        `Ping from Bot to Website roundabout: ~${String(Date.now() - res.timestamp)} ms.`,
+        `Ping from Bot to Website: ~${String(Date.now() - res.timestamp)} ms.`,
       )
     } else {
       // TODO: Looks like this is a healthcheck!

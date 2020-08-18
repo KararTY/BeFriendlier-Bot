@@ -1,5 +1,6 @@
-import { MessageType, BIO, BASE } from 'befriendlier-shared'
+import { BASE, BIO, MessageType } from 'befriendlier-shared'
 import { PrivmsgMessage } from 'dank-twitch-irc'
+import messagesText from 'src/messagesText'
 import DefaultHandler from './DefaultHandler'
 
 export default class BioHandler extends DefaultHandler {
@@ -7,7 +8,7 @@ export default class BioHandler extends DefaultHandler {
 
   public prefix = ['bio']
 
-  public helpText = () => 'sets your profile bio. Add "global" in the beginning to change your global profile\'s bio.'
+  public helpText = () => messagesText.helpText.bio
 
   public async onCommand (msg: PrivmsgMessage, words: string[]) {
     const responseMessage = this.getNameAndIds(msg) as BIO
@@ -35,14 +36,14 @@ export default class BioHandler extends DefaultHandler {
         this.twitch.sendMessage(
           responseMessage.channelTwitch,
           responseMessage.userTwitch,
-          'your bio is too long. 128 characters max.',
+          messagesText.bioTooLong,
         )
         return
       } else if (bioText.length < 3) {
         this.twitch.sendMessage(
           responseMessage.channelTwitch,
           responseMessage.userTwitch,
-          'your bio is too long. 3 minimum characters.',
+          messagesText.bioTooShort,
         )
         return
       }

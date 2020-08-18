@@ -1,5 +1,6 @@
 import { MessageType, ROLLMATCH } from 'befriendlier-shared'
 import { PrivmsgMessage } from 'dank-twitch-irc'
+import messagesText from 'src/messagesText'
 import DefaultHandler from './DefaultHandler'
 
 export default class MoreHandler extends DefaultHandler {
@@ -7,7 +8,7 @@ export default class MoreHandler extends DefaultHandler {
 
   public prefix = ['more']
 
-  public helpText = () => 'returns more information about the rolled profile.'
+  public helpText = () => messagesText.helpText.more
 
   public async onCommand (msg: PrivmsgMessage) {
     const responseMessage = this.getNameAndIds(msg) as ROLLMATCH
@@ -15,6 +16,11 @@ export default class MoreHandler extends DefaultHandler {
     const foundUserRoll = this.twitch.getUserInstance(msg)
 
     if (foundUserRoll === undefined) {
+      this.twitch.sendMessage(
+        responseMessage.channelTwitch,
+        responseMessage.userTwitch,
+        messagesText.notInitializedARoll,
+      )
       return
     }
 

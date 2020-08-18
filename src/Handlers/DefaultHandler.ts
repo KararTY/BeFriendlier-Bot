@@ -1,6 +1,7 @@
 import { Logger } from '@adonisjs/logger/build/standalone'
 import { BASE } from 'befriendlier-shared'
 import { PrivmsgMessage } from 'dank-twitch-irc'
+import messagesText from 'src/messagesText'
 import Client from '../Twitch'
 import Ws from '../Ws'
 
@@ -13,7 +14,7 @@ export default class DefaultHandler {
   public prefix: string[] = []
   public adminOnly = false
 
-  public helpText = () => 'This command has no help usage.'
+  public helpText = () => messagesText.helpText.none
 
   constructor (twitch: Client, ws: Ws, logger: Logger) {
     this.twitch = twitch

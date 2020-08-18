@@ -1,14 +1,15 @@
 import { PrivmsgMessage } from 'dank-twitch-irc'
+import messagesText from 'src/messagesText'
 import DefaultHandler from './DefaultHandler'
 
 export default class BotHandler extends DefaultHandler {
   // public messageType = MessageType
 
-  public prefix = ['bot', 'befriendlier']
+  public prefix = ['bot', `${this.twitch.name}`]
 
   public helpText = () => {
     const heapUsed = process.memoryUsage().heapUsed / (1024 * 1024)
-    return `mem used: ~${heapUsed.toFixed(2)} mibibyte.`
+    return messagesText.helpText.bot.replace('%s', heapUsed.toFixed(2))
   }
 
   public async onCommand (msg: PrivmsgMessage) {

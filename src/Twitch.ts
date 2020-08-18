@@ -74,7 +74,7 @@ export default class Client {
   private readonly ws: Ws
   private readonly logger: Logger
 
-  private readonly name: string
+  public readonly name: string
   private readonly id: string
 
   public readonly commandPrefix: string
@@ -255,7 +255,7 @@ export default class Client {
     }
 
     // TODO: REFACTOR THIS LATER.
-    if (msg.messageText === '!befriendlier') {
+    if (msg.messageText === `!${this.name}`) {
       const msgBot = { ...msg }
       msgBot.messageText = '@@bot'
 
@@ -360,6 +360,7 @@ export default class Client {
         return
       }
     }
+
     for (const [, cachedMsg] of this.msgs) {
       const removeMsgBool = (msg instanceof ClearchatMessage)
         ? cachedMsg.msg.channelName === msg.channelName

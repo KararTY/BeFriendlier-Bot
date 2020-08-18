@@ -1,5 +1,6 @@
-import { MessageType, ROLLMATCH, More } from 'befriendlier-shared'
+import { MessageType, More, ROLLMATCH } from 'befriendlier-shared'
 import { PrivmsgMessage } from 'dank-twitch-irc'
+import messagesText from 'src/messagesText'
 import DefaultHandler from './DefaultHandler'
 
 export default class RollMatchHandler extends DefaultHandler {
@@ -8,8 +9,7 @@ export default class RollMatchHandler extends DefaultHandler {
   public prefix = ['swipe', 'roll']
 
   public helpText = () => {
-    return 'initiates a match! Good luck, rubber ducky 🦆' +
-      'Append "global" to initiate a match with global profiles.'
+    return messagesText.helpText.rollMatch
   }
 
   public async onCommand (msg: PrivmsgMessage, words: string[]) {

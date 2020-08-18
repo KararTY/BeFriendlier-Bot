@@ -1,5 +1,6 @@
-import { MessageType, LEAVECHAT } from 'befriendlier-shared'
+import { LEAVECHAT, MessageType } from 'befriendlier-shared'
 import { PrivmsgMessage } from 'dank-twitch-irc'
+import messagesText from 'src/messagesText'
 import DefaultHandler from './DefaultHandler'
 
 export default class LeaveChannelHandler extends DefaultHandler {
@@ -25,7 +26,7 @@ export default class LeaveChannelHandler extends DefaultHandler {
       this.twitch.sendMessage(
         responseMessage.channelTwitch,
         responseMessage.userTwitch,
-        'could not find that user on Twitch.',
+        messagesText.twitchUserNotFound,
       )
     }
   }

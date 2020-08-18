@@ -1,4 +1,5 @@
 import { BASE, MessageType } from 'befriendlier-shared'
+import messagesText from 'src/messagesText'
 import DefaultHandler from './DefaultHandler'
 
 export default class TakeABreakHandler extends DefaultHandler {
@@ -12,8 +13,7 @@ export default class TakeABreakHandler extends DefaultHandler {
     this.twitch.sendMessage(
       channelTwitch,
       userTwitch,
-      result !== undefined && result.value.length > 0
-        ? result.value : 'take a break! You\'re currently on a cooldown period.',
+      result !== undefined && result.value.length > 0 ? result.value : messagesText.takeABreak,
     )
 
     this.twitch.removeUserInstance({ channelTwitch, userTwitch })
