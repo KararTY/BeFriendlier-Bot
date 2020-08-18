@@ -1,7 +1,7 @@
 import { Logger } from '@adonisjs/logger/build/standalone'
 import { BASE } from 'befriendlier-shared'
 import { PrivmsgMessage } from 'dank-twitch-irc'
-import messagesText from 'src/messagesText'
+import messagesText from '../messagesText'
 import Client from '../Twitch'
 import Ws from '../Ws'
 

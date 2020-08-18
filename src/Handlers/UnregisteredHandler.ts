@@ -1,6 +1,6 @@
 import { BASE, MessageType } from 'befriendlier-shared'
 import DefaultHandler from './DefaultHandler'
-import messagesText from 'src/messagesText'
+import messagesText from '../messagesText'
 
 export default class UnregisteredHandler extends DefaultHandler {
   public messageType = MessageType.UNREGISTERED

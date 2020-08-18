@@ -1,6 +1,6 @@
 import { JOINCHAT, MessageType } from 'befriendlier-shared'
 import { PrivmsgMessage } from 'dank-twitch-irc'
-import messagesText from 'src/messagesText'
+import messagesText from '../messagesText'
 import DefaultHandler from './DefaultHandler'
 
 export default class JoinChannelHandler extends DefaultHandler {

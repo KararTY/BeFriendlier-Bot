@@ -3,7 +3,7 @@ import fs from 'fs'
 import fetch from 'got'
 import os from 'os'
 import path from 'path'
-import messagesText from 'src/messagesText'
+import messagesText from '../messagesText'
 import DefaultHandler from './DefaultHandler'
 
 enum Sign {

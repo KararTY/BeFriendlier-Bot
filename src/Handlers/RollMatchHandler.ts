@@ -1,6 +1,6 @@
 import { MessageType, More, ROLLMATCH } from 'befriendlier-shared'
 import { PrivmsgMessage } from 'dank-twitch-irc'
-import messagesText from 'src/messagesText'
+import messagesText from '../messagesText'
 import DefaultHandler from './DefaultHandler'
 
 export default class RollMatchHandler extends DefaultHandler {

@@ -1,7 +1,7 @@
 import { UNMATCH, MessageType } from 'befriendlier-shared'
 import { PrivmsgMessage } from 'dank-twitch-irc'
 import DefaultHandler from './DefaultHandler'
-import messagesText from 'src/messagesText'
+import messagesText from '../messagesText'
 
 export default class UnmatchHandler extends DefaultHandler {
   public messageType = MessageType.UNMATCH
