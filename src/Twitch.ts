@@ -291,6 +291,7 @@ export default class Client {
     } else if (foundUserCooldown.getTime() > Date.now()) {
       return false
     }
+    foundUserCooldown = new Date(Date.now() + 15000)
 
     if (foundChannel === undefined) {
       this.leaveChannel({ id: msg.channelID, name: msg.channelName })
@@ -298,9 +299,8 @@ export default class Client {
     } else if (foundChannel.cooldown.getTime() > Date.now()) {
       return false
     }
-
     foundChannel.cooldown = new Date(Date.now() + 5000)
-    foundUserCooldown = new Date(Date.now() + 15000)
+
     return true
   }
 
