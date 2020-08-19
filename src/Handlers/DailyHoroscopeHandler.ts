@@ -9,6 +9,7 @@ import DefaultHandler from './DefaultHandler'
 enum Sign {
   AQ = 'aquarius',
   PI = 'pisces',
+  AR = 'aries',
   T = 'taurus',
   G = 'gemini',
   CAN = 'cancer',
