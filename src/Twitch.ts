@@ -85,7 +85,7 @@ export default class Client {
 
   private readonly generalQueue = new PQueue({ concurrency: 1 })
 
-  private readonly invisibleSuffix = '\u{000e0000}'
+  private readonly invisibleSuffix = ' \u{000e0000}'
 
   public readonly api: TwitchAuth
   public readonly packageJSON: any
