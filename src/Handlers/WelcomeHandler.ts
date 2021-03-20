@@ -7,7 +7,7 @@ export default class WelcomeHandler extends DefaultHandler {
   // public prefix = ['']
 
   public async onCommand () {
-    this.ws.sendMessage(MessageType.WELCOME, '')
+    this.ws.sendMessage(this.messageType, '')
   }
 
   public async onServerResponse () {

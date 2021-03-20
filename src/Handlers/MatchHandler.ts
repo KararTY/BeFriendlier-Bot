@@ -28,7 +28,7 @@ export default class MatchHandler extends DefaultHandler {
       responseMessage.global = true
     }
 
-    this.ws.sendMessage(MessageType.MATCH, JSON.stringify(responseMessage))
+    this.ws.sendMessage(this.messageType, JSON.stringify(responseMessage))
   }
 
   public async onServerResponse ({ channelTwitch, userTwitch, result }: BASE) {

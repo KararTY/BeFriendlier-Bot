@@ -19,6 +19,6 @@ export default class ChatsHandler extends DefaultHandler {
       value: channels,
     }
 
-    this.ws.sendMessage(MessageType.CHATS, JSON.stringify(responseMessage))
+    this.ws.sendMessage(this.messageType, JSON.stringify(responseMessage))
   }
 }

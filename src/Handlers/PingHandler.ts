@@ -17,7 +17,7 @@ export default class PingHandler extends DefaultHandler {
     await this.twitch.ircClient.ping()
     const dateAfterPing = Date.now()
     responseMessage.result = { pingFromBotToTwitch: dateAfterPing - dateNow }
-    this.ws.sendMessage(MessageType.PING, JSON.stringify(responseMessage))
+    this.ws.sendMessage(this.messageType, JSON.stringify(responseMessage))
   }
 
   public async onServerResponse (data: BASE | undefined, res: { timestamp: number }) {

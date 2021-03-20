@@ -23,7 +23,7 @@ export default class UnmatchHandler extends DefaultHandler {
         name: res[0].login,
       }
 
-      this.ws.sendMessage(MessageType.UNMATCH, JSON.stringify(responseMessage))
+      this.ws.sendMessage(this.messageType, JSON.stringify(responseMessage))
     } else {
       this.twitch.sendMessage(
         responseMessage.channelTwitch,

@@ -51,7 +51,7 @@ export default class BioHandler extends DefaultHandler {
 
     responseMessage.bio = bioText.join(' ').substr(0, 128)
 
-    this.ws.sendMessage(MessageType.BIO, JSON.stringify(responseMessage))
+    this.ws.sendMessage(this.messageType, JSON.stringify(responseMessage))
   }
 
   public async onServerResponse ({ channelTwitch, userTwitch, result }: BASE) {

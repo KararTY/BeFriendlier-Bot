@@ -20,7 +20,7 @@ export default class JoinChannelHandler extends DefaultHandler {
         name: res[0].login,
       }
 
-      this.ws.sendMessage(MessageType.JOINCHAT, JSON.stringify(responseMessage))
+      this.ws.sendMessage(this.messageType, JSON.stringify(responseMessage))
     } else {
       this.twitch.sendMessage(
         responseMessage.channelTwitch,

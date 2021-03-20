@@ -31,7 +31,7 @@ export default class RollMatchHandler extends DefaultHandler {
 
     responseMessage.more = foundUserRoll.type
 
-    this.ws.sendMessage(MessageType.ROLLMATCH, JSON.stringify(responseMessage))
+    this.ws.sendMessage(this.messageType, JSON.stringify(responseMessage))
   }
 
   public async onServerResponse ({ channelTwitch, userTwitch, result, more }: ROLLMATCH) {

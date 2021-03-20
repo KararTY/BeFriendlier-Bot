@@ -32,7 +32,7 @@ export default class EmotesHandler extends DefaultHandler {
     // If user is trying to change their global emotes.
     responseMessage.global = words[0] === 'global'
 
-    this.ws.sendMessage(MessageType.EMOTES, JSON.stringify(responseMessage))
+    this.ws.sendMessage(this.messageType, JSON.stringify(responseMessage))
   }
 
   public async onServerResponse ({ channelTwitch, userTwitch, result }: BASE) {

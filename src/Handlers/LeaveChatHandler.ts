@@ -21,7 +21,7 @@ export default class LeaveChannelHandler extends DefaultHandler {
         name: res[0].login,
       }
 
-      this.ws.sendMessage(MessageType.LEAVECHAT, JSON.stringify(responseMessage))
+      this.ws.sendMessage(this.messageType, JSON.stringify(responseMessage))
     } else {
       this.twitch.sendMessage(
         responseMessage.channelTwitch,
