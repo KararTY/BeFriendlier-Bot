@@ -11,7 +11,7 @@ const messagesText = {
     emotes: 'sets your favorite emotes for your profile. ' +
       'Add "global" in the beginning to change your global profile\'s bio.',
     bio: 'sets your profile bio. Add "global" in the beginning to change your global profile\'s bio.',
-    bot: 'mem used: ~%s mebibyte.',
+    bot: 'mem used: ~%s MB.',
     horoscope: 'shows daily horoscope. Available signs: %s.',
     none: 'This command has no help usage.',
     match: 'attempts to match with the profile.',

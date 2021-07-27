@@ -19,5 +19,5 @@ export default class BotHandler extends DefaultHandler {
     this.twitch.sendMessage(responseMessage.channelTwitch, responseMessage.userTwitch, message)
   }
 
-  // public onServerResponse (res) {}
+  // public async onServerResponse (res) {}
 }

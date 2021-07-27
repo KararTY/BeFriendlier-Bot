@@ -31,5 +31,5 @@ export default class HelpHandler extends DefaultHandler {
     }
   }
 
-  // public onServerResponse (res) {}
+  // public async onServerResponse (res) {}
 }

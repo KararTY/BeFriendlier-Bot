@@ -129,5 +129,5 @@ export default class DailyHoroscopeHandler extends DefaultHandler {
     }
   }
 
-  // public onServerResponse (res) {}
+  // public async onServerResponse (res) {}
 }

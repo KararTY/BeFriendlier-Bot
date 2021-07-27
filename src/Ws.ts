@@ -1,3 +1,4 @@
+import bourne from '@hapi/bourne'
 import { Logger } from '@adonisjs/logger/build/standalone'
 import { schema } from '@adonisjs/validator/build/src/Schema'
 import { validator } from '@adonisjs/validator/build/src/Validator'
@@ -66,7 +67,7 @@ export default class Bot {
     let json
 
     try {
-      json = JSON.parse(data as string)
+      json = bourne.parse(data as string, null, { protoAction: 'remove' })
     } catch (error) {
       this.logger.error({ err: error }, 'Ws.onMessage(): Error with parsing websocket data.')
       // Data's not JSON.
