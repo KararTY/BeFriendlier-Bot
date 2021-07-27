@@ -70,6 +70,11 @@ export class RollInstance {
   }
 }
 
+let cooldowns = {
+  user: 7500,
+  channel: 2500
+}
+
 export default class Client {
   private readonly ws: Ws
   private readonly logger: Logger
@@ -286,12 +291,12 @@ export default class Client {
     let foundUserCooldown = this.userCooldowns.get(msg.senderUserID)
 
     if (foundUserCooldown === undefined) {
-      this.userCooldowns.set(msg.senderUserID, new Date(Date.now() + 15000))
+      this.userCooldowns.set(msg.senderUserID, new Date(Date.now() + cooldowns.user))
       foundUserCooldown = this.userCooldowns.get(msg.senderUserID) as Date
     } else if (foundUserCooldown.getTime() > Date.now()) {
       return false
     }
-    foundUserCooldown = new Date(Date.now() + 15000)
+    foundUserCooldown = new Date(Date.now() + cooldowns.user)
 
     if (foundChannel === undefined) {
       this.leaveChannel({ id: msg.channelID, name: msg.channelName })
@@ -299,7 +304,7 @@ export default class Client {
     } else if (foundChannel.cooldown.getTime() > Date.now()) {
       return false
     }
-    foundChannel.cooldown = new Date(Date.now() + 5000)
+    foundChannel.cooldown = new Date(Date.now() + cooldowns.channel)
 
     return true
   }
