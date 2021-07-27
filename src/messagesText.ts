@@ -6,10 +6,10 @@ const messagesText = {
   takeABreak: 'take a break! You\'re currently on a cooldown period.',
   unregistered: 'you\'re not registered! Browse to the website to register.',
   noHoroscope: 'no horoscope today! Check back tomorrow?',
+  sameUser: 'recipient user is the same user as you.',
   helpText: {
     help: 'rubber ducky 🦆 Never lucky.',
-    emotes: 'sets your favorite emotes for your profile. ' +
-      'Add "global" in the beginning to change your global profile\'s bio.',
+    emotes: 'sets your favorite emotes for your profile. Add "global" in the beginning to change your global profile\'s bio.',
     bio: 'sets your profile bio. Add "global" in the beginning to change your global profile\'s bio.',
     bot: 'mem used: ~%s MB.',
     horoscope: 'shows daily horoscope. Available signs: %s.',
@@ -20,6 +20,7 @@ const messagesText = {
     ping: 'returns ping info about Twitch IRC & Website.',
     rollMatch: 'initiates a match! Good luck, rubber ducky 🦆 Append "global" to initiate a match with global profiles.',
     unmatch: 'unmatches with the provided user. Append "global" to unmatch with a user in your global profile.',
+    giveEmotes: 'lets you trade your emotes with another befriendlier user.',
   },
 }
 
