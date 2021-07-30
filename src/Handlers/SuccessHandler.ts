@@ -26,7 +26,7 @@ export default class SuccessHandler extends DefaultHandler {
       })
 
       // Send to matched user.
-      await this.twitch.sendWhisper(result, String(result.value).replace('%s%', `@${String(userTwitch.name)}`),
+      await this.twitch.sendWhisper({ name: result.matchUsername, id: '_' }, String(result.value).replace('%s%', `@${String(userTwitch.name)}`),
       ).catch(error => {
         this.logger.error({ err: error }, 'SuccessHandler.onServerResponse() -> #2 Twitch.sendWhisper()')
       })
