@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/KararTY/BeFriendlier-Bot#readme",
   "devDependencies": {
-    "@types/node": "^16.4.3",
+    "@types/node": "^16.4.7",
     "@types/ws": "^7.4.7",
     "@typescript-eslint/eslint-plugin": "^4.28.5",
     "@typescript-eslint/parser": "^4.28.5",
@@ -44,10 +44,10 @@
     "@adonisjs/env": "^1.0.18",
     "@adonisjs/logger": "^2.1.0",
     "@adonisjs/validator": "^7.4.0",
-    "befriendlier-shared": "kararty/BeFriendlier-Shared#0598956",
+    "befriendlier-shared": "kararty/BeFriendlier-Shared#0fc51b5",
     "dank-twitch-irc": "^4.3.0",
     "got": "^11.8.2",
-    "p-queue": "^7.1.0",
+    "p-queue": "^6.6.2",
     "ws": "^7.5.3"
   },
   "optionalDependencies": {

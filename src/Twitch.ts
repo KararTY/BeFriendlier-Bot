@@ -197,7 +197,7 @@ export default class Client {
   }
 
   public async sendWhisper (user: NameAndId, message: string) {
-    return await this.ircClient.whisper(user.id, `${message}`)
+    return await this.ircClient.whisper(user.name, `${message}`)
   }
 
   public joinChannel ({ id, name }: NameAndId) {

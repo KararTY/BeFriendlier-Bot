@@ -15,7 +15,7 @@ export default class WhisperHandler extends DefaultHandler {
       this.twitch.sendMessage(
         channelTwitch,
         userTwitch,
-        result.value,
+        `whispers disabled, ${result.value}`,
       )
     })
   }
