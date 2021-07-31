@@ -15,6 +15,7 @@ export default class GiveEmotesHandler extends DefaultHandler {
 
     // Get user details for provided user.
     const res = await this.twitch.api.getUser(this.twitch.token.superSecret, [words[0]])
+
     if (res !== null && res.length > 0) {
       responseMessage.recipientUserTwitch = {
         id: res[0].id,
@@ -26,6 +27,10 @@ export default class GiveEmotesHandler extends DefaultHandler {
       }
 
       responseMessage.emotes = this.parseEmotes(msg, words.slice(1))
+
+      if (responseMessage.emotes.length === 0) {
+        return this.twitch.sendMessage(responseMessage.channelTwitch, responseMessage.userTwitch, messagesText.noEmotes)
+      }
 
       this.ws.sendMessage(this.messageType, JSON.stringify(responseMessage))
     } else {

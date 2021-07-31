@@ -7,6 +7,7 @@ const messagesText = {
   unregistered: 'you\'re not registered! Browse to the website to register.',
   noHoroscope: 'no horoscope today! Check back tomorrow?',
   sameUser: 'recipient user is the same user as you.',
+  noEmotes: 'you\'ve not entered any Twitch emotes in your message.',
   helpText: {
     help: 'rubber ducky 🦆 Never lucky.',
     emotes: 'sets your favorite emotes for your profile. Add "global" in the beginning to change your global profile\'s bio.',
@@ -20,7 +21,7 @@ const messagesText = {
     ping: 'returns ping info about Twitch IRC & Website.',
     rollMatch: 'initiates a match! Good luck, rubber ducky 🦆 Append "global" to initiate a match with global profiles.',
     unmatch: 'unmatches with the provided user. Append "global" to unmatch with a user in your global profile.',
-    giveEmotes: 'lets you trade your emotes with another befriendlier user.',
+    giveEmotes: 'lets you trade your emotes with another befriendlier user. (<recipient name> <amount> <emote name>)',
   },
 }
 
