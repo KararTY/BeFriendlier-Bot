@@ -44,7 +44,7 @@ export default class RollMatchHandler extends DefaultHandler {
     }
 
 
-    let foundUserRoll = this.twitch.getUserInstance({ senderUserID: userTwitch.id, channelID: channelTwitch.id } as PrivmsgMessage) as RollInstance
+    const foundUserRoll = this.twitch.getUserInstance({ senderUserID: userTwitch.id, channelID: channelTwitch.id } as PrivmsgMessage) as RollInstance
 
     foundUserRoll.type = more
 
