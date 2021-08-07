@@ -1,5 +1,6 @@
 import { MessageType, More, ROLLMATCH } from 'befriendlier-shared'
 import { PrivmsgMessage } from 'dank-twitch-irc'
+import { RollInstance } from '../Twitch'
 import messagesText from '../messagesText'
 import DefaultHandler from './DefaultHandler'
 
@@ -41,6 +42,11 @@ export default class RollMatchHandler extends DefaultHandler {
         .replace('%prefix%', '@@')
         .replace('%prefix%', '@@')
     }
+
+
+    let foundUserRoll = this.twitch.getUserInstance({ senderUserID: userTwitch.id, channelID: channelTwitch.id } as PrivmsgMessage) as RollInstance
+
+    foundUserRoll.type = more
 
     this.twitch.sendMessage(channelTwitch, userTwitch, String(result.value))
   }
