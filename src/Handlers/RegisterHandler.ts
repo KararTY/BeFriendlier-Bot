@@ -13,7 +13,7 @@ export default class RegisterHandler extends DefaultHandler {
   public async onCommand (msg: PrivmsgMessage) {
     const base = this.getNameAndIds(msg)
   
-    this.twitch.sendMessage(base.channelTwitch, base.userTwitch, messagesText.twitchUserNotFound)
+    this.twitch.sendMessage(base.channelTwitch, base.userTwitch, messagesText.whispersOnly)
   }
 
   public async onWhisperCommand (whMsg: WhisperMessage, words: string[]) {
