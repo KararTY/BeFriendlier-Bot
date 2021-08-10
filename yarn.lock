@@ -496,9 +496,9 @@ balanced-match@^1.0.0:
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
   integrity sha1-ibTRmasr7kneFk6gK4nORi1xt2c=
 
-befriendlier-shared@kararty/BeFriendlier-Shared#0598956:
+befriendlier-shared@kararty/BeFriendlier-Shared#4d09eedb630e036630c2861f612fd41a580a6a70:
   version "6.4.0"
-  resolved "https://codeload.github.com/kararty/BeFriendlier-Shared/tar.gz/0598956f73a24835bce5c557124308d9ba70d06f"
+  resolved "https://codeload.github.com/kararty/BeFriendlier-Shared/tar.gz/4d09eedb630e036630c2861f612fd41a580a6a70"
   dependencies:
     "@adonisjs/logger" "^2.1.0"
     got "^11.8.2"

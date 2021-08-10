@@ -44,7 +44,7 @@
     "@adonisjs/env": "^1.0.18",
     "@adonisjs/logger": "^2.1.0",
     "@adonisjs/validator": "^7.4.0",
-    "befriendlier-shared": "kararty/BeFriendlier-Shared#b4c9e83",
+    "befriendlier-shared": "kararty/BeFriendlier-Shared#4d09eedb630e036630c2861f612fd41a580a6a70",
     "dank-twitch-irc": "^4.3.0",
     "got": "^11.8.2",
     "p-queue": "^6.6.2",

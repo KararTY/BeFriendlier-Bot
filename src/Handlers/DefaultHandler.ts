@@ -1,6 +1,6 @@
 import { Logger } from '@adonisjs/logger/build/standalone'
 import { BASE } from 'befriendlier-shared'
-import { PrivmsgMessage } from 'dank-twitch-irc'
+import { PrivmsgMessage, WhisperMessage } from 'dank-twitch-irc'
 import messagesText from '../messagesText'
 import Client from '../Twitch'
 import Ws from '../Ws'
@@ -22,13 +22,17 @@ export default class DefaultHandler {
     this.logger = logger
   }
 
-  public getNameAndIds (msg: PrivmsgMessage): BASE {
+  public getNameAndIds (msg: PrivmsgMessage | WhisperMessage): BASE {
     return {
       userTwitch: {
         name: msg.senderUsername,
         id: msg.senderUserID,
       },
-      channelTwitch: {
+      channelTwitch: msg instanceof WhisperMessage ? {
+        // Set "global" Befriendlier channel.
+        name: this.twitch.name,
+        id: this.twitch.id
+      } : {
         name: msg.channelName,
         id: msg.channelID,
       },
@@ -36,6 +40,7 @@ export default class DefaultHandler {
   }
 
   public async onCommand (_msg?: PrivmsgMessage, _words?: string[]) {}
+  public async onWhisperCommand (_msg?: WhisperMessage, _words?: string[]) {}
 
   public async onServerResponse (_res: any, _raw?: any) {
     if (_res.data && _res.data.length > 0) {

@@ -8,6 +8,7 @@ import {
   PrivmsgMessage,
   PrivmsgMessageRateLimiter,
   SlowModeRateLimiter,
+  WhisperMessage,
 } from 'dank-twitch-irc'
 import PQueue from 'p-queue'
 import TwitchConfig from '../config/Twitch'
@@ -43,6 +44,17 @@ class Message {
   }
 }
 
+class WhMessage {
+  public readonly msg: WhisperMessage
+
+  constructor (msg: WhisperMessage, clientRef: any) {
+    this.msg = msg
+
+    // Immediately invoke function.
+    clientRef.onMessage(this)
+  }
+}
+
 export class RollInstance {
   public type: More
   public global: boolean
@@ -72,7 +84,8 @@ export class RollInstance {
 
 let cooldowns = {
   user: 7500,
-  channel: 2500
+  channel: 2500,
+  whisper: 2500
 }
 
 export default class Client {
@@ -80,7 +93,7 @@ export default class Client {
   private readonly logger: Logger
 
   public readonly name: string
-  private readonly id: string
+  public readonly id: string
 
   public readonly commandPrefix: string
 
@@ -98,7 +111,7 @@ export default class Client {
 
   public ircClient: ChatClient
 
-  public readonly msgs: Map<string, Message> = new Map()
+  public readonly msgs: Map<string, Message | WhMessage> = new Map()
   public readonly channels: Map<string, Channel> = new Map()
   public readonly userCooldowns: Map<string, Date> = new Map()
 
@@ -179,6 +192,7 @@ export default class Client {
     this.ircClient.on('error', (error) => this.logger.error({ err: error }, 'Twitch.onError()'))
 
     this.ircClient.on('PRIVMSG', (msg) => void this.prepareMsg(msg))
+    this.ircClient.on('WHISPER', (msg) => void this.prepareWhisperMsg(msg))
 
     this.ircClient.on('CLEARCHAT', (msg) => this.deleteMessage(msg))
     this.ircClient.on('CLEARMSG', (msg) => this.deleteMessage(msg))
@@ -234,25 +248,28 @@ export default class Client {
     }
   }
 
-  public async onMessage ({ msg, deleted }: Message) {
-    if (deleted) {
+  public async onMessage (m: Message | WhMessage): Promise<void> {
+    if (m instanceof Message && m.deleted) {
       return
     }
 
-    const words = msg.messageText.substring(this.commandPrefix.length).split(' ')
+    const words = m.msg.messageText.substring(this.commandPrefix.length).split(' ')
 
     const foundCommand = this.handlers.filter(command => command.prefix.length !== 0)
       .find(command => command.prefix.includes(words[0].toLowerCase()))
 
     if (foundCommand !== undefined) {
       if (foundCommand.adminOnly &&
-        (this.admins === undefined || !this.admins.includes(msg.senderUsername))) {
+        (this.admins === undefined || !this.admins.includes(m.msg.senderUsername))) {
         return
       }
 
-      void this.generalQueue.add(async () => await foundCommand.onCommand(msg, words.slice(1)))
+      if (m instanceof WhMessage) {
+        void this.generalQueue.add(async () => await foundCommand.onWhisperCommand(m.msg, words.slice(1)))
+      } else void this.generalQueue.add(async () => await foundCommand.onCommand(m.msg, words.slice(1)))
     }
   }
+
 
   private async prepareMsg (msg: PrivmsgMessage): Promise<void> {
     if (msg.senderUserID === this.id) {
@@ -285,6 +302,22 @@ export default class Client {
     }
   }
 
+  private async prepareWhisperMsg (whMsg: WhisperMessage) {
+    if (whMsg.senderUserID === this.id) {
+      return
+    }
+
+    if (!whMsg.messageText.startsWith(this.commandPrefix)) {
+      return
+    }
+
+    const hasSetCooldown = this.whisperCooldown(whMsg)
+
+    if (hasSetCooldown) {
+      this.msgs.set(whMsg.messageID, new WhMessage(whMsg, this))
+    }
+  }
+
   private cooldown (msg: PrivmsgMessage) {
     const foundChannel = this.channels.get(msg.channelID)
 
@@ -305,6 +338,35 @@ export default class Client {
       return false
     }
     foundChannel.cooldown = new Date(Date.now() + cooldowns.channel)
+
+    return true
+  }
+
+  private whisperCooldown (whMsg: WhisperMessage) {
+    // Get "global" channel, e.g. befriendlier's.
+
+    const foundChannel = this.channels.get(this.id)
+
+    let foundUserCooldown = this.userCooldowns.get(whMsg.senderUserID)
+
+    if (foundUserCooldown === undefined) {
+      this.userCooldowns.set(whMsg.senderUserID, new Date(Date.now() + cooldowns.whisper))
+      foundUserCooldown = this.userCooldowns.get(whMsg.senderUserID) as Date
+    } else if (foundUserCooldown.getTime() > Date.now()) {
+      return false
+    }
+    foundUserCooldown = new Date(Date.now() + cooldowns.whisper)
+
+    if (foundChannel === undefined) {
+      this.logger.error({}, 'Twitch.whisperCooldown() -> Could not find "Befriendlier" channel in channels array.')
+
+      // Should never occur.
+      // this.leaveChannel({ id: this.id, name: this.name })
+      return false
+    } else if (foundChannel.cooldown.getTime() > Date.now()) {
+      return false
+    }
+    foundChannel.cooldown = new Date(Date.now() + cooldowns.whisper)
 
     return true
   }
@@ -367,6 +429,8 @@ export default class Client {
     }
 
     for (const [, cachedMsg] of this.msgs) {
+      if (cachedMsg instanceof WhMessage) continue
+
       const removeMsgBool = (msg instanceof ClearchatMessage)
         ? cachedMsg.msg.channelName === msg.channelName
         : (msg instanceof ClearmsgMessage)
