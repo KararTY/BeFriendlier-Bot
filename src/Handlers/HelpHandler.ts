@@ -1,4 +1,4 @@
-import { PrivmsgMessage } from 'dank-twitch-irc'
+import { PrivmsgMessage, WhisperMessage } from 'dank-twitch-irc'
 import messagesText from '../messagesText'
 import DefaultHandler from './DefaultHandler'
 
@@ -11,6 +11,26 @@ export default class HelpHandler extends DefaultHandler {
   public async onCommand (msg: PrivmsgMessage, words: string[]) {
     const responseMessage = this.getNameAndIds(msg)
 
+    const message = this.makeMessage(words)
+
+    if (message.length > 0) {
+      this.twitch.sendMessage(responseMessage.channelTwitch, responseMessage.userTwitch, message)
+    }
+  }
+
+  public async onWhisperCommand (whMsg: WhisperMessage, words: string[]) {
+    const responseMessage = this.getNameAndIds(whMsg)
+
+    const message = this.makeMessage(words)
+
+    if (message.length > 0) {
+      await this.twitch.sendWhisper(responseMessage.userTwitch, message)
+    }
+  }
+
+  // public async onServerResponse (res) {}
+
+  private makeMessage (words: string[]) {
     const commands = this.twitch.handlers.filter(command => !command.adminOnly && command.prefix.length !== 0)
 
     let message: string = ''
@@ -26,10 +46,6 @@ export default class HelpHandler extends DefaultHandler {
       // TODO: Make it paginate.
     }
 
-    if (message.length > 0) {
-      this.twitch.sendMessage(responseMessage.channelTwitch, responseMessage.userTwitch, message)
-    }
+    return message
   }
-
-  // public async onServerResponse (res) {}
 }
