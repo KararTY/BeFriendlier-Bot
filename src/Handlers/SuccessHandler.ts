@@ -15,7 +15,9 @@ export default class SuccessHandler extends DefaultHandler {
       await this.twitch.sendWhisper(
         userTwitch,
         String(result.value).replace('%s%', `@${String(result.matchUsername)}`),
-      ).catch(error => {
+      ).then(() => {
+        this.twitch.sendMessage(channelTwitch, userTwitch, `🦆 rubber ducky says: A match! Check your whispers.`)
+      }).catch(error => {
         this.logger.error({ err: error }, 'SuccessHandler.onServerResponse() -> Twitch.sendWhisper()')
 
         this.twitch.sendMessage(

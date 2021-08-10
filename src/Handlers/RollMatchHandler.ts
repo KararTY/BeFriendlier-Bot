@@ -43,7 +43,6 @@ export default class RollMatchHandler extends DefaultHandler {
         .replace('%prefix%', '@@')
     }
 
-
     const foundUserRoll = this.twitch.getUserInstance({ senderUserID: userTwitch.id, channelID: channelTwitch.id } as PrivmsgMessage) as RollInstance
 
     foundUserRoll.type = more
