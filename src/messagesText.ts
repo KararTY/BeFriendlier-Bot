@@ -4,7 +4,7 @@ const messagesText = {
   bioTooShort: 'your bio is too short. 3 minimum characters.',
   twitchUserNotFound: 'could not find that user on Twitch.',
   takeABreak: 'take a break! You\'re currently on a cooldown period.',
-  unregistered: 'you\'re not registered! Whisper me "@@register" for more information.',
+  unregistered: 'you\'re not registered! DM me "@@register" for more information.',
   noHoroscope: 'no horoscope today! Check back tomorrow?',
   sameUser: 'recipient user is the same user as you.',
   noEmotes: 'you\'ve not entered any Twitch emotes in your message.',
