@@ -23,13 +23,14 @@ export default class BioHandler extends DefaultHandler {
       }
     }
 
-    // TODO: Add FFZ & BTTV emote detections.
     if (words[0] === 'global') {
-      message.messageText = words.slice(1).join(' ')
+      message.messageText = message.messageText.split(' ').slice(2).join(' ')
       responseMessage.global = true
+    } else {
+      message.messageText = message.messageText.split(' ').slice(1).join(' ')
     }
 
-    const bioText = message.messageText.split(' ').slice(1)
+    const bioText = message.messageText
 
     if (bioText.length > 1) {
       if (bioText.length > 127) {
@@ -49,7 +50,7 @@ export default class BioHandler extends DefaultHandler {
       }
     }
 
-    responseMessage.bio = bioText.join(' ').substr(0, 128)
+    responseMessage.bio = bioText.substr(0, 128).trim()
 
     this.ws.sendMessage(this.messageType, JSON.stringify(responseMessage))
   }
