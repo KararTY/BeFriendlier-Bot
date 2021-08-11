@@ -15,6 +15,7 @@ const messagesText = {
     + ' YOU MUST LOGIN VIA THE WEBSITE TO ENABLE YOUR GLOBAL PROFILE. Read more on website or on my Twitch profile page.',
   alreadyRegistered: 'You\'re already registered! You can now peruse the bot and website.',
   whispersOnly: 'this command can only be used via whispers!',
+  ood: 'that\'s all that\'s written.',
   helpText: {
     help: 'rubber ducky 🦆 Never lucky.',
     emotes: 'sets your favorite emotes for your profile. Add "global" in the beginning to change your global profile\'s bio. Only Twitch emotes work for now.',

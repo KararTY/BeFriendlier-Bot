@@ -45,7 +45,14 @@ export default class RollMatchHandler extends DefaultHandler {
 
     const foundUserRoll = this.twitch.getUserInstance({ senderUserID: userTwitch.id, channelID: channelTwitch.id } as PrivmsgMessage) as RollInstance
 
-    foundUserRoll.type = more
+    if (foundUserRoll.lastType === more) {
+      this.twitch.sendMessage(channelTwitch, userTwitch, messagesText.ood)
+      return
+    }
+
+    if (more) {
+      foundUserRoll.type = more
+    }
 
     this.twitch.sendMessage(channelTwitch, userTwitch, String(result.value))
   }

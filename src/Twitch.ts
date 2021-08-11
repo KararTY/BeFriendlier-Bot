@@ -56,6 +56,7 @@ class WhMessage {
 }
 
 export class RollInstance {
+  public lastType: More
   public type: More
   public global: boolean
 
@@ -65,6 +66,8 @@ export class RollInstance {
   }
 
   public nextType () {
+    this.lastType = this.type
+
     switch (this.type) {
       case More.NONE:
         this.type = More.BIO

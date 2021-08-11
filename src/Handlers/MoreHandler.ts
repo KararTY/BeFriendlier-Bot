@@ -24,11 +24,11 @@ export default class MoreHandler extends DefaultHandler {
       return
     }
 
-    foundUserRoll.nextType()
-
     if (foundUserRoll.global) {
       responseMessage.global = true
     }
+    
+    foundUserRoll.nextType()
 
     responseMessage.more = foundUserRoll.type
     this.ws.sendMessage(MessageType.ROLLMATCH, JSON.stringify(responseMessage))
