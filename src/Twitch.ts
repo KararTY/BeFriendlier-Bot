@@ -314,64 +314,41 @@ export default class Client {
       return
     }
 
-    const hasSetCooldown = this.whisperCooldown(whMsg)
+    const hasSetCooldown = this.cooldown(whMsg)
 
     if (hasSetCooldown) {
       this.msgs.set(whMsg.messageID, new WhMessage(whMsg, this))
     }
   }
 
-  private cooldown (msg: PrivmsgMessage) {
-    const foundChannel = this.channels.get(msg.channelID)
+  private cooldown (msg: PrivmsgMessage | WhisperMessage) {
+    const isWhisper = msg instanceof WhisperMessage
+    const dateNow = Date.now()
 
+    const foundChannelCooldown = this.channels.get(isWhisper ? this.id : (msg as PrivmsgMessage).channelID)
     let foundUserCooldown = this.userCooldowns.get(msg.senderUserID)
 
+    if (foundChannelCooldown === undefined) {
+      if (msg instanceof PrivmsgMessage) {
+        this.leaveChannel({ id: msg.channelID, name: msg.channelName })
+      } else {
+        this.logger.error({}, 'Twitch.cooldown() -> Could not find "Befriendlier" channel in channels array.')
+      }
+      return false
+    }
+    
     if (foundUserCooldown === undefined) {
-      this.userCooldowns.set(msg.senderUserID, new Date(Date.now() + cooldowns.user))
+      this.userCooldowns.set(msg.senderUserID, new Date(dateNow))
       foundUserCooldown = this.userCooldowns.get(msg.senderUserID) as Date
-    } else if (foundUserCooldown.getTime() > Date.now()) {
-      return false
     }
-    foundUserCooldown = new Date(Date.now() + cooldowns.user)
 
-    if (foundChannel === undefined) {
-      this.leaveChannel({ id: msg.channelID, name: msg.channelName })
-      return false
-    } else if (foundChannel.cooldown.getTime() > Date.now()) {
-      return false
-    }
-    foundChannel.cooldown = new Date(Date.now() + cooldowns.channel)
+    const cooldown = (foundChannelCooldown.cooldown.getTime() - dateNow) + (foundUserCooldown.getTime() - dateNow)
 
-    return true
-  }
-
-  private whisperCooldown (whMsg: WhisperMessage) {
-    // Get "global" channel, e.g. befriendlier's.
-
-    const foundChannel = this.channels.get(this.id)
-
-    let foundUserCooldown = this.userCooldowns.get(whMsg.senderUserID)
-
-    if (foundUserCooldown === undefined) {
-      this.userCooldowns.set(whMsg.senderUserID, new Date(Date.now() + cooldowns.whisper))
-      foundUserCooldown = this.userCooldowns.get(whMsg.senderUserID) as Date
-    } else if (foundUserCooldown.getTime() > Date.now()) {
-      return false
-    }
-    foundUserCooldown = new Date(Date.now() + cooldowns.whisper)
-
-    if (foundChannel === undefined) {
-      this.logger.error({}, 'Twitch.whisperCooldown() -> Could not find "Befriendlier" channel in channels array.')
-
-      // Should never occur.
-      // this.leaveChannel({ id: this.id, name: this.name })
-      return false
-    } else if (foundChannel.cooldown.getTime() > Date.now()) {
-      return false
-    }
-    foundChannel.cooldown = new Date(Date.now() + cooldowns.whisper)
-
-    return true
+    if (cooldown <= 0) {
+      foundChannelCooldown.cooldown = new Date(dateNow + (isWhisper ? cooldowns.whisper : cooldowns.channel))
+      this.userCooldowns.set(msg.senderUserID, new Date(dateNow + (isWhisper ? cooldowns.whisper : cooldowns.user)))
+      return true
+    } else return false
   }
 
   private onServerResponse (res: WsRes) {
