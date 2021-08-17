@@ -82,18 +82,18 @@ export async function matchText ({ channelTwitch, userTwitch }: ROLLMATCH, { log
 
   switch (foundUserRoll.type) {
     case More.NONE:
-      message = `new ${globalStr}match's bio: ${bio.length > 32 ? `${bio.substr(0, 32)}...` : bio}`
+      message = `new ${globalStr}match's bio: ${bio.length > 32 ? `${bio.substr(0, 32)}...` : bio}.`
       break
     case More.BIO:
       message = `${foundUserRoll.global === true ? 'global\'s ' : ''}full bio: ${bio}`
       break
     case More.FAVORITEEMOTES:
       message = `${globalStr}match's favorite emotes: ` +
-        `${profile.favorite_emotes.length > 0 ? profile.favorite_emotes.map((emote: Emote) => emote.name).join(' ') : 'None.'}`
+        `${profile.favorite_emotes.length > 0 ? profile.favorite_emotes.map((emote: Emote) => emote.name).join(' ') : 'None'}.`
       break
     case More.FAVORITESTREAMERS:
       message = `${globalStr}match's favorite streamers: ` +
-        `${user.favorite_streamers.length > 0 ? user.favorite_streamers.map((streamer: User) => noPingsStr(streamer.name)).join(' ') : 'None.'}`
+        `${user.favorite_streamers.length > 0 ? user.favorite_streamers.map((streamer: User) => noPingsStr(streamer.name)).join(' ') : 'None'}.`
       break
   }
 
