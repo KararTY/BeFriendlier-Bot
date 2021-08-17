@@ -337,7 +337,7 @@ export default class Client {
   }
 
   private cooldown (msg: PrivmsgMessage | WhisperMessage) {
-    const isWhisper = msg instanceof WhisperMessage
+    const isWhisper = msg instanceof WhisperMessage || !(msg.channelID)
     const dateNow = Date.now()
 
     const foundChannelCooldown = this.channels.get(isWhisper ? this.id : (msg as PrivmsgMessage).channelID)
