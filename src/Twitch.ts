@@ -125,7 +125,14 @@ export default class Client {
   public readonly headers: { 'user-agent': string }
 
   constructor (config: TwitchConfig, ws: Ws, api: TwitchAuth, pajbotAPI: PajbotAPI, packageJSON: any, logger: Logger) {
+    this.name = config.user.name
+    this.id = config.user.id
+    this.commandPrefix = config.commandPrefix
+    this.admins = config.admins
+    this.headers = config.headers
+
     this.ws = ws
+
     this.api = api
 
     this.pajbotAPI = pajbotAPI
@@ -133,15 +140,6 @@ export default class Client {
     this.packageJSON = packageJSON
 
     this.logger = logger
-
-    this.name = config.user.name
-    this.id = config.user.id
-
-    this.commandPrefix = config.commandPrefix
-
-    this.admins = config.admins
-
-    this.headers = config.headers
 
     this.ws.eventEmitter.on('WS.MESSAGE', (data: WsRes) => this.onServerResponse(data))
     this.ws.eventEmitter.on('WS.CLOSED', (data) => this.onServerClosed(data))
