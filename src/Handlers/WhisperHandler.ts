@@ -9,7 +9,9 @@ export default class WhisperHandler extends DefaultHandler {
   // public async onCommand (msg: PrivmsgMessage) {}
 
   public async onServerResponse ({ channelTwitch, userTwitch, result }: BASE) {
-    await this.twitch.sendWhisper(userTwitch, result.value).catch(error => {
+    const message = result.value.replace(/%prefix%/g, this.twitch.commandPrefix)
+
+    await this.twitch.sendWhisper(userTwitch, message).catch(error => {
       this.logger.error({ err: error }, 'WhisperHandler.onServerResponse() -> Twitch.sendWhisper()')
 
       this.twitch.sendMessage(

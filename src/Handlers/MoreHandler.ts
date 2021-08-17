@@ -1,6 +1,7 @@
 import { ROLLMATCH } from 'befriendlier-shared'
 import { PrivmsgMessage } from 'dank-twitch-irc'
 import DefaultHandler from './DefaultHandler'
+import { matchText } from './RollMatchHandler'
 
 export default class MoreHandler extends DefaultHandler {
   // public messageType = MessageType
@@ -22,15 +23,12 @@ export default class MoreHandler extends DefaultHandler {
       )
       return
     }
-
-    if (foundUserRoll.global) {
-      responseMessage.global = true
-    }
     
-    foundUserRoll.nextType()
-
-    responseMessage.more = foundUserRoll.type
-    this.ws.sendMessage(MessageType.ROLLMATCH, JSON.stringify(responseMessage))
+    void matchText(
+      { ...responseMessage },
+      { logger: this.logger, twitch: this.twitch, getEmotes: () => this.getEmotes(), i18n: (str) => this.i18n(str), noPingsStr: this.noPingsStr },
+      foundUserRoll
+    )
   }
 
   // public async onServerResponse (res) {}

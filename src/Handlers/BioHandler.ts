@@ -55,7 +55,11 @@ export default class BioHandler extends DefaultHandler {
   }
 
   public async onServerResponse ({ channelTwitch, userTwitch, result }: BASE) {
-    this.twitch.sendMessage(channelTwitch, userTwitch, String(result.value))
+    const emotes = await this.getEmotes()
+
+    const bio = result.value.split(' ').map((word: string) => emotes.findIndex(ee => ee.name === word) > -1 ? word : this.noPingsStr(word)).join(' ')
+
+    this.twitch.sendMessage(channelTwitch, userTwitch, bio)
   }
 
   private escapeRegExp (text: string) {

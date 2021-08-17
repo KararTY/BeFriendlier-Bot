@@ -29,6 +29,19 @@ export interface Channel {
   addInvisibleSuffix: boolean
 }
 
+interface UserRollInstance {
+  channelID: string
+  senderUserID: string
+  data: UserRollInstanceData
+}
+
+interface UserRollInstanceData {
+  profile: Profile,
+  user: User
+  type?: More
+  lastType?: More
+}
+
 class Message {
   public readonly msg: PrivmsgMessage
   public deleted = false
@@ -55,18 +68,40 @@ class WhMessage {
   }
 }
 
+export interface User {
+  name: string
+  twitchID: string
+  favorite_streamers: User[]
+}
+
+export interface Profile {
+  enabled: boolean
+  bio: string
+  favorite_emotes: Emote[]
+}
+
 export class RollInstance {
-  public lastType: More
+  public lastType?: More
   public type: More
   public global: boolean
+  public data: {
+    profile: Profile
+    user: User
+  }
 
-  constructor (global = false) {
-    this.type = More.NONE
+  constructor ({ profile, user, type, lastType }: UserRollInstanceData, global = false) {
+    this.data = {
+      profile,
+      user
+    }
+
     this.global = global
+    this.type = type || More.NONE
+    this.lastType = lastType
   }
 
   public nextType () {
-    this.lastType = this.type
+    this.lastType = JSON.stringify(this.type) as More
 
     switch (this.type) {
       case More.NONE:
@@ -244,9 +279,11 @@ export default class Client {
       error => this.logger.error({ err: error }, 'Twitch.leaveChannel() -> Twitch.PART'))
   }
 
-  public createAndGetUserInstance (msg: PrivmsgMessage, global = false) {
-    this.channels.get(msg.channelID)?.userRolls.set(msg.senderUserID, new RollInstance(global))
-    return this.getUserInstance(msg) as RollInstance
+  public setUserInstance (
+    { channelID, senderUserID, data }: UserRollInstance,
+    global = false) {
+    this.channels.get(channelID)?.userRolls.set(senderUserID, new RollInstance(data, global))
+    return this.getUserInstance({ channelID, senderUserID } as PrivmsgMessage) as RollInstance
   }
 
   public getUserInstance (msg: PrivmsgMessage) {
