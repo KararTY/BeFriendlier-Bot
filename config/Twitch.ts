@@ -43,7 +43,7 @@ export default class TwitchConfig {
      * HTTP request headers.
      */
     this.headers = {
-      'user-agent': 'befriendlierapp (https://github.com/kararty/befriendlier-web)',
+      'user-agent': 'befriendlierbot (https://github.com/kararty/befriendlier-bot)',
     }
 
     /**

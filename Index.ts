@@ -1,7 +1,8 @@
 // Load env variables
 import { env } from '@adonisjs/env/build/standalone'
 import { Logger } from '@adonisjs/logger/build/standalone'
-import { TwitchAuth } from 'befriendlier-shared'
+import { PajbotAPI, TwitchAuth } from 'befriendlier-shared'
+import PajbotConfig from './config/Pajbot'
 import { readdirSync, readFileSync } from 'fs'
 import path from 'path'
 import TwitchConfig from './config/Twitch'
@@ -27,8 +28,12 @@ const server = new Ws(wsConfig, logger)
 const apiConfig = new TwitchConfig(env)
 const api = new TwitchAuth(apiConfig, logger.level)
 
+// Initialize Pajbot.
+const pajAPIConfig = new PajbotConfig()
+const pajbotAPI = new PajbotAPI(pajAPIConfig, logger.level)
+
 // Start Twitch client.
-const twitch = new Twitch(apiConfig, server, api, packageJSON, logger)
+const twitch = new Twitch(apiConfig, server, api, pajbotAPI, packageJSON, logger)
 
 // Add command handlers
 const commandDirectory = path.join(__dirname, 'src', 'Handlers')

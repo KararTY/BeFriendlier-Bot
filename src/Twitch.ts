@@ -1,6 +1,6 @@
 /* eslint-disable no-void */
 import { Logger } from '@adonisjs/logger/build/standalone'
-import { BASE, MessageType, More, NameAndId, TwitchAuth } from 'befriendlier-shared'
+import { BASE, Emote, MessageType, More, NameAndId, PajbotAPI, TwitchAuth } from 'befriendlier-shared'
 import {
   ChatClient,
   ClearchatMessage,
@@ -123,9 +123,11 @@ export default class Client {
   public readonly admins: string[] | undefined
   public readonly headers: { 'user-agent': string }
 
-  constructor (config: TwitchConfig, ws: Ws, api: TwitchAuth, packageJSON: any, logger: Logger) {
-    this.api = api
+  constructor (config: TwitchConfig, ws: Ws, api: TwitchAuth, pajbotAPI: PajbotAPI, packageJSON: any, logger: Logger) {
     this.ws = ws
+    this.api = api
+
+    this.pajbotAPI = pajbotAPI
 
     this.packageJSON = packageJSON
 
@@ -204,8 +206,17 @@ export default class Client {
     return this.ircClient.connect()
   }
 
-  public sendMessage (channel: NameAndId, user: NameAndId, message: string) {
+  public async sendMessage (channel: NameAndId, user: NameAndId, message: string) {
     const foundChannel = this.channels.get(channel.id) as Channel
+
+    const pajbotCheck = await this.pajbotAPI.check(foundChannel.name, this.filterMsg(message))
+
+    if (pajbotCheck && pajbotCheck.banned) {
+      // banphrase_data appears on banned === true
+      // const banphraseData = pajbotCheck.banphrase_data as { phrase: string }
+      this.logger.warn('"%s" contains bad words (%s)', message, JSON.stringify(pajbotCheck.banphrase_data))
+      message = 'message contains banned phrases.'
+    }
 
     foundChannel.addInvisibleSuffix = !foundChannel.addInvisibleSuffix // Flip
 
@@ -301,7 +312,7 @@ export default class Client {
 
     if (hasSetCooldown) {
       // Message class has a "clientRef" to "this" so it can call clientRef.onMessage().
-      this.msgs.set(msg.messageID, new Message(msg, this))
+      this.msgs.set(msg.messageID, new Message({ ...msg, messageText: this.filterMsg(msg.messageText) } as PrivmsgMessage, this))
     }
   }
 
@@ -317,8 +328,13 @@ export default class Client {
     const hasSetCooldown = this.cooldown(whMsg)
 
     if (hasSetCooldown) {
-      this.msgs.set(whMsg.messageID, new WhMessage(whMsg, this))
+      this.msgs.set(whMsg.messageID, new WhMessage({ ...whMsg, messageText: this.filterMsg(whMsg.messageText) } as WhisperMessage, this))
     }
+  }
+
+  // Remove some characters.
+  private filterMsg (messageText: string) {
+    return messageText.normalize().replace(/[\uE000-\uF8FF]+/gu, '').replace(/[\u{000e0000}]/gu, '').trim()
   }
 
   private cooldown (msg: PrivmsgMessage | WhisperMessage) {
