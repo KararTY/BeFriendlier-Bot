@@ -22,7 +22,7 @@ export default class RollMatchHandler extends DefaultHandler {
       return
     }
 
-    if (words[0] === 'global' || responseMessage.channelTwitch.id === this.twitch.name) {
+    if (words[0] === 'global' || responseMessage.channelTwitch.id === this.twitch.id) {
       responseMessage.global = true
     }
 
@@ -89,11 +89,11 @@ export async function matchText ({ channelTwitch, userTwitch }: ROLLMATCH, { log
       break
     case More.FAVORITEEMOTES:
       message = `${globalStr}match's favorite emotes: ` +
-        `${profile.favorite_emotes.length > 0 ? profile.favorite_emotes.map((emote: Emote) => emote.name).join(' ') : 'None'}.`
+        `${profile.favorite_emotes.length > 0 ? profile.favorite_emotes.map((emote: Emote) => emote.name).join(' ') : 'None.'}`
       break
     case More.FAVORITESTREAMERS:
       message = `${globalStr}match's favorite streamers: ` +
-        `${user.favorite_streamers.length > 0 ? user.favorite_streamers.map((streamer: User) => noPingsStr(streamer.name)).join(' ') : 'None'}.`
+        `${user.favorite_streamers.length > 0 ? user.favorite_streamers.map((streamer: User) => noPingsStr(streamer.name)).join(' ') : 'None.'}`
       break
   }
 
