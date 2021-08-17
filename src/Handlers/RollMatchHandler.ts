@@ -18,6 +18,7 @@ export default class RollMatchHandler extends DefaultHandler {
     const foundUserRoll = this.twitch.getUserInstance(msg)
 
     if (foundUserRoll !== undefined) {
+      await this.twitch.sendWhisper(responseMessage.userTwitch, this.i18n(this.messagesText.alreadyRolling))
       return
     }
 
@@ -64,24 +65,12 @@ export async function matchText ({ channelTwitch, userTwitch }: ROLLMATCH, { log
     return
   }
 
-  if (foundUserRoll.type === foundUserRoll.lastType) {
-    twitch.sendMessage(channelTwitch, userTwitch, i18n(this.messagesText.ood))
-    return
-  }
-
   const { profile, user } = foundUserRoll.data
 
   // Skip some stuff if user doesn't define anything.
-  if (profile.bio === 'Hello!') {
-    foundUserRoll.type = More.FAVORITEEMOTES
-  }
 
-  if (foundUserRoll.type === More.BIO && profile.bio.length < 32) {
+  if (foundUserRoll.type === More.BIO && profile.bio.length < 33) {
     foundUserRoll.type = More.FAVORITEEMOTES
-  }
-
-  if (foundUserRoll.type === More.FAVORITEEMOTES && profile.favorite_emotes.length === 0) {
-    foundUserRoll.type = More.FAVORITESTREAMERS
   }
 
   const emotes = await getEmotes()
@@ -110,6 +99,11 @@ export async function matchText ({ channelTwitch, userTwitch }: ROLLMATCH, { log
 
   if (!foundUserRoll.lastType) {
     message += ` ${firstTimeText}`
+  }
+
+  if (foundUserRoll.type === foundUserRoll.lastType) {
+    twitch.sendMessage(channelTwitch, userTwitch, i18n(this.messagesText.ood))
+    return
   }
 
   foundUserRoll.nextType()

@@ -16,6 +16,7 @@ const messagesText = {
   alreadyRegistered: 'You\'re already registered! You can now peruse the bot and website.',
   whispersOnly: 'this command can only be used via whispers!',
   ood: 'that\'s all that\'s written.',
+  alreadyRolling: 'you\'re already rolling for a match! Reply with %prefix%more, %prefix%match, %prefix%no',
   helpText: {
     help: 'rubber ducky 🦆 Never lucky.',
     emotes: 'sets your favorite emotes for your profile. Add "global" in the beginning to change your global profile\'s bio. Only Twitch emotes work for now.',
