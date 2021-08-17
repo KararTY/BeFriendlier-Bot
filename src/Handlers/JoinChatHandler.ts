@@ -1,6 +1,5 @@
 import { JOINCHAT, MessageType } from 'befriendlier-shared'
 import { PrivmsgMessage } from 'dank-twitch-irc'
-import messagesText from '../messagesText'
 import DefaultHandler from './DefaultHandler'
 
 export default class JoinChannelHandler extends DefaultHandler {
@@ -25,7 +24,7 @@ export default class JoinChannelHandler extends DefaultHandler {
       this.twitch.sendMessage(
         responseMessage.channelTwitch,
         responseMessage.userTwitch,
-        messagesText.twitchUserNotFound,
+        this.i18n(this.messagesText.twitchUserNotFound),
       )
     }
   }

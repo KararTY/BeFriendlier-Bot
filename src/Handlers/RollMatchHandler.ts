@@ -10,7 +10,7 @@ export default class RollMatchHandler extends DefaultHandler {
   public prefix = ['swipe', 'roll']
 
   public helpText = () => {
-    return messagesText.helpText.rollMatch
+    return this.i18n(this.messagesText.helpText.rollMatch)
   }
 
   public async onCommand (msg: PrivmsgMessage, words: string[]) {

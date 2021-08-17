@@ -1,6 +1,5 @@
 import { Emote, GIVEEMOTES, MessageType } from 'befriendlier-shared'
 import { PrivmsgMessage } from 'dank-twitch-irc'
-import messagesText from '../messagesText'
 import DefaultHandler from './DefaultHandler'
 
 export default class GiveEmotesHandler extends DefaultHandler {
@@ -8,7 +7,7 @@ export default class GiveEmotesHandler extends DefaultHandler {
 
   public prefix = ['giveemotes']
 
-  public helpText = () => messagesText.helpText.giveEmotes
+  public helpText = () => this.i18n(this.messagesText.helpText.giveEmotes)
 
   public async onCommand (msg: PrivmsgMessage, words: string[]) {
     const responseMessage = this.getNameAndIds(msg) as GIVEEMOTES
@@ -23,19 +22,19 @@ export default class GiveEmotesHandler extends DefaultHandler {
       }
 
       if (responseMessage.recipientUserTwitch.id === responseMessage.userTwitch.id) {
-        return this.twitch.sendMessage(responseMessage.channelTwitch, responseMessage.userTwitch, messagesText.sameUser)
+        return this.twitch.sendMessage(responseMessage.channelTwitch, responseMessage.userTwitch, this.i18n(this.messagesText.sameUser))
       }
 
       responseMessage.emotes = this.parseEmotes(msg, words.slice(1))
 
       if (responseMessage.emotes.length === 0) {
-        return this.twitch.sendMessage(responseMessage.channelTwitch, responseMessage.userTwitch, messagesText.noEmotes)
+        return this.twitch.sendMessage(responseMessage.channelTwitch, responseMessage.userTwitch, this.i18n(this.messagesText.noEmotes))
       }
 
       this.ws.sendMessage(this.messageType, JSON.stringify(responseMessage))
     } else {
       this.twitch.sendMessage(
-        responseMessage.channelTwitch, responseMessage.userTwitch, messagesText.twitchUserNotFound)
+        responseMessage.channelTwitch, responseMessage.userTwitch, this.i18n(this.messagesText.twitchUserNotFound))
     }
   }
 

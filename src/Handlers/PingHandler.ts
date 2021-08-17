@@ -1,6 +1,5 @@
 import { BASE, MessageType } from 'befriendlier-shared'
 import { PrivmsgMessage } from 'dank-twitch-irc'
-import messagesText from '../messagesText'
 import DefaultHandler from './DefaultHandler'
 
 export default class PingHandler extends DefaultHandler {
@@ -8,7 +7,7 @@ export default class PingHandler extends DefaultHandler {
 
   public prefix = ['ping']
 
-  public helpText = () => messagesText.helpText.ping
+  public helpText = () => this.i18n(this.messagesText.helpText.ping)
 
   public async onCommand (msg: PrivmsgMessage) {
     const responseMessage = this.getNameAndIds(msg)

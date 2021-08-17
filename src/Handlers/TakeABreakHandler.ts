@@ -1,5 +1,4 @@
 import { BASE, MessageType } from 'befriendlier-shared'
-import messagesText from '../messagesText'
 import DefaultHandler from './DefaultHandler'
 
 export default class TakeABreakHandler extends DefaultHandler {
@@ -13,7 +12,7 @@ export default class TakeABreakHandler extends DefaultHandler {
     this.twitch.sendMessage(
       channelTwitch,
       userTwitch,
-      result !== undefined && result.value.length > 0 ? result.value : messagesText.takeABreak,
+      result !== undefined && result.value.length > 0 ? result.value : this.i18n(this.messagesText.takeABreak),
     )
 
     this.twitch.removeUserInstance({ channelTwitch, userTwitch })

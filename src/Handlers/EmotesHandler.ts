@@ -1,6 +1,5 @@
 import { BASE, EMOTES, MessageType } from 'befriendlier-shared'
 import { PrivmsgMessage } from 'dank-twitch-irc'
-import messagesText from '../messagesText'
 import DefaultHandler from './DefaultHandler'
 
 export default class EmotesHandler extends DefaultHandler {
@@ -8,9 +7,7 @@ export default class EmotesHandler extends DefaultHandler {
 
   public prefix = ['emotes']
 
-  public helpText = () => {
-    return messagesText.helpText.emotes
-  }
+  public helpText = () => this.i18n(this.messagesText.helpText.emotes)
 
   public async onCommand (msg: PrivmsgMessage, words: string[]) {
     const responseMessage = this.getNameAndIds(msg) as EMOTES

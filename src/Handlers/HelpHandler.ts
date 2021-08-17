@@ -1,12 +1,11 @@
 import { PrivmsgMessage, WhisperMessage } from 'dank-twitch-irc'
-import messagesText from '../messagesText'
 import DefaultHandler from './DefaultHandler'
 
 export default class HelpHandler extends DefaultHandler {
   // public messageType = MessageType
 
   public prefix = ['help', 'commands']
-  public helpText = () => messagesText.helpText.help
+  public helpText = () => this.i18n(this.messagesText.helpText.help)
 
   public async onCommand (msg: PrivmsgMessage, words: string[]) {
     const responseMessage = this.getNameAndIds(msg)
@@ -35,7 +34,7 @@ export default class HelpHandler extends DefaultHandler {
 
     let message: string = ''
     if (words.length === 0) {
-      message = `prepend @@ to commands: ${commands.map(command => command.prefix[0]).join(', ')}. More help in the profile page.`
+      message = `prepend ${this.twitch.commandPrefix} to commands: ${commands.map(command => command.prefix[0]).join(', ')}. More help in the profile page.`
     } else {
       const command = commands.find(command => command.prefix.includes(words[0]))
 

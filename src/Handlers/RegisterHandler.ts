@@ -1,6 +1,5 @@
 import { BASE, MessageType, REGISTER } from 'befriendlier-shared'
 import DefaultHandler from './DefaultHandler'
-import messagesText from '../messagesText'
 import { PrivmsgMessage, WhisperMessage } from 'dank-twitch-irc'
 
 export default class RegisterHandler extends DefaultHandler {
@@ -8,19 +7,19 @@ export default class RegisterHandler extends DefaultHandler {
 
   public prefix = ['register']
 
-  public helpText = () => messagesText.helpText.register
+  public helpText = () => this.i18n(this.messagesText.helpText.register)
 
   public async onCommand (msg: PrivmsgMessage) {
     const base = this.getNameAndIds(msg)
   
-    this.twitch.sendMessage(base.channelTwitch, base.userTwitch, messagesText.whispersOnly)
+    this.twitch.sendMessage(base.channelTwitch, base.userTwitch, this.i18n(this.messagesText.whispersOnly))
   }
 
   public async onWhisperCommand (whMsg: WhisperMessage, words: string[]) {
     const responseMessage = this.getNameAndIds(whMsg) as REGISTER
 
     if (words[0] !== 'accept') {
-      await this.twitch.sendWhisper(responseMessage.userTwitch, messagesText.registrationDisclaimer)
+      await this.twitch.sendWhisper(responseMessage.userTwitch, this.i18n(this.messagesText.registrationDisclaimer))
       return
     }
 
@@ -36,14 +35,14 @@ export default class RegisterHandler extends DefaultHandler {
 
       this.ws.sendMessage(this.messageType, JSON.stringify(responseMessage))
     } else {
-      await this.twitch.sendWhisper(responseMessage.userTwitch, messagesText.twitchUserNotFound)
+      await this.twitch.sendWhisper(responseMessage.userTwitch, this.i18n(this.messagesText.twitchUserNotFound))
     }
   }
 
   public async onServerResponse ({ userTwitch, result }: BASE) {
     await this.twitch.sendWhisper(userTwitch, result.value
-      ? messagesText.registrationSuccessful
-      : messagesText.alreadyRegistered
+      ? this.i18n(this.messagesText.registrationSuccessful)
+      : this.i18n(this.messagesText.alreadyRegistered)
     )
   }
 }

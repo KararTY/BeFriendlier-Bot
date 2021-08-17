@@ -293,7 +293,7 @@ export default class Client {
     // TODO: REFACTOR THIS LATER.
     if (msg.messageText === `!${this.name}`) {
       const msgBot = { ...msg }
-      msgBot.messageText = '@@bot'
+      msgBot.messageText = `${this.commandPrefix}bot`
 
       const hasSetCooldown = this.cooldown(msg)
 

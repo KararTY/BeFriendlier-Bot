@@ -1,6 +1,5 @@
-import { MessageType, ROLLMATCH } from 'befriendlier-shared'
+import { ROLLMATCH } from 'befriendlier-shared'
 import { PrivmsgMessage } from 'dank-twitch-irc'
-import messagesText from '../messagesText'
 import DefaultHandler from './DefaultHandler'
 
 export default class MoreHandler extends DefaultHandler {
@@ -8,7 +7,7 @@ export default class MoreHandler extends DefaultHandler {
 
   public prefix = ['more']
 
-  public helpText = () => messagesText.helpText.more
+  public helpText = () => this.i18n(this.messagesText.helpText.more)
 
   public async onCommand (msg: PrivmsgMessage) {
     const responseMessage = this.getNameAndIds(msg) as ROLLMATCH
@@ -19,7 +18,7 @@ export default class MoreHandler extends DefaultHandler {
       this.twitch.sendMessage(
         responseMessage.channelTwitch,
         responseMessage.userTwitch,
-        messagesText.notInitializedARoll,
+        this.i18n(this.messagesText.notInitializedARoll),
       )
       return
     }

@@ -1,5 +1,5 @@
 import { Logger } from '@adonisjs/logger/build/standalone'
-import { BASE } from 'befriendlier-shared'
+import { BASE, Emote } from 'befriendlier-shared'
 import { PrivmsgMessage, WhisperMessage } from 'dank-twitch-irc'
 import messagesText from '../messagesText'
 import Client from '../Twitch'
@@ -8,13 +8,19 @@ import Ws from '../Ws'
 export default class DefaultHandler {
   protected readonly twitch: Client
   protected readonly ws: Ws
+  protected readonly messagesText = messagesText
   protected readonly logger: Logger
 
   public messageType = 'DEFAULT'
   public prefix: string[] = []
   public adminOnly = false
 
-  public helpText = () => messagesText.helpText.none
+  public cachedTwitch = {
+    nextUpdate: Date.now(),
+    emotes: [] as Emote[]
+  }
+
+  public helpText = () => this.i18n(this.messagesText.helpText.none)
 
   constructor (twitch: Client, ws: Ws, logger: Logger) {
     this.twitch = twitch
@@ -37,6 +43,28 @@ export default class DefaultHandler {
         id: msg.channelID,
       },
     }
+  }
+
+  // TODO: Finish i18n implementation.
+  public i18n (text: string) {
+    return text.replace(/%prefix%/g, this.twitch.commandPrefix)
+  }
+
+  public async getEmotes () {
+    let emotes: Emote[] = this.cachedTwitch.emotes
+
+    if (Date.now() > this.cachedTwitch.nextUpdate) {
+      const resEmotes = await this.twitch.api.getGlobalEmotes(this.twitch.token.superSecret)
+      if (resEmotes !== null) this.cachedTwitch.emotes = resEmotes
+      emotes = this.cachedTwitch.emotes
+      this.cachedTwitch.nextUpdate = Date.now() + 21600000 // 6 h
+    }
+
+    return emotes
+  }
+
+  public noPingsStr (str: string) {
+    return str.substr(0, 1) + '\u{E0000}' + str.substr(1)
   }
 
   public async onCommand (_msg?: PrivmsgMessage, _words?: string[]) {}

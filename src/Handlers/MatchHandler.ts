@@ -1,6 +1,5 @@
 import { BASE, MessageType } from 'befriendlier-shared'
 import { PrivmsgMessage } from 'dank-twitch-irc'
-import messagesText from '../messagesText'
 import DefaultHandler from './DefaultHandler'
 
 export default class MatchHandler extends DefaultHandler {
@@ -8,7 +7,7 @@ export default class MatchHandler extends DefaultHandler {
 
   public prefix = ['match', 'yes']
 
-  public helpText = () => messagesText.helpText.match
+  public helpText = () => this.i18n(this.messagesText.helpText.match)
 
   public async onCommand (msg: PrivmsgMessage) {
     const responseMessage = this.getNameAndIds(msg)
@@ -19,7 +18,7 @@ export default class MatchHandler extends DefaultHandler {
       this.twitch.sendMessage(
         responseMessage.channelTwitch,
         responseMessage.userTwitch,
-        messagesText.notInitializedARoll,
+        this.i18n(this.messagesText.notInitializedARoll),
       )
       return
     }

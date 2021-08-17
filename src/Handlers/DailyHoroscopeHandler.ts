@@ -3,7 +3,6 @@ import fs from 'fs'
 import fetch from 'got'
 import os from 'os'
 import path from 'path'
-import messagesText from '../messagesText'
 import DefaultHandler from './DefaultHandler'
 
 enum Sign {
@@ -35,7 +34,7 @@ export default class DailyHoroscopeHandler extends DefaultHandler {
 
   public helpText = () => {
     const signs = Object.values(Sign).map(sign => String(sign))
-    return messagesText.helpText.horoscope.replace('%s', signs.join(', '))
+    return this.i18n(this.messagesText.helpText.horoscope.replace('%s', signs.join(', ')))
   }
 
   private readonly horoscopes: Horoscope[] = []
@@ -73,7 +72,7 @@ export default class DailyHoroscopeHandler extends DefaultHandler {
           this.twitch.sendMessage(
             responseMessage.channelTwitch,
             responseMessage.userTwitch,
-            messagesText.noHoroscope,
+            this.i18n(this.messagesText.noHoroscope),
           )
           return
         }
@@ -94,7 +93,7 @@ export default class DailyHoroscopeHandler extends DefaultHandler {
         this.twitch.sendMessage(
           responseMessage.channelTwitch,
           responseMessage.userTwitch,
-          messagesText.noHoroscope,
+          this.i18n(this.messagesText.noHoroscope),
         )
         return
       }

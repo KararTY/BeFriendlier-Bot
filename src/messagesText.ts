@@ -1,17 +1,17 @@
 const messagesText = {
-  notInitializedARoll: 'you\'ve not rolled a match yet, use @@swipe or @@roll first.',
+  notInitializedARoll: 'you\'ve not rolled a match yet, use %prefix%swipe or %prefix%roll first.',
   bioTooLong: 'your bio is too long. 128 characters max.',
   bioTooShort: 'your bio is too short. 3 minimum characters.',
   twitchUserNotFound: 'could not find that user on Twitch.',
   takeABreak: 'take a break! You\'re currently on a cooldown period.',
-  unregistered: 'you\'re not registered! DM me "@@register" for more information.',
+  unregistered: 'you\'re not registered! DM me "%prefix%register" for more information.',
   noHoroscope: 'no horoscope today! Check back tomorrow?',
   sameUser: 'recipient user is the same user as you.',
   noEmotes: 'you\'ve not entered any Twitch emotes in your message.',
   registrationDisclaimer: 'By registering, you accept BeFriendlier\'s Privacy Policy https://befriendlier.app/privacy and Terms of Service https://befriendlier.app/terms'
-    + ' We save some of your public Twitch data on BeFriendlier\'s server, and by registering you\'re creating an account on the website. Reply with "@@register accept" to accept the Privacy policy and Terms of Service.',
+    + ' We save some of your public Twitch data on BeFriendlier\'s server, and by registering you\'re creating an account on the website. Reply with "%prefix%register accept" to accept the Privacy policy and Terms of Service.',
   registrationSuccessful: 'Welcome to BeFriendlier! You can now use the bot and match with other people & collect emotes.'
-    + ' Don\'t forget to set your profile\'s @@bio and @@emotes! If you want to set your user\'s favorite streamers, you must do it via the website.'
+    + ' Don\'t forget to set your profile\'s ${prefix}bio and ${prefix}emotes! If you want to set your user\'s favorite streamers, you must do it via the website.'
     + ' YOU MUST LOGIN VIA THE WEBSITE TO ENABLE YOUR GLOBAL PROFILE. Read more on website or on my Twitch profile page.',
   alreadyRegistered: 'You\'re already registered! You can now peruse the bot and website.',
   whispersOnly: 'this command can only be used via whispers!',
@@ -32,7 +32,7 @@ const messagesText = {
     giveEmotes: 'lets you trade your emotes with another BeFriendlier user. (<recipient name> <amount> <emote name>)',
     register: 'creates an account for you on BeFriendlier\'s website befriendlier(dot)app and allows you to use the bot.'
       + ' Can only be used via whisper.'
-  },
+  }
 }
 
 export default messagesText

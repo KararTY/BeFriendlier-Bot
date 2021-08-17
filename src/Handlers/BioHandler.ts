@@ -1,6 +1,5 @@
 import { BASE, BIO, MessageType } from 'befriendlier-shared'
 import { PrivmsgMessage } from 'dank-twitch-irc'
-import messagesText from '../messagesText'
 import DefaultHandler from './DefaultHandler'
 
 export default class BioHandler extends DefaultHandler {
@@ -8,7 +7,7 @@ export default class BioHandler extends DefaultHandler {
 
   public prefix = ['bio']
 
-  public helpText = () => messagesText.helpText.bio
+  public helpText = () => this.i18n(this.messagesText.helpText.bio)
 
   public async onCommand (msg: PrivmsgMessage, words: string[]) {
     const responseMessage = this.getNameAndIds(msg) as BIO
@@ -32,19 +31,19 @@ export default class BioHandler extends DefaultHandler {
 
     const bioText = message.messageText
 
-    if (bioText.length > 1) {
+    if (bioText.length >= 1) {
       if (bioText.length > 127) {
         this.twitch.sendMessage(
           responseMessage.channelTwitch,
           responseMessage.userTwitch,
-          messagesText.bioTooLong,
+          this.i18n(this.messagesText.bioTooLong),
         )
         return
       } else if (bioText.length < 3) {
         this.twitch.sendMessage(
           responseMessage.channelTwitch,
           responseMessage.userTwitch,
-          messagesText.bioTooShort,
+          this.i18n(this.messagesText.bioTooShort),
         )
         return
       }
