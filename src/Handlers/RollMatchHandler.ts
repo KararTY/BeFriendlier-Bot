@@ -18,7 +18,7 @@ export default class RollMatchHandler extends DefaultHandler {
     const foundUserRoll = this.twitch.getUserInstance(msg)
 
     if (foundUserRoll !== undefined) {
-      await this.twitch.sendWhisper(responseMessage.userTwitch, this.i18n(this.messagesText.alreadyRolling))
+      await this.twitch.sendMessage(responseMessage.channelTwitch, responseMessage.userTwitch, this.i18n(this.messagesText.alreadyRolling))
       return
     }
 
