@@ -109,6 +109,7 @@ export default class Client {
   private readonly invisibleSuffix = ' \u{000e0000}'
 
   public readonly api: TwitchAuth
+  public readonly pajbotAPI: PajbotAPI
   public readonly packageJSON: any
   public token: Token
 
