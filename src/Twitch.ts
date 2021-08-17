@@ -122,7 +122,7 @@ export class RollInstance {
 
 let cooldowns = {
   user: 7500,
-  channel: 2500,
+  channel: 5000,
   whisper: 2500
 }
 
