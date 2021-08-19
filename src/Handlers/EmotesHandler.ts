@@ -27,7 +27,7 @@ export default class EmotesHandler extends DefaultHandler {
     }).slice(0, 5)
 
     // If user is trying to change their global emotes.
-    responseMessage.global = words[0] === 'global'
+    responseMessage.global = this.isGlobal(responseMessage.channelTwitch, words)
 
     this.ws.sendMessage(this.messageType, JSON.stringify(responseMessage))
   }

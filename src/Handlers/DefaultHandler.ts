@@ -1,5 +1,5 @@
 import { Logger } from '@adonisjs/logger/build/standalone'
-import { BASE, Emote } from 'befriendlier-shared'
+import { BASE, Emote, NameAndId } from 'befriendlier-shared'
 import { PrivmsgMessage, WhisperMessage } from 'dank-twitch-irc'
 import messagesText from '../messagesText'
 import Client from '../Twitch'
@@ -34,7 +34,7 @@ export default class DefaultHandler {
         name: msg.senderUsername,
         id: msg.senderUserID,
       },
-      channelTwitch: msg instanceof WhisperMessage ? {
+      channelTwitch: (msg instanceof WhisperMessage || !msg.channelID) ? {
         // Set "global" Befriendlier channel.
         name: this.twitch.name,
         id: this.twitch.id
@@ -65,6 +65,10 @@ export default class DefaultHandler {
 
   public noPingsStr (str: string) {
     return str.substr(0, 1) + '\u{E0000}' + str.substr(1)
+  }
+
+  public isGlobal (channelTwitch: NameAndId, words: string[]) {
+    return (channelTwitch.id === this.twitch.id) || (words[0] === 'global')
   }
 
   public async onCommand (_msg?: PrivmsgMessage, _words?: string[]) {}

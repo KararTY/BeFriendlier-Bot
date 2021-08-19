@@ -22,7 +22,7 @@ export default class BioHandler extends DefaultHandler {
       }
     }
 
-    if (words[0] === 'global') {
+    if (this.isGlobal(responseMessage.channelTwitch, words)) {
       message.messageText = message.messageText.split(' ').slice(2).join(' ')
       responseMessage.global = true
     } else {

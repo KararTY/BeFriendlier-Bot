@@ -22,7 +22,7 @@ export default class RollMatchHandler extends DefaultHandler {
       return
     }
 
-    if (words[0] === 'global' || responseMessage.channelTwitch.id === this.twitch.id) {
+    if (this.isGlobal(responseMessage.channelTwitch, words)) {
       responseMessage.global = true
     }
 
