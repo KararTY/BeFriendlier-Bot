@@ -24,6 +24,29 @@ export default class BioHandler extends DefaultHandler {
 
     if (this.isGlobal(responseMessage.channelTwitch, words)) {
       message.messageText = message.messageText.split(' ').slice(2).join(' ')
+
+      this.twitch.userCooldowns.set(msg.senderUserID, new Date(Date.now() + 60000))
+
+      // Check pajbots.
+      const pajbotCheck = await this.twitch.pajbotAPI.check(responseMessage.channelTwitch.name, this.twitch.filterMsg(message.messageText))
+      const pajbot2Check = await this.twitch.pajbotAPI.checkVersion2(responseMessage.channelTwitch.name, this.twitch.filterMsg(message.messageText))
+
+      if (pajbotCheck?.banned || pajbot2Check?.banned) {
+        this.twitch.sendMessage(
+          responseMessage.channelTwitch,
+          responseMessage.userTwitch,
+          this.i18n(this.messagesText.bannedPhrases),
+        )
+        return
+      } else if (pajbotCheck === null || pajbot2Check === null) {
+        this.twitch.sendMessage(
+          responseMessage.channelTwitch,
+          responseMessage.userTwitch,
+          this.i18n(this.messagesText.bannedPhrases),
+        )
+        return
+      }
+
       responseMessage.global = true
     } else {
       message.messageText = message.messageText.split(' ').slice(1).join(' ')

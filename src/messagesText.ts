@@ -17,6 +17,8 @@ const messagesText = {
   whispersOnly: 'this command can only be used via whispers!',
   ood: 'that\'s all that\'s written.',
   alreadyRolling: 'you\'re already rolling for a match! Reply with %prefix%more, %prefix%match, %prefix%no',
+  bannedPhrases: 'that contains banned phrases. Please double check your input.',
+  banphraseAPIOffline: 'the banphrase API is offline, cannot comply.',
   helpText: {
     help: 'rubber ducky 🦆 Never lucky.',
     emotes: 'sets your favorite emotes for your profile. Add "global" in the beginning to change your global profile\'s bio. Only Twitch emotes work for now.',

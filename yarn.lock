@@ -763,7 +763,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^4.28.5
     "@typescript-eslint/parser": ^4.28.5
     adonis-preset-ts: ^2.1.0
-    befriendlier-shared: "kararty/BeFriendlier-Shared#ff78362075b977f92957a63b73d8e690883b34a4"
+    befriendlier-shared: "kararty/BeFriendlier-Shared#208abd914572a6f0a8621c4c4d2b4969f2801760"
     bufferutil: ^4.0.3
     copyfiles: ^2.4.1
     dank-twitch-irc: ^4.3.0
@@ -792,13 +792,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"befriendlier-shared@kararty/BeFriendlier-Shared#ff78362075b977f92957a63b73d8e690883b34a4":
+"befriendlier-shared@kararty/BeFriendlier-Shared#208abd914572a6f0a8621c4c4d2b4969f2801760":
   version: 6.4.0
-  resolution: "befriendlier-shared@https://github.com/kararty/BeFriendlier-Shared.git#commit=ff78362075b977f92957a63b73d8e690883b34a4"
+  resolution: "befriendlier-shared@https://github.com/kararty/BeFriendlier-Shared.git#commit=208abd914572a6f0a8621c4c4d2b4969f2801760"
   dependencies:
     "@adonisjs/logger": ^2.1.0
     got: ^11.8.2
-  checksum: ba7eae962ddcaf7d092f54bf00771543672f3623354c811a8b906d1d266f28644d018b6246012c0b14fbd52ce7a3f089ce7229e806bde2959b176505874d871a
+  checksum: 93234f8f5228245b1822b7ff16fa9e565a3571514de9de9bcef36a48034920768da2763ab0ac67f76c3869bbcb15da39c6439ff89defc903586ff430098e3fb3
   languageName: node
   linkType: hard
 

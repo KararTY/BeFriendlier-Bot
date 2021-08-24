@@ -245,11 +245,31 @@ export default class Client {
 
     const pajbotCheck = await this.pajbotAPI.check(foundChannel.name, this.filterMsg(message))
 
-    if (pajbotCheck && pajbotCheck.banned) {
+    let checkMessages: string[] = []
+
+    if (pajbotCheck?.banned) {
       // banphrase_data appears on banned === true
       // const banphraseData = pajbotCheck.banphrase_data as { phrase: string }
       this.logger.warn('"%s" contains bad words (%s)', message, JSON.stringify(pajbotCheck.banphrase_data))
-      message = 'message contains banned phrases.'
+      checkMessages.push('message contains banned phrases.')
+    } else if (pajbotCheck === null) {
+      checkMessages.push('Banphrase API is offline.')
+    }
+
+    const pajbot2Check = await this.pajbotAPI.checkVersion2(foundChannel.name, this.filterMsg(message))
+    if (pajbot2Check?.banned) {
+      // banphrase_data appears on banned === true
+      // const banphraseData = pajbotCheck.banphrase_data as { phrase: string }
+      this.logger.warn('"%s" contains bad words (%s)', message, JSON.stringify(pajbot2Check.filter_data))
+      checkMessages.push('(v2) message contains banned phrases.')
+    } else if (pajbotCheck === null) {
+      checkMessages.push('Banphrase v2 API is offline.')
+    }
+  
+    if (checkMessages.length > 0) {
+      message = checkMessages.join(' \r\n')
+      this.userCooldowns.set(user.id, new Date(Date.now() + 60000))
+      this.removeUserInstance({ channelTwitch: channel, userTwitch: user })
     }
 
     foundChannel.addInvisibleSuffix = !foundChannel.addInvisibleSuffix // Flip
@@ -369,11 +389,11 @@ export default class Client {
   }
 
   // Remove some characters.
-  private filterMsg (messageText: string) {
+  public filterMsg (messageText: string) {
     return messageText.normalize().replace(/[\uE000-\uF8FF]+/gu, '').replace(/[\u{000e0000}]/gu, '').trim()
   }
 
-  private cooldown (msg: PrivmsgMessage | WhisperMessage) {
+  private cooldown (msg: PrivmsgMessage | WhisperMessage, customCooldown?: number) {
     const isWhisper = msg instanceof WhisperMessage || !(msg.channelID)
     const dateNow = Date.now()
 
@@ -398,7 +418,7 @@ export default class Client {
 
     if (cooldown <= 0) {
       foundChannelCooldown.cooldown = new Date(dateNow + (isWhisper ? cooldowns.whisper : cooldowns.channel))
-      this.userCooldowns.set(msg.senderUserID, new Date(dateNow + (isWhisper ? cooldowns.whisper : cooldowns.user)))
+      this.userCooldowns.set(msg.senderUserID, new Date(dateNow + (customCooldown ? customCooldown : (isWhisper ? cooldowns.whisper : cooldowns.user))))
       return true
     } else return false
   }
