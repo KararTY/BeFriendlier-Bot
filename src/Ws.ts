@@ -1,5 +1,5 @@
-import bourne from '@hapi/bourne'
-import { Logger } from '@adonisjs/logger/build/standalone'
+import sjp from 'secure-json-parse'
+import { Logger } from '@adonisjs/logger'
 import { schema } from '@adonisjs/validator/build/src/Schema'
 import { validator } from '@adonisjs/validator/build/src/Validator'
 import { MessageType } from 'befriendlier-shared'
@@ -67,7 +67,7 @@ export default class Bot {
     let json
 
     try {
-      json = bourne.parse(data as string, null, { protoAction: 'remove' })
+      json = sjp.parse(data as string, null, { protoAction: 'remove' })
     } catch (error) {
       this.logger.error({ err: error }, 'Ws.onMessage(): Error with parsing websocket data.')
       // Data's not JSON.

@@ -1,5 +1,5 @@
 /* eslint-disable no-void */
-import { Logger } from '@adonisjs/logger/build/standalone'
+import { Logger } from '@adonisjs/logger'
 import { BASE, Emote, MessageType, More, NameAndId, PajbotAPI, TwitchAuth } from 'befriendlier-shared'
 import {
   ChatClient,

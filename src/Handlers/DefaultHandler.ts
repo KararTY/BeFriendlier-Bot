@@ -1,4 +1,4 @@
-import { Logger } from '@adonisjs/logger/build/standalone'
+import { Logger } from '@adonisjs/logger'
 import { BASE, Emote, NameAndId } from 'befriendlier-shared'
 import { PrivmsgMessage, WhisperMessage } from 'dank-twitch-irc'
 import messagesText from '../messagesText'
@@ -64,7 +64,7 @@ export default class DefaultHandler {
   }
 
   public noPingsStr (str: string) {
-    return str.substr(0, 1) + '\u{E0000}' + str.substr(1)
+    return str.substring(0, 1) + '\u{E0000}' + str.substring(1)
   }
 
   public isGlobal (channelTwitch: NameAndId, words: string[]) {

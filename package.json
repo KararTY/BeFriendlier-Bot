@@ -20,39 +20,40 @@
   },
   "homepage": "https://github.com/KararTY/BeFriendlier-Bot#readme",
   "devDependencies": {
-    "@types/node": "^16.4.7",
+    "@types/node": "^16.11.11",
     "@types/ws": "^7.4.7",
-    "@typescript-eslint/eslint-plugin": "^4.28.5",
-    "@typescript-eslint/parser": "^4.28.5",
+    "@typescript-eslint/eslint-plugin": "^5.5.0",
+    "@typescript-eslint/parser": "^5.5.0",
     "adonis-preset-ts": "^2.1.0",
     "copyfiles": "^2.4.1",
-    "eslint": "^7.31.0",
+    "eslint": "^8.4.0",
     "eslint-config-standard": "^16.0.3",
-    "eslint-config-standard-with-typescript": "^20.0.0",
-    "eslint-plugin-adonis": "^1.3.3",
-    "eslint-plugin-import": "^2.23.4",
+    "eslint-config-standard-with-typescript": "^21.0.1",
+    "eslint-plugin-adonis": "^2.0.0",
+    "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^5.1.0",
+    "eslint-plugin-promise": "^5.2.0",
     "eslint-plugin-standard": "^5.0.0",
-    "pino-pretty": "^5.1.2",
+    "pino-pretty": "^7.2.0",
     "rimraf": "^3.0.2",
-    "standard-version": "^9.3.1",
+    "standard-version": "^9.3.2",
     "ts-node-dev": "^1.1.8",
-    "typescript": "^4.3.5"
+    "typescript": "^4.5.2"
   },
   "dependencies": {
-    "@adonisjs/env": "^1.0.18",
-    "@adonisjs/logger": "^2.1.0",
-    "@adonisjs/validator": "^7.4.0",
-    "befriendlier-shared": "kararty/BeFriendlier-Shared#208abd914572a6f0a8621c4c4d2b4969f2801760",
+    "@adonisjs/env": "^3.0.5",
+    "@adonisjs/logger": "^4.1.1",
+    "@adonisjs/validator": "^12.1.1",
+    "befriendlier-shared": "git+https://github.com/kararty/befriendlier-shared.git#e86f3c6bf516321f2b585ed53dcf42eeb0fcfe2b",
     "dank-twitch-irc": "^4.3.0",
-    "got": "^11.8.2",
+    "got": "^11.8.3",
     "p-queue": "^6.6.2",
+    "secure-json-parse": "^2.4.0",
     "ws": "^7.5.3"
   },
   "optionalDependencies": {
-    "bufferutil": "^4.0.3",
-    "utf-8-validate": "^5.0.5"
+    "bufferutil": "^4.0.5",
+    "utf-8-validate": "^5.0.7"
   },
   "packageManager": "yarn@3.0.0"
 }

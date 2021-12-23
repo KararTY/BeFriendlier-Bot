@@ -1,9 +1,8 @@
 // Load env variables
-import { env } from '@adonisjs/env/build/standalone'
-import { Logger } from '@adonisjs/logger/build/standalone'
+import { Logger } from '@adonisjs/logger'
 import { PajbotAPI, TwitchAuth } from 'befriendlier-shared'
 import PajbotConfig from './config/Pajbot'
-import { readdirSync, readFileSync } from 'fs'
+import { readdirSync } from 'fs'
 import path from 'path'
 import TwitchConfig from './config/Twitch'
 import WSConfig from './config/Ws'
@@ -11,7 +10,7 @@ import packageJSON from './package.json'
 import Twitch from './src/Twitch'
 import Ws from './src/Ws'
 
-env.process(readFileSync(path.join(__dirname, '.env'), 'utf-8'))
+import env from './env'
 
 const logger = new Logger({
   name: 'befriendlier-bot',

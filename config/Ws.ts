@@ -1,4 +1,4 @@
-import { Env } from '@adonisjs/env/build/src/Env'
+import { Env } from '@adonisjs/env'
 
 export default class WSConfig {
   public url: string
@@ -8,7 +8,7 @@ export default class WSConfig {
     /**
      * Server url to connect to.
      */
-    this.url = `ws://${env.getOrFail('HOST') as string}:${env.getOrFail('PORT') as string}`
+    this.url = `ws://${env.get('HOST')}:${env.get('PORT')}`
 
     /**
      * HTTP request headers.
