@@ -1,6 +1,6 @@
 import { Logger } from '@adonisjs/logger'
+import { PrivmsgMessage, WhisperMessage } from '@kararty/dank-twitch-irc'
 import { BASE, Emote, NameAndId } from 'befriendlier-shared'
-import { PrivmsgMessage, WhisperMessage } from 'dank-twitch-irc'
 import messagesText from '../messagesText'
 import Client from '../Twitch'
 import Ws from '../Ws'
@@ -87,5 +87,9 @@ export default class DefaultHandler {
     } else {
       this.logger.error(`${this.constructor.name}.onServerResponse(): RECEIVED UNHANDLED MESSAGE: %O`, _res)
     }
+  }
+
+  public getHelpMessage (): string {
+    return `${this.prefix[0]}: ${this.helpText()}`
   }
 }
