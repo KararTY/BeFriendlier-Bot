@@ -1,5 +1,5 @@
+import { PrivmsgMessage } from '@kararty/dank-twitch-irc'
 import { ROLLMATCH } from 'befriendlier-shared'
-import { PrivmsgMessage } from 'dank-twitch-irc'
 import DefaultHandler from './DefaultHandler'
 import { matchText } from './RollMatchHandler'
 

@@ -1,5 +1,5 @@
+import { PrivmsgMessage } from '@kararty/dank-twitch-irc'
 import { MessageType } from 'befriendlier-shared'
-import { PrivmsgMessage } from 'dank-twitch-irc'
 import DefaultHandler from './DefaultHandler'
 
 export default class NoHandler extends DefaultHandler {

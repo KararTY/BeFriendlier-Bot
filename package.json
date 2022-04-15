@@ -11,7 +11,7 @@
     "lint": "ts-standard",
     "format": "ts-standard --fix",
     "release": "standard-version",
-    "update": "git pull && pnpm i --shamefully-hoist && npm run build && pm2 restart Bot"
+    "update": "git pull && npm i && npm run build && pm2 restart Bot"
   },
   "repository": {
     "type": "git",
@@ -38,7 +38,7 @@
     "@adonisjs/logger": "^4.1.4",
     "@adonisjs/validator": "^12.3.1",
     "befriendlier-shared": "git+https://github.com/kararty/befriendlier-shared.git#d92741757fd66dbabbe4eb83232f68ab1850963f",
-    "dank-twitch-irc": "^4.3.0",
+    "@kararty/dank-twitch-irc": "^4.6.0",
     "got": "=11.8.3",
     "p-queue": "=6.6.2",
     "secure-json-parse": "^2.4.0",
