@@ -1,5 +1,5 @@
+import { PrivmsgMessage } from '@kararty/dank-twitch-irc'
 import { Emote, GIVEEMOTES, MessageType } from 'befriendlier-shared'
-import { PrivmsgMessage } from 'dank-twitch-irc'
 import DefaultHandler from './DefaultHandler'
 
 export default class GiveEmotesHandler extends DefaultHandler {
@@ -7,42 +7,52 @@ export default class GiveEmotesHandler extends DefaultHandler {
 
   public prefix = ['giveemotes']
 
-  public helpText = () => this.i18n(this.messagesText.helpText.giveEmotes)
+  public helpText = (): string => this.i18n(this.messagesText.helpText.giveEmotes)
 
-  public async onCommand (msg: PrivmsgMessage, words: string[]) {
+  public async onCommand (msg: PrivmsgMessage, words: string[]): Promise<void> {
     const responseMessage = this.getNameAndIds(msg) as GIVEEMOTES
+
+    if (words[0] === undefined) {
+      void this.twitch.sendMessage(
+        responseMessage.channelTwitch, responseMessage.userTwitch, this.getHelpMessage())
+      return
+    }
 
     // Get user details for provided user.
     const res = await this.twitch.api.getUser(this.twitch.token.superSecret, [words[0]])
-
-    if (res !== null && res.length > 0) {
-      responseMessage.recipientUserTwitch = {
-        id: res[0].id,
-        name: res[0].login,
-      }
-
-      if (responseMessage.recipientUserTwitch.id === responseMessage.userTwitch.id) {
-        return this.twitch.sendMessage(responseMessage.channelTwitch, responseMessage.userTwitch, this.i18n(this.messagesText.sameUser))
-      }
-
-      responseMessage.emotes = this.parseEmotes(msg, words.slice(1))
-
-      if (responseMessage.emotes.length === 0) {
-        return this.twitch.sendMessage(responseMessage.channelTwitch, responseMessage.userTwitch, this.i18n(this.messagesText.noEmotes))
-      }
-
-      this.ws.sendMessage(this.messageType, JSON.stringify(responseMessage))
-    } else {
-      this.twitch.sendMessage(
+    if (res === null || res.length === 0) {
+      void this.twitch.sendMessage(
         responseMessage.channelTwitch, responseMessage.userTwitch, this.i18n(this.messagesText.twitchUserNotFound))
+      return
     }
+
+    responseMessage.recipientUserTwitch = {
+      id: res[0].id,
+      name: res[0].login
+    }
+
+    if (responseMessage.recipientUserTwitch.id === responseMessage.userTwitch.id) {
+      void this.twitch.sendMessage(
+        responseMessage.channelTwitch, responseMessage.userTwitch, this.i18n(this.messagesText.sameUser))
+      return
+    }
+
+    responseMessage.emotes = this.parseEmotes(msg, words.slice(1))
+
+    if (responseMessage.emotes.length === 0) {
+      void this.twitch.sendMessage(
+        responseMessage.channelTwitch, responseMessage.userTwitch, this.i18n(this.messagesText.noEmotes))
+      return
+    }
+
+    this.ws.sendMessage(this.messageType, JSON.stringify(responseMessage))
   }
 
-  public async onServerResponse ({ channelTwitch, userTwitch, result } : GIVEEMOTES) {
-    this.twitch.sendMessage(channelTwitch, userTwitch, String(result.value))
+  public async onServerResponse ({ channelTwitch, userTwitch, result }: GIVEEMOTES): Promise<void> {
+    void this.twitch.sendMessage(channelTwitch, userTwitch, String(result.value))
   }
 
-  public parseEmotes (msg: PrivmsgMessage, words: string[]) {
+  public parseEmotes (msg: PrivmsgMessage, words: string[]): Emote[] {
     // Some kind of god of parsing
     // 10 Kappa
     // 10 Kappa 10 Kappa
@@ -65,7 +75,7 @@ export default class GiveEmotesHandler extends DefaultHandler {
         emotes.push({
           id: emote.id,
           name: emote.code,
-          amount: Number(amount) - 1, // Minus one because we add it later on.
+          amount: Number(amount) - 1 // Minus one because we add it later on.
         })
       } else {
         (existingEmote.amount as number) += Number(amount)
@@ -80,7 +90,7 @@ export default class GiveEmotesHandler extends DefaultHandler {
         emotes.push({
           id: emote.id,
           name: emote.code,
-          amount: 1,
+          amount: 1
         })
       } else {
         (existingEmote.amount as number) += 1
