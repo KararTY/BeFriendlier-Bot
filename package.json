@@ -6,8 +6,10 @@
   "private": true,
   "scripts": {
     "build": "rimraf build/ && tsc -b && copyfiles .env build/",
-    "start": "node build/Index.js",
+    "start": "node build/Index.js --inspect",
     "start-test": "ts-node-dev --respawn --clear --log-error --inspect=\"0\" -- Index.ts",
+    "lint": "ts-standard",
+    "format": "ts-standard --fix",
     "release": "standard-version",
     "update": "git pull && pnpm i --shamefully-hoist && npm run build && pm2 restart Bot"
   },
@@ -20,40 +22,33 @@
   },
   "homepage": "https://github.com/KararTY/BeFriendlier-Bot#readme",
   "devDependencies": {
-    "@types/node": "^16.11.11",
-    "@types/ws": "^7.4.7",
-    "@typescript-eslint/eslint-plugin": "^5.5.0",
-    "@typescript-eslint/parser": "^5.5.0",
+    "@types/node": "^17.0.24",
+    "@types/ws": "^8.5.3",
     "adonis-preset-ts": "^2.1.0",
     "copyfiles": "^2.4.1",
-    "eslint": "^8.4.0",
-    "eslint-config-standard": "^16.0.3",
-    "eslint-config-standard-with-typescript": "^21.0.1",
-    "eslint-plugin-adonis": "^2.0.0",
-    "eslint-plugin-import": "^2.25.3",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^5.2.0",
-    "eslint-plugin-standard": "^5.0.0",
-    "pino-pretty": "^7.2.0",
+    "pino-pretty": "=7.2.0",
     "rimraf": "^3.0.2",
     "standard-version": "^9.3.2",
+    "ts-standard": "^11.0.0",
     "ts-node-dev": "^1.1.8",
-    "typescript": "^4.5.2"
+    "typescript": "^4.6.3"
   },
   "dependencies": {
-    "@adonisjs/env": "^3.0.5",
-    "@adonisjs/logger": "^4.1.1",
-    "@adonisjs/validator": "^12.1.1",
-    "befriendlier-shared": "git+https://github.com/kararty/befriendlier-shared.git#e86f3c6bf516321f2b585ed53dcf42eeb0fcfe2b",
+    "@adonisjs/env": "^3.0.9",
+    "@adonisjs/logger": "^4.1.4",
+    "@adonisjs/validator": "^12.3.1",
+    "befriendlier-shared": "git+https://github.com/kararty/befriendlier-shared.git#d92741757fd66dbabbe4eb83232f68ab1850963f",
     "dank-twitch-irc": "^4.3.0",
-    "got": "^11.8.3",
-    "p-queue": "^6.6.2",
+    "got": "=11.8.3",
+    "p-queue": "=6.6.2",
     "secure-json-parse": "^2.4.0",
-    "ws": "^7.5.3"
+    "ws": "^8.5.0"
   },
   "optionalDependencies": {
-    "bufferutil": "^4.0.5",
-    "utf-8-validate": "^5.0.7"
+    "bufferutil": "^4.0.6",
+    "utf-8-validate": "^5.0.9"
   },
-  "packageManager": "yarn@3.0.0"
+  "ts-standard": {
+    "project": "./tsconfig.json"
+  }
 }
