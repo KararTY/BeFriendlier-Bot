@@ -1,4 +1,4 @@
-import { PrivmsgMessage } from 'dank-twitch-irc'
+import { PrivmsgMessage } from '@kararty/dank-twitch-irc'
 import DefaultHandler from './DefaultHandler'
 
 export default class BotHandler extends DefaultHandler {
