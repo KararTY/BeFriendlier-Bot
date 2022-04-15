@@ -8,11 +8,12 @@ const messagesText = {
   noHoroscope: 'no horoscope today! Check back tomorrow?',
   sameUser: 'recipient user is the same user as you.',
   noEmotes: 'you\'ve not entered any Twitch emotes in your message.',
-  registrationDisclaimer: 'By registering, you accept BeFriendlier\'s Privacy Policy https://befriendlier.app/privacy and Terms of Service https://befriendlier.app/terms'
-    + ' We save some of your public Twitch data on BeFriendlier\'s server, and by registering you\'re creating an account on the website. Reply with "%prefix%register accept" to accept the Privacy policy and Terms of Service.',
-  registrationSuccessful: 'Welcome to BeFriendlier! You can now use the bot and match with other people & collect emotes.'
-    + ' Don\'t forget to set your profile\'s ${prefix}bio and ${prefix}emotes! If you want to set your user\'s favorite streamers, you must do it via the website.'
-    + ' YOU MUST LOGIN VIA THE WEBSITE TO ENABLE YOUR GLOBAL PROFILE. Read more on website or on my Twitch profile page.',
+  registrationDisclaimer: 'By registering, you accept BeFriendlier\'s Privacy Policy https://befriendlier.app/privacy and Terms of Service https://befriendlier.app/terms' +
+    ' We save some of your public Twitch data on BeFriendlier\'s server, and by registering you\'re creating an account on the website. Reply with "%prefix%register accept"' +
+    ' to accept the Privacy policy and Terms of Service.',
+  registrationSuccessful: 'Welcome to BeFriendlier! You can now use the bot and match with other people & collect emotes.' +
+    ' Don\'t forget to set your profile\'s %prefix%bio and %prefix%emotes! If you want to set your user\'s favorite streamers, you must do it via the website.' +
+    ' YOU MUST LOGIN VIA THE WEBSITE TO ENABLE YOUR GLOBAL PROFILE. Read more on website or on my Twitch profile page.',
   alreadyRegistered: 'You\'re already registered! You can now peruse the bot and website.',
   whispersOnly: 'this command can only be used via whispers!',
   ood: 'that\'s all that\'s written.',
@@ -21,9 +22,9 @@ const messagesText = {
   banphraseAPIOffline: 'the banphrase API is offline, cannot comply.',
   helpText: {
     help: 'rubber ducky 🦆 Never lucky.',
-    emotes: 'sets your favorite emotes for your profile. Add "global" in the beginning to change your global profile\'s bio. Only Twitch emotes work for now.',
-    bio: 'sets your profile bio. Add "global" in the beginning to change your global profile\'s bio.',
-    bot: 'mem used: ~%s MB.',
+    emotes: 'see the emotes set for this profile. Only Twitch emotes work for now. Add "global" in the beginning to see your global profile\'s emotes.',
+    profile: 'shows or sets your profile bio & emotes. Add "global" in the beginning to change your global profile\'s bio.',
+    bot: 'mem used: ~%memory% MB.',
     horoscope: 'shows daily horoscope. Available signs: %s.',
     none: 'This command has no help usage.',
     match: 'attempts to match with the profile.',
