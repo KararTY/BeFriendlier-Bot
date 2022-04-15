@@ -6,11 +6,11 @@ export default class WelcomeHandler extends DefaultHandler {
 
   // public prefix = ['']
 
-  public async onCommand () {
+  public async onCommand (): Promise<void> {
     this.ws.sendMessage(this.messageType, '')
   }
 
-  public async onServerResponse () {
+  public async onServerResponse (): Promise<void> {
     await this.onCommand()
   }
 }

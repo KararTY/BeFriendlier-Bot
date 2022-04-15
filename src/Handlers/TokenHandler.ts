@@ -8,7 +8,7 @@ export default class TokenHandler extends DefaultHandler {
 
   // public async onCommand (msg: PrivmsgMessage) {}
 
-  public async onServerResponse (res: Token) {
+  public async onServerResponse (res: Token): Promise<void> {
     this.twitch.token = res
 
     // Login / Relogin to Twitch

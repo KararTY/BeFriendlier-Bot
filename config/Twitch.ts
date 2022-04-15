@@ -31,7 +31,7 @@ export default class TwitchConfig {
      */
     this.user = {
       name: env.get('TWITCH_BOT_NAME') as string,
-      id: env.get('TWITCH_BOT_ID') as string,
+      id: env.get('TWITCH_BOT_ID') as string
     }
 
     /**
@@ -43,7 +43,7 @@ export default class TwitchConfig {
      * HTTP request headers.
      */
     this.headers = {
-      'user-agent': 'befriendlierbot (https://github.com/kararty/befriendlier-bot)',
+      'user-agent': 'befriendlierbot (https://github.com/kararty/befriendlier-bot)'
     }
 
     /**

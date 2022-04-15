@@ -20,7 +20,7 @@ export default class DefaultHandler {
     emotes: [] as Emote[]
   }
 
-  public helpText = () => this.i18n(this.messagesText.helpText.none)
+  public helpText = (): string => this.i18n(this.messagesText.helpText.none)
 
   constructor (twitch: Client, ws: Ws, logger: Logger) {
     this.twitch = twitch
@@ -32,25 +32,27 @@ export default class DefaultHandler {
     return {
       userTwitch: {
         name: msg.senderUsername,
-        id: msg.senderUserID,
+        id: msg.senderUserID
       },
-      channelTwitch: (msg instanceof WhisperMessage || !msg.channelID) ? {
-        // Set "global" Befriendlier channel.
-        name: this.twitch.name,
-        id: this.twitch.id
-      } : {
-        name: msg.channelName,
-        id: msg.channelID,
-      },
+      channelTwitch: (msg instanceof WhisperMessage || typeof msg.channelID === 'undefined')
+        ? {
+            // Set "global" BeFriendlier channel.
+            name: this.twitch.name,
+            id: this.twitch.id
+          }
+        : {
+            name: msg.channelName,
+            id: msg.channelID
+          }
     }
   }
 
   // TODO: Finish i18n implementation.
-  public i18n (text: string) {
+  public i18n (text: string): string {
     return text.replace(/%prefix%/g, this.twitch.commandPrefix)
   }
 
-  public async getEmotes () {
+  public async getEmotes (): Promise<Emote[]> {
     let emotes: Emote[] = this.cachedTwitch.emotes
 
     if (Date.now() > this.cachedTwitch.nextUpdate) {
@@ -63,19 +65,20 @@ export default class DefaultHandler {
     return emotes
   }
 
-  public noPingsStr (str: string) {
+  public noPingsStr (str: string): string {
     return str.substring(0, 1) + '\u{E0000}' + str.substring(1)
   }
 
-  public isGlobal (channelTwitch: NameAndId, words: string[]) {
+  public isGlobal (channelTwitch: NameAndId, words: string[]): boolean {
     return (channelTwitch.id === this.twitch.id) || (words[0] === 'global')
   }
 
-  public async onCommand (_msg?: PrivmsgMessage, _words?: string[]) {}
-  public async onWhisperCommand (_msg?: WhisperMessage, _words?: string[]) {}
+  public async onCommand (_msg?: PrivmsgMessage, _words?: string[]): Promise<void> {}
 
-  public async onServerResponse (_res: any, _raw?: any) {
-    if (_res.data && _res.data.length > 0) {
+  public async onWhisperCommand (_msg?: WhisperMessage, _words?: string[]): Promise<void> {}
+
+  public async onServerResponse (_res: any, _raw?: any): Promise<void> {
+    if (typeof _res.data !== 'undefined' && _res.data.length > 0) {
       const data: BASE = JSON.parse(_res.data)
       this.logger.error(`${this.constructor.name}.onServerResponse(): RECEIVED UNHANDLED MESSAGETYPE [${String(_res.type)}]: %O`, _res)
       if (data.channelTwitch !== undefined && data.userTwitch !== undefined) {

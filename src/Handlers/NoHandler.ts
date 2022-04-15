@@ -7,18 +7,18 @@ export default class NoHandler extends DefaultHandler {
 
   public prefix = ['no', 'mismatch']
 
-  public helpText = () => this.i18n(this.messagesText.helpText.no)
+  public helpText = (): string => this.i18n(this.messagesText.helpText.no)
 
-  public async onCommand (msg: PrivmsgMessage) {
+  public async onCommand (msg: PrivmsgMessage): Promise<void> {
     const responseMessage = this.getNameAndIds(msg)
 
     const foundUserRoll = this.twitch.getUserInstance(msg)
 
     if (foundUserRoll === undefined) {
-      this.twitch.sendMessage(
+      void this.twitch.sendMessage(
         responseMessage.channelTwitch,
         responseMessage.userTwitch,
-        this.i18n(this.messagesText.notInitializedARoll),
+        this.i18n(this.messagesText.notInitializedARoll)
       )
       return
     }

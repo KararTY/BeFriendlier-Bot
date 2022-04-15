@@ -1,22 +1,21 @@
 // Load env variables
 import { Logger } from '@adonisjs/logger'
 import { PajbotAPI, TwitchAuth } from 'befriendlier-shared'
-import PajbotConfig from './config/Pajbot'
 import { readdirSync } from 'fs'
 import path from 'path'
+import PajbotConfig from './config/Pajbot'
 import TwitchConfig from './config/Twitch'
 import WSConfig from './config/Ws'
+import env from './env'
 import packageJSON from './package.json'
 import Twitch from './src/Twitch'
 import Ws from './src/Ws'
-
-import env from './env'
 
 const logger = new Logger({
   name: 'befriendlier-bot',
   enabled: true,
   level: typeof env.get('LOG_LEVEL') === 'string' ? String(env.get('LOG_LEVEL')) : 'info',
-  prettyPrint: env.get('NODE_ENV') === 'development',
+  prettyPrint: env.get('NODE_ENV') === 'development'
 })
 
 // Initialize config values for WS.

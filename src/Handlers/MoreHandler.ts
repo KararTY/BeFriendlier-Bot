@@ -8,25 +8,25 @@ export default class MoreHandler extends DefaultHandler {
 
   public prefix = ['more']
 
-  public helpText = () => this.i18n(this.messagesText.helpText.more)
+  public helpText = (): string => this.i18n(this.messagesText.helpText.more)
 
-  public async onCommand (msg: PrivmsgMessage) {
+  public async onCommand (msg: PrivmsgMessage): Promise<void> {
     const responseMessage = this.getNameAndIds(msg) as ROLLMATCH
 
     const foundUserRoll = this.twitch.getUserInstance(msg)
 
     if (foundUserRoll === undefined) {
-      this.twitch.sendMessage(
+      void this.twitch.sendMessage(
         responseMessage.channelTwitch,
         responseMessage.userTwitch,
-        this.i18n(this.messagesText.notInitializedARoll),
+        this.i18n(this.messagesText.notInitializedARoll)
       )
       return
     }
-    
+
     void matchText(
       { ...responseMessage },
-      { logger: this.logger, twitch: this.twitch, getEmotes: () => this.getEmotes(), i18n: (str) => this.i18n(str), noPingsStr: this.noPingsStr },
+      { logger: this.logger, twitch: this.twitch, getEmotes: async () => await this.getEmotes(), i18n: { messagesText: this.messagesText, parse: (str) => this.i18n(str) }, noPingsStr: this.noPingsStr },
       foundUserRoll
     )
   }

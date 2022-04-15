@@ -8,11 +8,11 @@ export default class TakeABreakHandler extends DefaultHandler {
 
   // public async onCommand (msg: PrivmsgMessage) {}
 
-  public async onServerResponse ({ channelTwitch, userTwitch, result }: BASE) {
-    this.twitch.sendMessage(
+  public async onServerResponse ({ channelTwitch, userTwitch, result }: BASE): Promise<void> {
+    void this.twitch.sendMessage(
       channelTwitch,
       userTwitch,
-      result !== undefined && result.value.length > 0 ? result.value : this.i18n(this.messagesText.takeABreak),
+      result !== undefined && result.value.length > 0 ? result.value : this.i18n(this.messagesText.takeABreak)
     )
 
     this.twitch.removeUserInstance({ channelTwitch, userTwitch })

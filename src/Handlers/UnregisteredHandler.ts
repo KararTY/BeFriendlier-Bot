@@ -8,8 +8,8 @@ export default class UnregisteredHandler extends DefaultHandler {
 
   // public async onCommand (msg: PrivmsgMessage) {}
 
-  public async onServerResponse ({ channelTwitch, userTwitch }: BASE) {
-    this.twitch.sendMessage(channelTwitch, userTwitch, this.i18n(this.messagesText.unregistered))
+  public async onServerResponse ({ channelTwitch, userTwitch }: BASE): Promise<void> {
+    void this.twitch.sendMessage(channelTwitch, userTwitch, this.i18n(this.messagesText.unregistered))
 
     this.twitch.removeUserInstance({ channelTwitch, userTwitch })
   }

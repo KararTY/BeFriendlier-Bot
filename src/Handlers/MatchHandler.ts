@@ -7,18 +7,18 @@ export default class MatchHandler extends DefaultHandler {
 
   public prefix = ['match', 'yes']
 
-  public helpText = () => this.i18n(this.messagesText.helpText.match)
+  public helpText = (): string => this.i18n(this.messagesText.helpText.match)
 
-  public async onCommand (msg: PrivmsgMessage) {
+  public async onCommand (msg: PrivmsgMessage): Promise<void> {
     const responseMessage = this.getNameAndIds(msg)
 
     const foundUserRoll = this.twitch.getUserInstance(msg)
 
     if (foundUserRoll === undefined) {
-      this.twitch.sendMessage(
+      void this.twitch.sendMessage(
         responseMessage.channelTwitch,
         responseMessage.userTwitch,
-        this.i18n(this.messagesText.notInitializedARoll),
+        this.i18n(this.messagesText.notInitializedARoll)
       )
       return
     }
@@ -30,8 +30,8 @@ export default class MatchHandler extends DefaultHandler {
     this.ws.sendMessage(this.messageType, JSON.stringify(responseMessage))
   }
 
-  public async onServerResponse ({ channelTwitch, userTwitch, result }: BASE) {
-    this.twitch.sendMessage(channelTwitch, userTwitch, String(result.value))
+  public async onServerResponse ({ channelTwitch, userTwitch, result }: BASE): Promise<void> {
+    void this.twitch.sendMessage(channelTwitch, userTwitch, String(result.value))
 
     this.twitch.removeUserInstance({ channelTwitch, userTwitch })
   }

@@ -9,10 +9,9 @@
 |
 */
 
+import { Env, EnvParser } from '@adonisjs/env'
 import { readFileSync } from 'fs'
 import path from 'path'
-
-import { Env, EnvParser } from '@adonisjs/env'
 
 const env = new Env([
   {
@@ -35,7 +34,7 @@ env.rules({
   TWITCH_BOT_NAME: env.schema.string(),
   TWITCH_BOT_ID: env.schema.string(),
 
-  ADMINS: env.schema.string(),
+  ADMINS: env.schema.string()
 })
 
 env.process()

@@ -8,7 +8,7 @@ import {
   PrivmsgMessage,
   PrivmsgMessageRateLimiter,
   SlowModeRateLimiter,
-  WhisperMessage,
+  WhisperMessage
 } from 'dank-twitch-irc'
 import PQueue from 'p-queue'
 import TwitchConfig from '../config/Twitch'
@@ -36,7 +36,7 @@ interface UserRollInstance {
 }
 
 interface UserRollInstanceData {
-  profile: Profile,
+  profile: Profile
   user: User
   type?: More
   lastType?: More
@@ -96,21 +96,18 @@ export class RollInstance {
     }
 
     this.global = global
-    this.type = type || More.NONE
+    this.type = type ?? More.NONE
     this.lastType = lastType
   }
 
-  public nextType () {
-    this.lastType = JSON.stringify(this.type) as More
+  public nextType (): void {
+    this.lastType = this.type.toString() as More
 
     switch (this.type) {
       case More.NONE:
         this.type = More.BIO
         break
       case More.BIO:
-        this.type = More.FAVORITEEMOTES
-        break
-      case More.FAVORITEEMOTES:
         this.type = More.FAVORITESTREAMERS
         break
       case More.FAVORITESTREAMERS:
@@ -120,7 +117,7 @@ export class RollInstance {
   }
 }
 
-let cooldowns = {
+const cooldowns = {
   user: 7500,
   channel: 5000,
   whisper: 2500
@@ -191,13 +188,13 @@ export default class Client {
     }
   }
 
-  public async loginToTwitch () {
+  public async loginToTwitch (): Promise<void> {
     this.logger.info('Logging in to Twitch...')
     // We clean off all events, just for precautionary measures.
     if (this.ircClient !== undefined) {
       this.ircClient.removeAllListeners()
-      this.ircClient.close()
-      ;(this.ircClient as any) = undefined
+      this.ircClient.close();
+      (this.ircClient as any) = undefined
     }
 
     // Relogin to chat!
@@ -207,8 +204,8 @@ export default class Client {
       username: this.name,
       connection: {
         type: 'websocket',
-        secure: true,
-      },
+        secure: true
+      }
     })
 
     this.ircClient.use(new SlowModeRateLimiter(this.ircClient))
@@ -237,35 +234,35 @@ export default class Client {
     this.ircClient.on('CLEARMSG', (msg) => this.deleteMessage(msg))
 
     // Finally, connect to Twitch IRC.
-    return this.ircClient.connect()
+    return await this.ircClient.connect()
   }
 
-  public async sendMessage (channel: NameAndId, user: NameAndId, message: string) {
+  public async sendMessage (channel: NameAndId, user: NameAndId, message: string): Promise<void> {
     const foundChannel = this.channels.get(channel.id) as Channel
 
     const pajbotCheck = await this.pajbotAPI.check(foundChannel.name, this.filterMsg(message))
 
-    let checkMessages: string[] = []
+    const checkMessages: string[] = []
 
-    if (pajbotCheck?.banned) {
+    if (pajbotCheck === null) {
+      checkMessages.push('Banphrase API is offline.')
+    } else if (pajbotCheck.banned) {
       // banphrase_data appears on banned === true
       // const banphraseData = pajbotCheck.banphrase_data as { phrase: string }
       this.logger.warn('"%s" contains bad words (%s)', message, JSON.stringify(pajbotCheck.banphrase_data))
       checkMessages.push('message contains banned phrases.')
-    } else if (pajbotCheck === null) {
-      checkMessages.push('Banphrase API is offline.')
     }
 
     const pajbot2Check = await this.pajbotAPI.checkVersion2(foundChannel.name, this.filterMsg(message))
-    if (pajbot2Check?.banned) {
+    if (pajbot2Check === null) {
+      checkMessages.push('Banphrase v2 API is offline.')
+    } else if (pajbot2Check.banned) {
       // banphrase_data appears on banned === true
       // const banphraseData = pajbotCheck.banphrase_data as { phrase: string }
       this.logger.warn('"%s" contains bad words (%s)', message, JSON.stringify(pajbot2Check.filter_data))
       checkMessages.push('(v2) message contains banned phrases.')
-    } else if (pajbotCheck === null) {
-      checkMessages.push('Banphrase v2 API is offline.')
     }
-  
+
     if (checkMessages.length > 0) {
       message = checkMessages.join(' \r\n')
       this.userCooldowns.set(user.id, new Date(Date.now() + 60000))
@@ -278,21 +275,21 @@ export default class Client {
       .catch(error => this.logger.error({ err: error }, 'Twitch.sendMessage()'))
   }
 
-  public async sendWhisper (user: NameAndId, message: string) {
+  public async sendWhisper (user: NameAndId, message: string): Promise<void> {
     return await this.ircClient.whisper(user.name, `${message}`)
   }
 
-  public joinChannel ({ id, name }: NameAndId) {
+  public joinChannel ({ id, name }: NameAndId): void {
     this.channels.set(id, {
       id,
       name: name,
       cooldown: new Date(),
       userRolls: new Map(),
-      addInvisibleSuffix: true,
+      addInvisibleSuffix: true
     })
   }
 
-  public leaveChannel ({ id, name }: NameAndId) {
+  public leaveChannel ({ id, name }: NameAndId): void {
     this.channels.delete(id)
 
     this.ircClient.part(name).then(() => this.logger.info(`Twitch.leaveChannel() -> Twitch.PART: ${name}`)).catch(
@@ -301,16 +298,16 @@ export default class Client {
 
   public setUserInstance (
     { channelID, senderUserID, data }: UserRollInstance,
-    global = false) {
+    global = false): RollInstance {
     this.channels.get(channelID)?.userRolls.set(senderUserID, new RollInstance(data, global))
-    return this.getUserInstance({ channelID, senderUserID } as PrivmsgMessage) as RollInstance
+    return this.getUserInstance({ channelID, senderUserID }) as RollInstance
   }
 
-  public getUserInstance (msg: PrivmsgMessage) {
+  public getUserInstance (msg: { channelID: string, senderUserID: string }): RollInstance | undefined {
     return this.channels.get(msg.channelID)?.userRolls.get(msg.senderUserID)
   }
 
-  public removeUserInstance ({ channelTwitch, userTwitch }: BASE) {
+  public removeUserInstance ({ channelTwitch, userTwitch }: BASE): void {
     const userInstance = this.channels.get(channelTwitch.id)?.userRolls.get(userTwitch.id)
 
     if (userInstance !== undefined) {
@@ -340,7 +337,6 @@ export default class Client {
     }
   }
 
-
   private async prepareMsg (msg: PrivmsgMessage): Promise<void> {
     if (msg.senderUserID === this.id) {
       return
@@ -368,11 +364,12 @@ export default class Client {
 
     if (hasSetCooldown) {
       // Message class has a "clientRef" to "this" so it can call clientRef.onMessage().
-      this.msgs.set(msg.messageID, new Message({ ...msg, messageText: this.filterMsg(msg.messageText) } as PrivmsgMessage, this))
+      const m: PrivmsgMessage = { ...msg, messageText: this.filterMsg(msg.messageText) } as unknown as PrivmsgMessage
+      this.msgs.set(msg.messageID, new Message(m, this))
     }
   }
 
-  private async prepareWhisperMsg (whMsg: WhisperMessage) {
+  private async prepareWhisperMsg (whMsg: WhisperMessage): Promise<void> {
     if (whMsg.senderUserID === this.id) {
       return
     }
@@ -384,31 +381,32 @@ export default class Client {
     const hasSetCooldown = this.cooldown(whMsg)
 
     if (hasSetCooldown) {
-      this.msgs.set(whMsg.messageID, new WhMessage({ ...whMsg, messageText: this.filterMsg(whMsg.messageText) } as WhisperMessage, this))
+      const w: WhisperMessage = { ...whMsg, messageText: this.filterMsg(whMsg.messageText) }
+      this.msgs.set(whMsg.messageID, new WhMessage(w, this))
     }
   }
 
   // Remove some characters.
-  public filterMsg (messageText: string) {
+  public filterMsg (messageText: string): string {
     return messageText.normalize().replace(/[\uE000-\uF8FF]+/gu, '').replace(/[\u{000e0000}]/gu, '').trim()
   }
 
-  private cooldown (msg: PrivmsgMessage | WhisperMessage, customCooldown?: number) {
-    const isWhisper = msg instanceof WhisperMessage || !(msg.channelID)
+  private cooldown (msg: PrivmsgMessage | WhisperMessage, customCooldown?: number): boolean {
+    const isWhisper = msg instanceof WhisperMessage || typeof msg.channelID === 'undefined'
     const dateNow = Date.now()
 
-    const foundChannelCooldown = this.channels.get(isWhisper ? this.id : (msg as PrivmsgMessage).channelID)
+    const foundChannelCooldown = this.channels.get(isWhisper ? this.id : msg.channelID)
     let foundUserCooldown = this.userCooldowns.get(msg.senderUserID)
 
     if (foundChannelCooldown === undefined) {
       if (msg instanceof PrivmsgMessage) {
         this.leaveChannel({ id: msg.channelID, name: msg.channelName })
       } else {
-        this.logger.error({}, 'Twitch.cooldown() -> Could not find "Befriendlier" channel in channels array.')
+        this.logger.error({}, 'Twitch.cooldown() -> Could not find "BeFriendlier" channel in channels array.')
       }
       return false
     }
-    
+
     if (foundUserCooldown === undefined) {
       this.userCooldowns.set(msg.senderUserID, new Date(dateNow))
       foundUserCooldown = this.userCooldowns.get(msg.senderUserID) as Date
@@ -418,12 +416,12 @@ export default class Client {
 
     if (cooldown <= 0) {
       foundChannelCooldown.cooldown = new Date(dateNow + (isWhisper ? cooldowns.whisper : cooldowns.channel))
-      this.userCooldowns.set(msg.senderUserID, new Date(dateNow + (customCooldown ? customCooldown : (isWhisper ? cooldowns.whisper : cooldowns.user))))
+      this.userCooldowns.set(msg.senderUserID, new Date(dateNow + (customCooldown ?? (isWhisper ? cooldowns.whisper : cooldowns.user))))
       return true
     } else return false
   }
 
-  private onServerResponse (res: WsRes) {
+  private onServerResponse (res: WsRes): void {
     const command = this.handlers.find(command => command.messageType === res.type)
 
     if (command === undefined || res.data === undefined) {
@@ -439,21 +437,21 @@ export default class Client {
     void this.generalQueue.add(async () => await command.onServerResponse(data, res), { priority: Date.now() })
   }
 
-  private onServerClosed (data: { type: MessageType, data: string, state: 0 | 2 | 3 }) {
+  private onServerClosed (data: { type: MessageType, data: string, state: 0 | 2 | 3 }): void {
     const responseMessage = (data.state === this.ws.client.CONNECTING)
       ? 'Please wait, service is currently in the process of starting. Try again in a bit!'
       : (data.state === this.ws.client.CLOSING)
-        ? 'service is currently shutting down. Check the website for status updates!'
-        : 'service is currently down! Check the website for status updates!'
+          ? 'service is currently shutting down. Check the website for status updates!'
+          : 'service is currently down! Check the website for status updates!'
 
     const res: BASE = JSON.parse(data.data)
 
-    this.sendMessage(res.channelTwitch, res.userTwitch, responseMessage)
+    void this.sendMessage(res.channelTwitch, res.userTwitch, responseMessage)
 
     this.removeUserInstance(res)
   }
 
-  private deleteMessage (msg: ClearchatMessage | ClearmsgMessage) {
+  private deleteMessage (msg: ClearchatMessage | ClearmsgMessage): void {
     if (msg instanceof ClearchatMessage) {
       if (typeof msg.targetUsername === 'string' && msg.targetUsername === this.name) {
         const channelFound =
@@ -466,7 +464,7 @@ export default class Client {
             senderUsername: '', // These will make userTwitch's variables empty strings.
             senderUserID: '', // =/= Same as above.
             channelName: msg.channelName,
-            channelID: channelFound.id,
+            channelID: channelFound.id
           }
 
           void this.handlers
@@ -486,8 +484,8 @@ export default class Client {
       const removeMsgBool = (msg instanceof ClearchatMessage)
         ? cachedMsg.msg.channelName === msg.channelName
         : (msg instanceof ClearmsgMessage)
-          ? cachedMsg.msg.messageID === msg.targetMessageID
-          : false
+            ? cachedMsg.msg.messageID === msg.targetMessageID
+            : false
 
       if (removeMsgBool) {
         cachedMsg.deleted = true
@@ -496,11 +494,11 @@ export default class Client {
     }
   }
 
-  private onClose (error: Error | undefined) {
+  private onClose (error: Error | undefined): void {
     this.logger.error({
       err: (error !== undefined)
         ? error
-        : { message: 'Closed without any reason.' },
+        : { message: 'Closed without any reason.' }
     }, 'Twitch.onClose()')
 
     this.reconnectAttempts++

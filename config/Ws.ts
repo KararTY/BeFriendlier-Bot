@@ -8,13 +8,13 @@ export default class WSConfig {
     /**
      * Server url to connect to.
      */
-    this.url = `ws://${env.get('HOST')}:${env.get('PORT')}`
+    this.url = `ws://${env.get('HOST') as string}:${env.get('PORT') as string}`
 
     /**
      * HTTP request headers.
      */
     this.headers = {
-      'user-agent': `BEFRIENDLIER-BOT-${process.platform}-${process.pid}`,
+      'user-agent': `BEFRIENDLIER-BOT-${process.platform}-${process.pid}`
     }
   }
 }

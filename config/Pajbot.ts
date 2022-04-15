@@ -4,6 +4,7 @@ export default class PajbotConfig {
     'user-agent': string
     'content-type': string
   }
+
   public enabled: boolean
 
   constructor () {
@@ -11,7 +12,6 @@ export default class PajbotConfig {
      * Enable Pajbot checking.
      */
     this.enabled = true
-
 
     /**
      * Custom pajbot channels - If length === 0 / unset, gets default values.
@@ -24,7 +24,7 @@ export default class PajbotConfig {
      */
     this.headers = {
       'content-type': 'application/json',
-      'user-agent': 'befriendlierbot (https://github.com/kararty/befriendlier-bot)',
+      'user-agent': 'befriendlierbot (https://github.com/kararty/befriendlier-bot)'
     }
   }
 }
