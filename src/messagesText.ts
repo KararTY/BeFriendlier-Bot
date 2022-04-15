@@ -34,8 +34,9 @@ const messagesText = {
     rollMatch: 'initiates a match! Good luck, rubber ducky 🦆 Append "global" to initiate a match with global profiles.',
     unmatch: 'unmatches with the provided user. Append "global" to unmatch with a user in your global profile.',
     giveEmotes: 'lets you trade your emotes with another BeFriendlier user. (<recipient name> <amount> <emote name>)',
-    register: 'creates an account for you on BeFriendlier\'s website befriendlier(dot)app and allows you to use the bot.'
-      + ' Can only be used via whisper.'
+    register: 'creates an account for you on BeFriendlier\'s website befriendlier(dot)app and allows you to use the bot.' +
+      ' Can only be used via whisper.',
+    battle: 'use your battle emotes to fight your matched friends. You must have battle emotes that are still alive. (<opponent name>)'
   }
 }
 

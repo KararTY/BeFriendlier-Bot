@@ -1,6 +1,5 @@
 /* eslint-disable no-void */
 import { Logger } from '@adonisjs/logger'
-import { BASE, Emote, MessageType, More, NameAndId, PajbotAPI, TwitchAuth } from 'befriendlier-shared'
 import {
   ChatClient,
   ClearchatMessage,
@@ -9,7 +8,8 @@ import {
   PrivmsgMessageRateLimiter,
   SlowModeRateLimiter,
   WhisperMessage
-} from 'dank-twitch-irc'
+} from '@kararty/dank-twitch-irc'
+import { BASE, Emote, MessageType, More, NameAndId, PajbotAPI, TwitchAuth } from 'befriendlier-shared'
 import PQueue from 'p-queue'
 import TwitchConfig from '../config/Twitch'
 import DefaultHandler from './Handlers/DefaultHandler'
