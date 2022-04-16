@@ -20,6 +20,9 @@ export default class UnmatchHandler extends DefaultHandler {
       return
     }
 
+    // Letters, numbers, underscore.
+    words[0] = encodeURIComponent(words[0].replace(/[^\w]/g, ''))
+
     // Get user details for provided user.
     const res = await this.twitch.api.getUser(this.twitch.token.superSecret, [words[0]])
     if (res === null || res.length === 0) {
