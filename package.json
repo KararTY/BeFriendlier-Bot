@@ -7,7 +7,7 @@
   "scripts": {
     "build": "rimraf build/ && tsc -b && copyfiles .env build/",
     "start": "node build/Index.js --inspect",
-    "start-test": "ts-node-dev --respawn --clear --log-error --inspect=\"0\" -- Index.ts",
+    "start-test": "ts-node-dev --respawn --clear --log-error --inspect=\"0\" -- index.ts",
     "lint": "ts-standard",
     "format": "ts-standard --fix",
     "release": "standard-version",
