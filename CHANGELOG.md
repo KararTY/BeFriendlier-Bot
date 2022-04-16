@@ -2,6 +2,63 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 0.0.4 (2022-04-16)
+
+
+### Features
+
+* Add battle handler. ([99a9c38](https://github.com/KararTY/BeFriendlier-Bot/commit/99a9c3802bbbf702a6e8d8bd51938f6122482e20))
+* Add getHelpMessage to DefaultHandler ([6ea8aca](https://github.com/KararTY/BeFriendlier-Bot/commit/6ea8aca85ac3e05cacf7a3d04c285de80cb634b4))
+* Add GiveEmotes command. ([937e437](https://github.com/KararTY/BeFriendlier-Bot/commit/937e4376f8efd68c3ce196c84546d632a9d01fe2))
+* Add Pajbot2 checks. ([903f248](https://github.com/KararTY/BeFriendlier-Bot/commit/903f248d3d9bf2b82c0c3bc0d6c61e61788d38f4))
+* Add registration via whispers. ([00fbee1](https://github.com/KararTY/BeFriendlier-Bot/commit/00fbee180b319ce39e5a827a5e1e034c95b12c58))
+* Add WhisperHandler ([472b129](https://github.com/KararTY/BeFriendlier-Bot/commit/472b129b70bd2b1c026e58d48129ae21a66196d5))
+* Allow help command on Whispers ([51f1a9d](https://github.com/KararTY/BeFriendlier-Bot/commit/51f1a9dbb967707935ea18588bf0df3331bdd3a8))
+* Pajbot ban phrase checking for sent messages ([28999f1](https://github.com/KararTY/BeFriendlier-Bot/commit/28999f1a7ca73bb9327952623ca3825022bd2db0))
+* Set the `@[@more](https://github.com/more)` status sent by server. ([274c3cf](https://github.com/KararTY/BeFriendlier-Bot/commit/274c3cf26f9bf1962db8d7399195320a2f29a214))
+* Use WIP i18n implementation ([6f46aab](https://github.com/KararTY/BeFriendlier-Bot/commit/6f46aab2acb59e6bd0a255dbc95aa61375c899c1))
+
+
+### Bug Fixes
+
+* `@[@bio](https://github.com/bio) global` works again. ([4eda859](https://github.com/KararTY/BeFriendlier-Bot/commit/4eda859a60390ee287ad411d2135f54457ba6837))
+* Add a check for no entered emotes. ([fcaa7da](https://github.com/KararTY/BeFriendlier-Bot/commit/fcaa7daddae24791230f871b0e078cba958aa846))
+* Add another check for isWhisper ([8e5365f](https://github.com/KararTY/BeFriendlier-Bot/commit/8e5365f280d8f65da6f088125bdc6ab72a9b4dbc))
+* add aries to horoscope. ([ae56464](https://github.com/KararTY/BeFriendlier-Bot/commit/ae564645567cff24803b2b87616d906817dbc748))
+* Add dots. ([7620bd4](https://github.com/KararTY/BeFriendlier-Bot/commit/7620bd410b937f209f222e2c8e3b151a945cf7c8))
+* Add missing pajbotAPI object in Client class. ([145d37f](https://github.com/KararTY/BeFriendlier-Bot/commit/145d37f5a0f9ce48f0811af058627887519919d9))
+* Add updated messageText:s ([e27835a](https://github.com/KararTY/BeFriendlier-Bot/commit/e27835a6716b4e0ba0fb76d1f2903ed30083e22e))
+* Append global in main channel ([06c4a02](https://github.com/KararTY/BeFriendlier-Bot/commit/06c4a02b886eed7f928f6fe4a252f58671d87f1a))
+* Change messagesText for clarity. ([2f3dc0a](https://github.com/KararTY/BeFriendlier-Bot/commit/2f3dc0aa8bcb4280a0d2833dccfb292e2503badf))
+* DefaultHandler data check ([3b669e8](https://github.com/KararTY/BeFriendlier-Bot/commit/3b669e8c145ee8ea1271888127642512f3fe7c65))
+* Don't send alreadyRolling as a whisper. ([1a93387](https://github.com/KararTY/BeFriendlier-Bot/commit/1a93387bec56a7059f8b404cafc9026a84e3b3e5))
+* Fixed invisibleSuffix affecting emotes ([5f6caab](https://github.com/KararTY/BeFriendlier-Bot/commit/5f6caab521a4070feeda037df444d43cb929297d))
+* let -> const ([10e34d9](https://github.com/KararTY/BeFriendlier-Bot/commit/10e34d9cc96fcb144314d4be8f84e36c66691bf8))
+* Make returned horoscope random if not defined ([a8e61b4](https://github.com/KararTY/BeFriendlier-Bot/commit/a8e61b48ac23fe24da6e7a33ddde1c998b09ae40))
+* Make sure recipient is defined for giveemotes ([01fe4ae](https://github.com/KararTY/BeFriendlier-Bot/commit/01fe4aed3dd5b57d6d5093bb9dcd6dff95140ea0))
+* Make sure target is defined for JoinChatHandler ([b73178e](https://github.com/KararTY/BeFriendlier-Bot/commit/b73178ee42774affb32225f64fd83f6a386c6d07))
+* Make sure target is defined for UnmatchHandler ([ce8096b](https://github.com/KararTY/BeFriendlier-Bot/commit/ce8096b27c9b6771539bd52cfa1f1f367cd9fdd9))
+* Make sure user cooldown is global. ([c48e557](https://github.com/KararTY/BeFriendlier-Bot/commit/c48e557decdf9a05ee1f1a6f2847c76fa909a8e2))
+* Module directory has to be relative. ([d5f1a2d](https://github.com/KararTY/BeFriendlier-Bot/commit/d5f1a2d1eb06020e579707939928721179dadc81))
+* New ws version, uses buffers ([6659da8](https://github.com/KararTY/BeFriendlier-Bot/commit/6659da8150691f1bd516e4a54932cf34b21b031d))
+* No more "hello" matches or non-emote matches. ([b4b1bc4](https://github.com/KararTY/BeFriendlier-Bot/commit/b4b1bc4cacd7f9fdb6a814d4d291459fc9e73fe0))
+* No more crash on reconnect. ([104c972](https://github.com/KararTY/BeFriendlier-Bot/commit/104c97268a5a75a4f18b87d0819e3390cd93f3d5))
+* No need to show website ping if less than 10. ([df186ea](https://github.com/KararTY/BeFriendlier-Bot/commit/df186eaedcc82ca30128ec920d46f86e04943166))
+* Post something on match for people to see. ([622d6f4](https://github.com/KararTY/BeFriendlier-Bot/commit/622d6f49d69356f7d373f6aacf5c11f3e74040ed))
+* Prevent timeout in forsen's chat. ([1ed5d27](https://github.com/KararTY/BeFriendlier-Bot/commit/1ed5d27aadb00113ca65c97da4bf20c7be6700e7))
+* Properly whisper to matched user. ([e63560e](https://github.com/KararTY/BeFriendlier-Bot/commit/e63560e8e409833165fb34f0310a545f8ecb91d2))
+* reduce cooldowns by 50% ([46716e1](https://github.com/KararTY/BeFriendlier-Bot/commit/46716e177d01cf0f89f47c687f306b2cd55ea1e7))
+* Refactor some static strings to messagesText.ts ([95ab939](https://github.com/KararTY/BeFriendlier-Bot/commit/95ab939432187b1848cb00be916f3d9e78cecfc5))
+* Send a text if people get repeated data. ([92f5ca9](https://github.com/KararTY/BeFriendlier-Bot/commit/92f5ca9eda361b8c30f6fa265e297df2c7144be7))
+* Simplify profile creation. ([8cacb79](https://github.com/KararTY/BeFriendlier-Bot/commit/8cacb79be1c5c841213d92b6c2a19b9c45d124f1))
+* twitch.id -> twitch.name & Delete dots. ([1a0ad45](https://github.com/KararTY/BeFriendlier-Bot/commit/1a0ad45aa64c2c7b3bb7b8fb794c26fab4aed0c2))
+* twitchUserNotFound -> whispersOnly ([a3088af](https://github.com/KararTY/BeFriendlier-Bot/commit/a3088afee70624ced7efcc033870b6e98faef97c))
+* Update shared to make PajbotAPI work. ([6cd6c60](https://github.com/KararTY/BeFriendlier-Bot/commit/6cd6c6031cdb2ef6cc04edbd8e4811d01d29827e))
+* Upgrade logging, upgrade .env handling ([7a40f14](https://github.com/KararTY/BeFriendlier-Bot/commit/7a40f1425c1daf0d4720c74a0bbeea1315544715))
+* use hapi/bourne for json parsing from server ([b19bfb0](https://github.com/KararTY/BeFriendlier-Bot/commit/b19bfb079592f7fa2abb0f2992212bae4970bcb7))
+* Use messageType ([f9efd28](https://github.com/KararTY/BeFriendlier-Bot/commit/f9efd288f700fb645fe3effce479688765764ebc))
+* Whispers should work again. ([605d689](https://github.com/KararTY/BeFriendlier-Bot/commit/605d689206379932b5f032cbac08004d2c6ac47b))
+
 ### 0.0.2 (2020-08-17)
 
 
