@@ -2,11 +2,11 @@
   "name": "befriendlier-bot",
   "version": "0.0.4",
   "description": "Twitch bot serving commands to the befriendlier.app service.",
-  "main": "Index.ts",
+  "main": "index.ts",
   "private": true,
   "scripts": {
     "build": "rimraf build/ && tsc -b && copyfiles .env build/",
-    "start": "node build/Index.js --inspect",
+    "start": "node build/index.js --inspect",
     "start-test": "ts-node-dev --respawn --clear --log-error --inspect=\"0\" -- index.ts",
     "lint": "ts-standard",
     "format": "ts-standard --fix",
