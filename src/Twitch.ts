@@ -1,6 +1,5 @@
 /* eslint-disable no-void */
-import { Logger } from '@adonisjs/logger/build/standalone'
-import { BASE, MessageType, More, NameAndId, TwitchAuth } from 'befriendlier-shared'
+import { Logger } from '@adonisjs/logger'
 import {
   ChatClient,
   ClearchatMessage,
@@ -8,7 +7,9 @@ import {
   PrivmsgMessage,
   PrivmsgMessageRateLimiter,
   SlowModeRateLimiter,
-} from 'dank-twitch-irc'
+  WhisperMessage
+} from '@kararty/dank-twitch-irc'
+import { BASE, Emote, MessageType, More, NameAndId, PajbotAPI, TwitchAuth } from 'befriendlier-shared'
 import PQueue from 'p-queue'
 import TwitchConfig from '../config/Twitch'
 import DefaultHandler from './Handlers/DefaultHandler'
@@ -28,6 +29,19 @@ export interface Channel {
   addInvisibleSuffix: boolean
 }
 
+interface UserRollInstance {
+  channelID: string
+  senderUserID: string
+  data: UserRollInstanceData
+}
+
+interface UserRollInstanceData {
+  profile: Profile
+  user: User
+  type?: More
+  lastType?: More
+}
+
 class Message {
   public readonly msg: PrivmsgMessage
   public deleted = false
@@ -43,24 +57,57 @@ class Message {
   }
 }
 
+class WhMessage {
+  public readonly msg: WhisperMessage
+
+  constructor (msg: WhisperMessage, clientRef: any) {
+    this.msg = msg
+
+    // Immediately invoke function.
+    clientRef.onMessage(this)
+  }
+}
+
+export interface User {
+  name: string
+  twitchID: string
+  favorite_streamers: User[]
+}
+
+export interface Profile {
+  enabled: boolean
+  bio: string
+  favorite_emotes: Emote[]
+}
+
 export class RollInstance {
+  public lastType?: More
   public type: More
   public global: boolean
-
-  constructor (global = false) {
-    this.type = More.NONE
-    this.global = global
+  public data: {
+    profile: Profile
+    user: User
   }
 
-  public nextType () {
+  constructor ({ profile, user, type, lastType }: UserRollInstanceData, global = false) {
+    this.data = {
+      profile,
+      user
+    }
+
+    this.global = global
+    this.type = type ?? More.NONE
+    this.lastType = lastType
+  }
+
+  public nextType (): void {
+    this.lastType = this.type.toString() as More
+
     switch (this.type) {
       case More.NONE:
         this.type = More.BIO
         break
       case More.BIO:
-        this.type = More.FAVORITEEMOTES
-        break
-      case More.FAVORITEEMOTES:
         this.type = More.FAVORITESTREAMERS
         break
       case More.FAVORITESTREAMERS:
@@ -70,12 +117,18 @@ export class RollInstance {
   }
 }
 
+const cooldowns = {
+  user: 7500,
+  channel: 5000,
+  whisper: 2500
+}
+
 export default class Client {
   private readonly ws: Ws
   private readonly logger: Logger
 
   public readonly name: string
-  private readonly id: string
+  public readonly id: string
 
   public readonly commandPrefix: string
 
@@ -85,15 +138,16 @@ export default class Client {
 
   private readonly generalQueue = new PQueue({ concurrency: 1 })
 
-  private readonly invisibleSuffix = '\u{000e0000}'
+  private readonly invisibleSuffix = ' \u{000e0000}'
 
   public readonly api: TwitchAuth
+  public readonly pajbotAPI: PajbotAPI
   public readonly packageJSON: any
   public token: Token
 
   public ircClient: ChatClient
 
-  public readonly msgs: Map<string, Message> = new Map()
+  public readonly msgs: Map<string, Message | WhMessage> = new Map()
   public readonly channels: Map<string, Channel> = new Map()
   public readonly userCooldowns: Map<string, Date> = new Map()
 
@@ -102,22 +156,22 @@ export default class Client {
   public readonly admins: string[] | undefined
   public readonly headers: { 'user-agent': string }
 
-  constructor (config: TwitchConfig, ws: Ws, api: TwitchAuth, packageJSON: any, logger: Logger) {
-    this.api = api
+  constructor (config: TwitchConfig, ws: Ws, api: TwitchAuth, pajbotAPI: PajbotAPI, packageJSON: any, logger: Logger) {
+    this.name = config.user.name
+    this.id = config.user.id
+    this.commandPrefix = config.commandPrefix
+    this.admins = config.admins
+    this.headers = config.headers
+
     this.ws = ws
+
+    this.api = api
+
+    this.pajbotAPI = pajbotAPI
 
     this.packageJSON = packageJSON
 
     this.logger = logger
-
-    this.name = config.user.name
-    this.id = config.user.id
-
-    this.commandPrefix = config.commandPrefix
-
-    this.admins = config.admins
-
-    this.headers = config.headers
 
     this.ws.eventEmitter.on('WS.MESSAGE', (data: WsRes) => this.onServerResponse(data))
     this.ws.eventEmitter.on('WS.CLOSED', (data) => this.onServerClosed(data))
@@ -134,13 +188,13 @@ export default class Client {
     }
   }
 
-  public async loginToTwitch () {
+  public async loginToTwitch (): Promise<void> {
     this.logger.info('Logging in to Twitch...')
     // We clean off all events, just for precautionary measures.
     if (this.ircClient !== undefined) {
       this.ircClient.removeAllListeners()
-      this.ircClient.close()
-      ;(this.ircClient as any) = undefined
+      this.ircClient.close();
+      (this.ircClient as any) = undefined
     }
 
     // Relogin to chat!
@@ -150,8 +204,8 @@ export default class Client {
       username: this.name,
       connection: {
         type: 'websocket',
-        secure: true,
-      },
+        secure: true
+      }
     })
 
     this.ircClient.use(new SlowModeRateLimiter(this.ircClient))
@@ -174,16 +228,46 @@ export default class Client {
     this.ircClient.on('error', (error) => this.logger.error({ err: error }, 'Twitch.onError()'))
 
     this.ircClient.on('PRIVMSG', (msg) => void this.prepareMsg(msg))
+    this.ircClient.on('WHISPER', (msg) => void this.prepareWhisperMsg(msg))
 
     this.ircClient.on('CLEARCHAT', (msg) => this.deleteMessage(msg))
     this.ircClient.on('CLEARMSG', (msg) => this.deleteMessage(msg))
 
     // Finally, connect to Twitch IRC.
-    return this.ircClient.connect()
+    return await this.ircClient.connect()
   }
 
-  public sendMessage (channel: NameAndId, user: NameAndId, message: string) {
+  public async sendMessage (channel: NameAndId, user: NameAndId, message: string): Promise<void> {
     const foundChannel = this.channels.get(channel.id) as Channel
+
+    const pajbotCheck = await this.pajbotAPI.check(foundChannel.name, this.filterMsg(message))
+
+    const checkMessages: string[] = []
+
+    if (pajbotCheck === null) {
+      checkMessages.push('Banphrase API is offline.')
+    } else if (pajbotCheck.banned) {
+      // banphrase_data appears on banned === true
+      // const banphraseData = pajbotCheck.banphrase_data as { phrase: string }
+      this.logger.warn('"%s" contains bad words (%s)', message, JSON.stringify(pajbotCheck.banphrase_data))
+      checkMessages.push('message contains banned phrases.')
+    }
+
+    const pajbot2Check = await this.pajbotAPI.checkVersion2(foundChannel.name, this.filterMsg(message))
+    if (pajbot2Check === null) {
+      checkMessages.push('Banphrase v2 API is offline.')
+    } else if (pajbot2Check.banned) {
+      // banphrase_data appears on banned === true
+      // const banphraseData = pajbotCheck.banphrase_data as { phrase: string }
+      this.logger.warn('"%s" contains bad words (%s)', message, JSON.stringify(pajbot2Check.filter_data))
+      checkMessages.push('(v2) message contains banned phrases.')
+    }
+
+    if (checkMessages.length > 0) {
+      message = checkMessages.join(' \r\n')
+      this.userCooldowns.set(user.id, new Date(Date.now() + 60000))
+      this.removeUserInstance({ channelTwitch: channel, userTwitch: user })
+    }
 
     foundChannel.addInvisibleSuffix = !foundChannel.addInvisibleSuffix // Flip
 
@@ -191,37 +275,39 @@ export default class Client {
       .catch(error => this.logger.error({ err: error }, 'Twitch.sendMessage()'))
   }
 
-  public async sendWhisper (user: NameAndId, message: string) {
-    return await this.ircClient.whisper(user.id, `${message}`)
+  public async sendWhisper (user: NameAndId, message: string): Promise<void> {
+    return await this.ircClient.whisper(user.name, `${message}`)
   }
 
-  public joinChannel ({ id, name }: NameAndId) {
+  public joinChannel ({ id, name }: NameAndId): void {
     this.channels.set(id, {
       id,
       name: name,
       cooldown: new Date(),
       userRolls: new Map(),
-      addInvisibleSuffix: true,
+      addInvisibleSuffix: true
     })
   }
 
-  public leaveChannel ({ id, name }: NameAndId) {
+  public leaveChannel ({ id, name }: NameAndId): void {
     this.channels.delete(id)
 
     this.ircClient.part(name).then(() => this.logger.info(`Twitch.leaveChannel() -> Twitch.PART: ${name}`)).catch(
       error => this.logger.error({ err: error }, 'Twitch.leaveChannel() -> Twitch.PART'))
   }
 
-  public createAndGetUserInstance (msg: PrivmsgMessage, global = false) {
-    this.channels.get(msg.channelID)?.userRolls.set(msg.senderUserID, new RollInstance(global))
-    return this.getUserInstance(msg) as RollInstance
+  public setUserInstance (
+    { channelID, senderUserID, data }: UserRollInstance,
+    global = false): RollInstance {
+    this.channels.get(channelID)?.userRolls.set(senderUserID, new RollInstance(data, global))
+    return this.getUserInstance({ channelID, senderUserID }) as RollInstance
   }
 
-  public getUserInstance (msg: PrivmsgMessage) {
+  public getUserInstance (msg: { channelID: string, senderUserID: string }): RollInstance | undefined {
     return this.channels.get(msg.channelID)?.userRolls.get(msg.senderUserID)
   }
 
-  public removeUserInstance ({ channelTwitch, userTwitch }: BASE) {
+  public removeUserInstance ({ channelTwitch, userTwitch }: BASE): void {
     const userInstance = this.channels.get(channelTwitch.id)?.userRolls.get(userTwitch.id)
 
     if (userInstance !== undefined) {
@@ -229,23 +315,25 @@ export default class Client {
     }
   }
 
-  public async onMessage ({ msg, deleted }: Message) {
-    if (deleted) {
+  public async onMessage (m: Message | WhMessage): Promise<void> {
+    if (m instanceof Message && m.deleted) {
       return
     }
 
-    const words = msg.messageText.substring(this.commandPrefix.length).split(' ')
+    const words = m.msg.messageText.substring(this.commandPrefix.length).split(' ')
 
     const foundCommand = this.handlers.filter(command => command.prefix.length !== 0)
       .find(command => command.prefix.includes(words[0].toLowerCase()))
 
     if (foundCommand !== undefined) {
       if (foundCommand.adminOnly &&
-        (this.admins === undefined || !this.admins.includes(msg.senderUsername))) {
+        (this.admins === undefined || !this.admins.includes(m.msg.senderUsername))) {
         return
       }
 
-      void this.generalQueue.add(async () => await foundCommand.onCommand(msg, words.slice(1)))
+      if (m instanceof WhMessage) {
+        void this.generalQueue.add(async () => await foundCommand.onWhisperCommand(m.msg, words.slice(1)))
+      } else void this.generalQueue.add(async () => await foundCommand.onCommand(m.msg, words.slice(1)))
     }
   }
 
@@ -257,7 +345,7 @@ export default class Client {
     // TODO: REFACTOR THIS LATER.
     if (msg.messageText === `!${this.name}`) {
       const msgBot = { ...msg }
-      msgBot.messageText = '@@bot'
+      msgBot.messageText = `${this.commandPrefix}bot`
 
       const hasSetCooldown = this.cooldown(msg)
 
@@ -276,35 +364,64 @@ export default class Client {
 
     if (hasSetCooldown) {
       // Message class has a "clientRef" to "this" so it can call clientRef.onMessage().
-      this.msgs.set(msg.messageID, new Message(msg, this))
+      const m: PrivmsgMessage = { ...msg, messageText: this.filterMsg(msg.messageText) } as unknown as PrivmsgMessage
+      this.msgs.set(msg.messageID, new Message(m, this))
     }
   }
 
-  private cooldown (msg: PrivmsgMessage) {
-    const foundChannel = this.channels.get(msg.channelID)
+  private async prepareWhisperMsg (whMsg: WhisperMessage): Promise<void> {
+    if (whMsg.senderUserID === this.id) {
+      return
+    }
 
+    if (!whMsg.messageText.startsWith(this.commandPrefix)) {
+      return
+    }
+
+    const hasSetCooldown = this.cooldown(whMsg)
+
+    if (hasSetCooldown) {
+      const w: WhisperMessage = { ...whMsg, messageText: this.filterMsg(whMsg.messageText) }
+      this.msgs.set(whMsg.messageID, new WhMessage(w, this))
+    }
+  }
+
+  // Remove some characters.
+  public filterMsg (messageText: string): string {
+    return messageText.normalize().replace(/[\uE000-\uF8FF]+/gu, '').replace(/[\u{000e0000}]/gu, '').trim()
+  }
+
+  private cooldown (msg: PrivmsgMessage | WhisperMessage, customCooldown?: number): boolean {
+    const isWhisper = msg instanceof WhisperMessage || typeof msg.channelID === 'undefined'
+    const dateNow = Date.now()
+
+    const foundChannelCooldown = this.channels.get(isWhisper ? this.id : msg.channelID)
     let foundUserCooldown = this.userCooldowns.get(msg.senderUserID)
 
+    if (foundChannelCooldown === undefined) {
+      if (msg instanceof PrivmsgMessage) {
+        this.leaveChannel({ id: msg.channelID, name: msg.channelName })
+      } else {
+        this.logger.error({}, 'Twitch.cooldown() -> Could not find "BeFriendlier" channel in channels array.')
+      }
+      return false
+    }
+
     if (foundUserCooldown === undefined) {
-      this.userCooldowns.set(msg.senderUserID, new Date(Date.now() + 15000))
+      this.userCooldowns.set(msg.senderUserID, new Date(dateNow))
       foundUserCooldown = this.userCooldowns.get(msg.senderUserID) as Date
-    } else if (foundUserCooldown.getTime() > Date.now()) {
-      return false
     }
-    foundUserCooldown = new Date(Date.now() + 15000)
 
-    if (foundChannel === undefined) {
-      this.leaveChannel({ id: msg.channelID, name: msg.channelName })
-      return false
-    } else if (foundChannel.cooldown.getTime() > Date.now()) {
-      return false
-    }
-    foundChannel.cooldown = new Date(Date.now() + 5000)
+    const cooldown = (foundChannelCooldown.cooldown.getTime() - dateNow) + (foundUserCooldown.getTime() - dateNow)
 
-    return true
+    if (cooldown <= 0) {
+      foundChannelCooldown.cooldown = new Date(dateNow + (isWhisper ? cooldowns.whisper : cooldowns.channel))
+      this.userCooldowns.set(msg.senderUserID, new Date(dateNow + (customCooldown ?? (isWhisper ? cooldowns.whisper : cooldowns.user))))
+      return true
+    } else return false
   }
 
-  private onServerResponse (res: WsRes) {
+  private onServerResponse (res: WsRes): void {
     const command = this.handlers.find(command => command.messageType === res.type)
 
     if (command === undefined || res.data === undefined) {
@@ -320,21 +437,21 @@ export default class Client {
     void this.generalQueue.add(async () => await command.onServerResponse(data, res), { priority: Date.now() })
   }
 
-  private onServerClosed (data: { type: MessageType, data: string, state: 0 | 2 | 3 }) {
+  private onServerClosed (data: { type: MessageType, data: string, state: 0 | 2 | 3 }): void {
     const responseMessage = (data.state === this.ws.client.CONNECTING)
       ? 'Please wait, service is currently in the process of starting. Try again in a bit!'
       : (data.state === this.ws.client.CLOSING)
-        ? 'service is currently shutting down. Check the website for status updates!'
-        : 'service is currently down! Check the website for status updates!'
+          ? 'service is currently shutting down. Check the website for status updates!'
+          : 'service is currently down! Check the website for status updates!'
 
     const res: BASE = JSON.parse(data.data)
 
-    this.sendMessage(res.channelTwitch, res.userTwitch, responseMessage)
+    void this.sendMessage(res.channelTwitch, res.userTwitch, responseMessage)
 
     this.removeUserInstance(res)
   }
 
-  private deleteMessage (msg: ClearchatMessage | ClearmsgMessage) {
+  private deleteMessage (msg: ClearchatMessage | ClearmsgMessage): void {
     if (msg instanceof ClearchatMessage) {
       if (typeof msg.targetUsername === 'string' && msg.targetUsername === this.name) {
         const channelFound =
@@ -347,7 +464,7 @@ export default class Client {
             senderUsername: '', // These will make userTwitch's variables empty strings.
             senderUserID: '', // =/= Same as above.
             channelName: msg.channelName,
-            channelID: channelFound.id,
+            channelID: channelFound.id
           }
 
           void this.handlers
@@ -362,11 +479,13 @@ export default class Client {
     }
 
     for (const [, cachedMsg] of this.msgs) {
+      if (cachedMsg instanceof WhMessage) continue
+
       const removeMsgBool = (msg instanceof ClearchatMessage)
         ? cachedMsg.msg.channelName === msg.channelName
         : (msg instanceof ClearmsgMessage)
-          ? cachedMsg.msg.messageID === msg.targetMessageID
-          : false
+            ? cachedMsg.msg.messageID === msg.targetMessageID
+            : false
 
       if (removeMsgBool) {
         cachedMsg.deleted = true
@@ -375,11 +494,11 @@ export default class Client {
     }
   }
 
-  private onClose (error: Error | undefined) {
+  private onClose (error: Error | undefined): void {
     this.logger.error({
       err: (error !== undefined)
         ? error
-        : { message: 'Closed without any reason.' },
+        : { message: 'Closed without any reason.' }
     }, 'Twitch.onClose()')
 
     this.reconnectAttempts++

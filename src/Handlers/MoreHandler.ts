@@ -1,37 +1,34 @@
-import { MessageType, ROLLMATCH } from 'befriendlier-shared'
-import { PrivmsgMessage } from 'dank-twitch-irc'
-import messagesText from '../messagesText'
+import { PrivmsgMessage } from '@kararty/dank-twitch-irc'
+import { ROLLMATCH } from 'befriendlier-shared'
 import DefaultHandler from './DefaultHandler'
+import { matchText } from './RollMatchHandler'
 
 export default class MoreHandler extends DefaultHandler {
   // public messageType = MessageType
 
   public prefix = ['more']
 
-  public helpText = () => messagesText.helpText.more
+  public helpText = (): string => this.i18n(this.messagesText.helpText.more)
 
-  public async onCommand (msg: PrivmsgMessage) {
+  public async onCommand (msg: PrivmsgMessage): Promise<void> {
     const responseMessage = this.getNameAndIds(msg) as ROLLMATCH
 
     const foundUserRoll = this.twitch.getUserInstance(msg)
 
     if (foundUserRoll === undefined) {
-      this.twitch.sendMessage(
+      void this.twitch.sendMessage(
         responseMessage.channelTwitch,
         responseMessage.userTwitch,
-        messagesText.notInitializedARoll,
+        this.i18n(this.messagesText.notInitializedARoll)
       )
       return
     }
 
-    foundUserRoll.nextType()
-
-    if (foundUserRoll.global) {
-      responseMessage.global = true
-    }
-
-    responseMessage.more = foundUserRoll.type
-    this.ws.sendMessage(MessageType.ROLLMATCH, JSON.stringify(responseMessage))
+    void matchText(
+      { ...responseMessage },
+      { logger: this.logger, twitch: this.twitch, getEmotes: async () => await this.getEmotes(), i18n: { messagesText: this.messagesText, parse: (str) => this.i18n(str) }, noPingsStr: this.noPingsStr },
+      foundUserRoll
+    )
   }
 
   // public async onServerResponse (res) {}

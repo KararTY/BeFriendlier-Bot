@@ -1,6 +1,5 @@
+import { PrivmsgMessage } from '@kararty/dank-twitch-irc'
 import { JOINCHAT, MessageType } from 'befriendlier-shared'
-import { PrivmsgMessage } from 'dank-twitch-irc'
-import messagesText from '../messagesText'
 import DefaultHandler from './DefaultHandler'
 
 export default class JoinChannelHandler extends DefaultHandler {
@@ -9,28 +8,32 @@ export default class JoinChannelHandler extends DefaultHandler {
   public prefix = ['join']
   public adminOnly = true
 
-  public async onCommand (msg: PrivmsgMessage, words: string[]) {
+  public async onCommand (msg: PrivmsgMessage, words: string[]): Promise<void> {
     const responseMessage = this.getNameAndIds(msg) as JOINCHAT
+
+    if (words[0] === undefined) {
+      void this.twitch.sendMessage(
+        responseMessage.channelTwitch, responseMessage.userTwitch, this.getHelpMessage())
+      return
+    }
 
     // Get user details for provided user.
     const res = await this.twitch.api.getUser(this.twitch.token.superSecret, [words[0]])
-    if (res !== null && res.length > 0) {
-      responseMessage.joinUserTwitch = {
-        id: res[0].id,
-        name: res[0].login,
-      }
-
-      this.ws.sendMessage(MessageType.JOINCHAT, JSON.stringify(responseMessage))
-    } else {
-      this.twitch.sendMessage(
-        responseMessage.channelTwitch,
-        responseMessage.userTwitch,
-        messagesText.twitchUserNotFound,
-      )
+    if (res === null || res.length === 0) {
+      void this.twitch.sendMessage(
+        responseMessage.channelTwitch, responseMessage.userTwitch, this.i18n(this.messagesText.twitchUserNotFound))
+      return
     }
+
+    responseMessage.joinUserTwitch = {
+      id: res[0].id,
+      name: res[0].login
+    }
+
+    this.ws.sendMessage(this.messageType, JSON.stringify(responseMessage))
   }
 
-  public async onServerResponse ({ /* channelTwitch, userTwitch */ joinUserTwitch }: JOINCHAT) {
+  public async onServerResponse ({ /* channelTwitch, userTwitch */ joinUserTwitch }: JOINCHAT): Promise<void> {
     const foundExistingChannel = this.twitch.channels.get(joinUserTwitch.name)
 
     if (foundExistingChannel !== undefined) {
@@ -55,7 +58,6 @@ export default class JoinChannelHandler extends DefaultHandler {
       this.twitch.joinChannel(joinUserTwitch)
 
       // Tell server our new channels list.
-      // eslint-disable-next-line no-void
       void this.twitch.handlers.find(command => command.messageType === MessageType.CHATS)?.onCommand()
     }).catch(error => {
       this.logger.error({ err: error }, 'JoinChatHandler.onServerResponse() -> Twitch.JOIN')

@@ -1,20 +1,14 @@
-import { BASE, BIO, MessageType } from 'befriendlier-shared'
-import { PrivmsgMessage } from 'dank-twitch-irc'
-import messagesText from '../messagesText'
+import { PrivmsgMessage } from '@kararty/dank-twitch-irc'
+import { BASE, BIO } from 'befriendlier-shared'
 import DefaultHandler from './DefaultHandler'
 
 export default class BioHandler extends DefaultHandler {
-  public messageType = MessageType.BIO
-
-  public prefix = ['bio']
-
-  public helpText = () => messagesText.helpText.bio
-
-  public async onCommand (msg: PrivmsgMessage, words: string[]) {
+  public static async parseBio (this: BioHandler, msg: PrivmsgMessage, words: string[]): Promise<string> {
     const responseMessage = this.getNameAndIds(msg) as BIO
 
     // Filter bad words.
     const message = { ...msg }
+
     if (msg.flags instanceof Array) {
       for (let index = 0; index < msg.flags.length; index++) {
         const word = msg.flags[index].word
@@ -23,42 +17,49 @@ export default class BioHandler extends DefaultHandler {
       }
     }
 
-    // TODO: Add FFZ & BTTV emote detections.
-    if (words[0] === 'global') {
-      message.messageText = words.slice(1).join(' ')
-      responseMessage.global = true
+    if (this.isGlobal(responseMessage.channelTwitch, words)) {
+      message.messageText = message.messageText.split(' ').slice(2).join(' ')
+      this.twitch.userCooldowns.set(msg.senderUserID, new Date(Date.now() + 60000))
+    } else {
+      message.messageText = message.messageText.split(' ').slice(1).join(' ')
     }
 
-    const bioText = message.messageText.split(' ').slice(1)
+    if (message.messageText.length === 0) return ''
 
-    if (bioText.length > 1) {
-      if (bioText.length > 127) {
-        this.twitch.sendMessage(
-          responseMessage.channelTwitch,
-          responseMessage.userTwitch,
-          messagesText.bioTooLong,
-        )
-        return
+    // Check pajbots.
+    const pajbotCheck = await this.twitch.pajbotAPI.check(responseMessage.channelTwitch.name, this.twitch.filterMsg(message.messageText))
+    const pajbot2Check = await this.twitch.pajbotAPI.checkVersion2(responseMessage.channelTwitch.name, this.twitch.filterMsg(message.messageText))
+
+    if (pajbotCheck === null || pajbot2Check === null || pajbotCheck.banned || pajbot2Check.banned) {
+      throw new Error('BANNED_PHRASES')
+    }
+
+    const bioText = message.messageText
+
+    if (bioText.length > 0) {
+      if (bioText.length > 128) {
+        throw new Error('BIO_TOO_LONG')
       } else if (bioText.length < 3) {
-        this.twitch.sendMessage(
-          responseMessage.channelTwitch,
-          responseMessage.userTwitch,
-          messagesText.bioTooShort,
-        )
-        return
+        throw new Error('BIO_TOO_SHORT')
       }
     }
 
-    responseMessage.bio = bioText.join(' ').substr(0, 128)
-
-    this.ws.sendMessage(MessageType.BIO, JSON.stringify(responseMessage))
+    return bioText.substring(0, 128).trim()
   }
 
-  public async onServerResponse ({ channelTwitch, userTwitch, result }: BASE) {
-    this.twitch.sendMessage(channelTwitch, userTwitch, String(result.value))
+  public async onServerResponse ({ channelTwitch, userTwitch, result }: BASE): Promise<void> {
+    const emotes = await this.getEmotes()
+
+    const bio = result.value.split(' ').map((word: string) => emotes.some(ee => ee.name === word) ? word : this.noPingsStr(word)).join(' ')
+
+    void this.twitch.sendMessage(channelTwitch, userTwitch, bio)
   }
 
-  private escapeRegExp (text: string) {
+  private escapeRegExp (text: string): string {
     return text.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&')
+  }
+
+  public static shortenText (str: string, max = 32): string {
+    return str.length > 32 ? `${str.substring(0, max)}...` : str
   }
 }

@@ -1,4 +1,4 @@
-import { Env } from '@adonisjs/env/build/src/Env'
+import { Env } from '@adonisjs/env'
 
 export default class WSConfig {
   public url: string
@@ -8,13 +8,13 @@ export default class WSConfig {
     /**
      * Server url to connect to.
      */
-    this.url = `ws://${env.getOrFail('HOST') as string}:${env.getOrFail('PORT') as string}`
+    this.url = `ws://${env.get('HOST') as string}:${env.get('PORT') as string}`
 
     /**
      * HTTP request headers.
      */
     this.headers = {
-      'user-agent': `BEFRIENDLIER-BOT-${process.platform}-${process.pid}`,
+      'user-agent': `BEFRIENDLIER-BOT-${process.platform}-${process.pid}`
     }
   }
 }

@@ -1,18 +1,16 @@
 import { PrivmsgMessage } from '@kararty/dank-twitch-irc'
-import { MessageType, UNMATCH } from 'befriendlier-shared'
+import { BASE, BATTLE, MessageType } from 'befriendlier-shared'
 import DefaultHandler from './DefaultHandler'
 
-export default class UnmatchHandler extends DefaultHandler {
-  public messageType = MessageType.UNMATCH
+export default class BattleHandler extends DefaultHandler {
+  public messageType = MessageType.BATTLE
 
-  public prefix = ['unmatch']
+  public prefix = ['battle', 'attack', 'atk', 'fight']
 
-  public helpText = (): string => {
-    return this.i18n(this.messagesText.helpText.unmatch)
-  }
+  public helpText = (): string => this.i18n(this.messagesText.helpText.battle)
 
   public async onCommand (msg: PrivmsgMessage, words: string[]): Promise<void> {
-    const responseMessage = this.getNameAndIds(msg) as UNMATCH
+    const responseMessage = this.getNameAndIds(msg) as BATTLE
 
     if (words[0] === undefined) {
       void this.twitch.sendMessage(
@@ -28,15 +26,21 @@ export default class UnmatchHandler extends DefaultHandler {
       return
     }
 
-    responseMessage.matchUserTwitch = {
+    responseMessage.targetUserTwitch = {
       id: res[0].id,
       name: res[0].login
+    }
+
+    if (responseMessage.targetUserTwitch.id === responseMessage.userTwitch.id) {
+      void this.twitch.sendMessage(
+        responseMessage.channelTwitch, responseMessage.userTwitch, this.i18n(this.messagesText.sameUser))
+      return
     }
 
     this.ws.sendMessage(this.messageType, JSON.stringify(responseMessage))
   }
 
-  public async onServerResponse ({ channelTwitch, userTwitch, result }: UNMATCH): Promise<void> {
+  public async onServerResponse ({ channelTwitch, userTwitch, result }: BASE): Promise<void> {
     void this.twitch.sendMessage(channelTwitch, userTwitch, String(result.value))
   }
 }

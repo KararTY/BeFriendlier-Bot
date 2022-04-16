@@ -1,9 +1,9 @@
-import { PrivmsgMessage } from 'dank-twitch-irc'
+import { PrivmsgMessage } from '@kararty/dank-twitch-irc'
 import fs from 'fs'
 import fetch from 'got'
 import os from 'os'
 import path from 'path'
-import messagesText from '../messagesText'
+import BioHandler from './BioHandler'
 import DefaultHandler from './DefaultHandler'
 
 enum Sign {
@@ -33,26 +33,26 @@ export default class DailyHoroscopeHandler extends DefaultHandler {
 
   public prefix = ['horoscope', 'dailyhoroscope']
 
-  public helpText = () => {
+  public helpText = (): string => {
     const signs = Object.values(Sign).map(sign => String(sign))
-    return messagesText.helpText.horoscope.replace('%s', signs.join(', '))
+    return this.i18n(this.messagesText.helpText.horoscope.replace('%s', signs.join(', ')))
   }
 
   private readonly horoscopes: Horoscope[] = []
 
   private readonly horoscopesDirPath: string = path.join(os.homedir(), 'horoscopes')
 
-  public async onCommand (msg: PrivmsgMessage, words: string[]) {
+  public async onCommand (msg: PrivmsgMessage, words: string[]): Promise<void> {
     const responseMessage = this.getNameAndIds(msg)
 
-    let horoscopeName = Sign.LE.toString()
+    let horoscopeName = this.randomSign().toString()
 
     if (words[0] !== undefined) {
       const firstWordLowercase = words[0].toLowerCase()
       horoscopeName =
         Object.values(Sign).map(sign => String(sign)).find(signVal => signVal === firstWordLowercase) !== undefined
           ? firstWordLowercase
-          : Sign.LE
+          : horoscopeName
     }
 
     let horoscope = this.horoscopes.find(horoscope => horoscope.sign === horoscopeName)
@@ -70,10 +70,10 @@ export default class DailyHoroscopeHandler extends DefaultHandler {
         if (response !== null) {
           fileContent = JSON.stringify(response)
         } else {
-          this.twitch.sendMessage(
+          void this.twitch.sendMessage(
             responseMessage.channelTwitch,
             responseMessage.userTwitch,
-            messagesText.noHoroscope,
+            this.i18n(this.messagesText.noHoroscope)
           )
           return
         }
@@ -91,25 +91,25 @@ export default class DailyHoroscopeHandler extends DefaultHandler {
       if (response !== null) {
         horoscope = response
       } else {
-        this.twitch.sendMessage(
+        void this.twitch.sendMessage(
           responseMessage.channelTwitch,
           responseMessage.userTwitch,
-          messagesText.noHoroscope,
+          this.i18n(this.messagesText.noHoroscope)
         )
         return
       }
     }
 
-    const message = `${horoscope.sign} horoscope for date ${horoscope.date}: ${horoscope.horoscope.split('. ')[0]}...`
+    const message = BioHandler.shortenText(`${horoscope.sign} horoscope for date ${horoscope.date}: ${horoscope.horoscope.split('. ')[0]}`, 192)
 
-    this.twitch.sendMessage(responseMessage.channelTwitch, responseMessage.userTwitch, message)
+    void this.twitch.sendMessage(responseMessage.channelTwitch, responseMessage.userTwitch, message)
   }
 
-  private async requestHoroscope (sign: string) {
+  private async requestHoroscope (sign: string): Promise<null | Horoscope> {
     try {
       const { body }: any = await fetch.get(`https://ohmanda.com/api/horoscope/${sign}/`, {
         headers: this.twitch.headers,
-        responseType: 'json',
+        responseType: 'json'
       })
 
       const nextRequest = new Date()
@@ -129,5 +129,10 @@ export default class DailyHoroscopeHandler extends DefaultHandler {
     }
   }
 
-  // public onServerResponse (res) {}
+  private randomSign (): Sign {
+    const arr = Object.values(Sign)
+    return arr[Math.floor(Math.random() * arr.length)]
+  }
+
+  // public async onServerResponse (res) {}
 }

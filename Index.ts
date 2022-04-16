@@ -1,22 +1,21 @@
 // Load env variables
-import { env } from '@adonisjs/env/build/standalone'
-import { Logger } from '@adonisjs/logger/build/standalone'
-import { TwitchAuth } from 'befriendlier-shared'
-import { readdirSync, readFileSync } from 'fs'
+import { Logger } from '@adonisjs/logger'
+import { PajbotAPI, TwitchAuth } from 'befriendlier-shared'
+import { readdirSync } from 'fs'
 import path from 'path'
+import PajbotConfig from './config/Pajbot'
 import TwitchConfig from './config/Twitch'
 import WSConfig from './config/Ws'
+import env from './env'
 import packageJSON from './package.json'
 import Twitch from './src/Twitch'
 import Ws from './src/Ws'
-
-env.process(readFileSync(path.join(__dirname, '.env'), 'utf-8'))
 
 const logger = new Logger({
   name: 'befriendlier-bot',
   enabled: true,
   level: typeof env.get('LOG_LEVEL') === 'string' ? String(env.get('LOG_LEVEL')) : 'info',
-  prettyPrint: env.get('NODE_ENV') === 'development',
+  prettyPrint: env.get('NODE_ENV') === 'development'
 })
 
 // Initialize config values for WS.
@@ -27,8 +26,12 @@ const server = new Ws(wsConfig, logger)
 const apiConfig = new TwitchConfig(env)
 const api = new TwitchAuth(apiConfig, logger.level)
 
+// Initialize Pajbot.
+const pajAPIConfig = new PajbotConfig()
+const pajbotAPI = new PajbotAPI(pajAPIConfig, logger.level)
+
 // Start Twitch client.
-const twitch = new Twitch(apiConfig, server, api, packageJSON, logger)
+const twitch = new Twitch(apiConfig, server, api, pajbotAPI, packageJSON, logger)
 
 // Add command handlers
 const commandDirectory = path.join(__dirname, 'src', 'Handlers')

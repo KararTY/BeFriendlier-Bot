@@ -1,6 +1,5 @@
+import { PrivmsgMessage } from '@kararty/dank-twitch-irc'
 import { MessageType } from 'befriendlier-shared'
-import { PrivmsgMessage } from 'dank-twitch-irc'
-import messagesText from '../messagesText'
 import DefaultHandler from './DefaultHandler'
 
 export default class NoHandler extends DefaultHandler {
@@ -8,18 +7,18 @@ export default class NoHandler extends DefaultHandler {
 
   public prefix = ['no', 'mismatch']
 
-  public helpText = () => messagesText.helpText.no
+  public helpText = (): string => this.i18n(this.messagesText.helpText.no)
 
-  public async onCommand (msg: PrivmsgMessage) {
+  public async onCommand (msg: PrivmsgMessage): Promise<void> {
     const responseMessage = this.getNameAndIds(msg)
 
     const foundUserRoll = this.twitch.getUserInstance(msg)
 
     if (foundUserRoll === undefined) {
-      this.twitch.sendMessage(
+      void this.twitch.sendMessage(
         responseMessage.channelTwitch,
         responseMessage.userTwitch,
-        messagesText.notInitializedARoll,
+        this.i18n(this.messagesText.notInitializedARoll)
       )
       return
     }

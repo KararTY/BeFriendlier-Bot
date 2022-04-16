@@ -1,4 +1,4 @@
-import { Env } from '@adonisjs/env/build/src/Env'
+import { Env } from '@adonisjs/env'
 
 export default class TwitchConfig {
   public clientToken: string
@@ -14,12 +14,12 @@ export default class TwitchConfig {
     /**
      * Twitch client ID token.
      */
-    this.clientToken = env.getOrFail('TWITCH_CLIENT_TOKEN') as string
+    this.clientToken = env.get('TWITCH_CLIENT_TOKEN')
 
     /**
      * Twitch client secret token.
      */
-    this.clientSecret = env.getOrFail('TWITCH_CLIENT_SECRET') as string
+    this.clientSecret = env.get('TWITCH_CLIENT_SECRET')
 
     /**
      * Redirect URI.
@@ -30,8 +30,8 @@ export default class TwitchConfig {
      * Twitch username.
      */
     this.user = {
-      name: env.getOrFail('TWITCH_BOT_NAME') as string,
-      id: env.getOrFail('TWITCH_BOT_ID') as string,
+      name: env.get('TWITCH_BOT_NAME') as string,
+      id: env.get('TWITCH_BOT_ID') as string
     }
 
     /**
@@ -43,13 +43,13 @@ export default class TwitchConfig {
      * HTTP request headers.
      */
     this.headers = {
-      'user-agent': 'befriendlierapp (https://github.com/kararty/befriendlier-web)',
+      'user-agent': 'befriendlierbot (https://github.com/kararty/befriendlier-bot)'
     }
 
     /**
      * Command prefix.
      */
-    this.commandPrefix = env.getOrFail('COMMAND_PREFIX') as string
+    this.commandPrefix = env.get('COMMAND_PREFIX') as string
 
     /**
      * Admins with access to super commands.
