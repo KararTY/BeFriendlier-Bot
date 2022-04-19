@@ -61,7 +61,8 @@ export default class ProfileHandler extends DefaultHandler {
       result.value.bio
         .split(' ')
         .map((word: string) => emotes.some(ee => ee.name === word) ? word : this.noPingsStr(word))
-        .join(' ')
+        .join(' '),
+      128
     )
 
     void this.twitch.sendMessage(channelTwitch, userTwitch, `your profile bio: ${bio}`)

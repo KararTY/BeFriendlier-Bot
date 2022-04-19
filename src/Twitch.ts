@@ -212,6 +212,7 @@ export default class Client {
     this.ircClient.use(new PrivmsgMessageRateLimiter(this.ircClient))
 
     // Re-add/Add Twitch socket events
+
     this.ircClient.on('372', (msg) => {
       this.logger.info(`Twitch.372: ${msg.ircParameters.join(' ')}`)
     })
@@ -250,7 +251,7 @@ export default class Client {
       // banphrase_data appears on banned === true
       // const banphraseData = pajbotCheck.banphrase_data as { phrase: string }
       this.logger.warn('"%s" contains bad words (%s)', message, JSON.stringify(pajbotCheck.banphrase_data))
-      checkMessages.push('message contains banned phrases.')
+      checkMessages.push('(v1) message contains banned phrases.')
     }
 
     const pajbot2Check = await this.pajbotAPI.checkVersion2(foundChannel.name, this.filterMsg(message))
@@ -264,7 +265,7 @@ export default class Client {
     }
 
     if (checkMessages.length > 0) {
-      message = checkMessages.join(' \r\n')
+      message = checkMessages.join(' \n')
       this.userCooldowns.set(user.id, new Date(Date.now() + 60000))
       this.removeUserInstance({ channelTwitch: channel, userTwitch: user })
     }
