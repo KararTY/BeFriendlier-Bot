@@ -60,6 +60,6 @@ export default class BioHandler extends DefaultHandler {
   }
 
   public static shortenText (str: string, max = 32): string {
-    return str.length > 32 ? `${str.substring(0, max)}...` : str
+    return str.length > max ? `${str.substring(0, max)}...` : str
   }
 }
