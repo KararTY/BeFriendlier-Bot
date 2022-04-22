@@ -1,6 +1,6 @@
 import { Logger } from '@adonisjs/logger'
 import { PrivmsgMessage, WhisperMessage } from '@kararty/dank-twitch-irc'
-import { BASE, Emote, NameAndId } from 'befriendlier-shared'
+import { BASE, Emote, NameAndId, PajbotAPI } from 'befriendlier-shared'
 import messagesText from '../messagesText'
 import Client from '../Twitch'
 import Ws from '../Ws'
@@ -9,6 +9,7 @@ export default class DefaultHandler {
   protected readonly twitch: Client
   protected readonly ws: Ws
   protected readonly messagesText = messagesText
+  protected readonly pajbotAPI: PajbotAPI
   protected readonly logger: Logger
 
   public messageType = 'DEFAULT'
@@ -22,9 +23,10 @@ export default class DefaultHandler {
 
   public helpText = (): string => this.i18n(this.messagesText.helpText.none)
 
-  constructor (twitch: Client, ws: Ws, logger: Logger) {
+  constructor (twitch: Client, ws: Ws, pajbotAPI: PajbotAPI, logger: Logger) {
     this.twitch = twitch
     this.ws = ws
+    this.pajbotAPI = pajbotAPI
     this.logger = logger
   }
 

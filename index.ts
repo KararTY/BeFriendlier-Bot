@@ -48,7 +48,7 @@ void (async function loadHandlers (): Promise<void> {
 
       // Import
       const Command = (await import(fullFileName)).default
-      twitch.handlers.push(new Command(twitch, server, logger))
+      twitch.handlers.push(new Command(twitch, server, pajbotAPI, logger))
     }
 
     server.connect()
