@@ -1,7 +1,8 @@
 import { Logger } from '@adonisjs/logger'
 import { PrivmsgMessage } from '@kararty/dank-twitch-irc'
-import { Emote, MessageType, More, ROLLMATCH } from 'befriendlier-shared'
+import { Emote, MessageType, More, PajbotAPI, ROLLMATCH } from 'befriendlier-shared'
 import Client, { RollInstance, User } from '../Twitch'
+import BioHandler from './BioHandler'
 import DefaultHandler from './DefaultHandler'
 
 export default class RollMatchHandler extends DefaultHandler {
@@ -43,6 +44,7 @@ export default class RollMatchHandler extends DefaultHandler {
     void matchText(
       { channelTwitch, userTwitch },
       {
+        pajbotAPI: this.pajbotAPI,
         logger: this.logger,
         twitch: this.twitch,
         getEmotes: async () => await this.getEmotes(),
@@ -56,7 +58,7 @@ export default class RollMatchHandler extends DefaultHandler {
 
 export async function matchText (
   { channelTwitch, userTwitch, global }: ROLLMATCH,
-  { logger, twitch, getEmotes, i18n, noPingsStr }: { logger: Logger, twitch: Client, getEmotes: () => Promise<Emote[]>, i18n: { messagesText: any, parse: (str: string) => string }, noPingsStr: (str: string) => string },
+  { pajbotAPI, logger, twitch, getEmotes, i18n, noPingsStr }: { pajbotAPI: PajbotAPI, logger: Logger, twitch: Client, getEmotes: () => Promise<Emote[]>, i18n: { messagesText: any, parse: (str: string) => string }, noPingsStr: (str: string) => string },
   roll?: RollInstance
 ): Promise<void> {
   let message = ''
@@ -83,22 +85,46 @@ export async function matchText (
   }
 
   const emotes = await getEmotes()
-  const bio = profile.bio.split(' ').map(word => emotes.findIndex(ee => ee.name === word) > -1 ? word : noPingsStr(word)).join(' ')
+  let bio = profile.bio.split(' ').map(word => emotes.findIndex(ee => ee.name === word) > -1 ? word : noPingsStr(word)).join(' ')
+
+  // CHECK BANPHRASE FOR BIO
+  const checkMessages: string[] = []
+
+  if (foundUserRoll.type !== More.FAVORITESTREAMERS) {
+    const pajbotCheck = await pajbotAPI.check(channelTwitch.name, twitch.filterMsg(bio))
+    if (pajbotCheck === null) {
+      checkMessages.push('Banphrase API is offline.')
+    } else if (pajbotCheck.banned) {
+      logger.warn('"%s" contains bad words (%s)', bio, JSON.stringify(pajbotCheck.banphrase_data))
+      checkMessages.push('[BANPHRASE v1]')
+    }
+
+    const pajbot2Check = await pajbotAPI.checkVersion2(channelTwitch.name, twitch.filterMsg(bio))
+    if (pajbot2Check === null) {
+      checkMessages.push('Banphrase v2 API is offline.')
+    } else if (pajbot2Check.banned) {
+      logger.warn('"%s" contains bad words (%s)', bio, JSON.stringify(pajbot2Check.filter_data))
+      checkMessages.push('[BANPHRASE v2]')
+    }
+
+    bio = checkMessages.join(' ')
+  }
 
   const globalStr = foundUserRoll.global ? 'global ' : ''
   const prefix = twitch.commandPrefix
   const firstTimeText = `Reply with ${prefix}more, ${prefix}match or ${prefix}no`
+  const censoredStr = checkMessages.length > 0 ? 'censored ' : ''
 
   switch (foundUserRoll.type) {
     case More.BIO:
-      message = `${globalStr}match's full profile: ${bio}`
+      message = `${globalStr}match's full ${censoredStr}profile: ${BioHandler.shortenText(bio, 128)}`
       break
     case More.FAVORITESTREAMERS:
       message = `${globalStr}match's favorite streamers: ` +
         `${user.favorite_streamers.length > 0 ? user.favorite_streamers.map((streamer: User) => noPingsStr(streamer.name)).join(' ') : 'None.'}`
       break
     default:
-      message = `new ${globalStr}match's profile: ${bio.length > 32 ? `${bio.substring(0, 32)}...` : bio}.`
+      message = `new ${globalStr}match's ${censoredStr}profile: ${BioHandler.shortenText(bio)}.`
       break
   }
 
