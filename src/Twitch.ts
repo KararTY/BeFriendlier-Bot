@@ -241,10 +241,9 @@ export default class Client {
   public async sendMessage (channel: NameAndId, user: NameAndId, message: string): Promise<void> {
     const foundChannel = this.channels.get(channel.id) as Channel
 
-    const pajbotCheck = await this.pajbotAPI.check(foundChannel.name, this.filterMsg(message))
-
     const checkMessages: string[] = []
 
+    const pajbotCheck = await this.pajbotAPI.check(foundChannel.name, this.filterMsg(message))
     if (pajbotCheck === null) {
       checkMessages.push('Banphrase API is offline.')
     } else if (pajbotCheck.banned) {
@@ -265,9 +264,10 @@ export default class Client {
     }
 
     if (checkMessages.length > 0) {
-      message = checkMessages.join(' \n')
+      checkMessages.push('Ignoring you for 1 minute.')
+      message = checkMessages.join(' ')
       this.userCooldowns.set(user.id, new Date(Date.now() + 60000))
-      this.removeUserInstance({ channelTwitch: channel, userTwitch: user })
+      // this.removeUserInstance({ channelTwitch: channel, userTwitch: user })
     }
 
     foundChannel.addInvisibleSuffix = !foundChannel.addInvisibleSuffix // Flip
