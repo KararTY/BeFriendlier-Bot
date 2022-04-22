@@ -44,7 +44,7 @@ export default class BioHandler extends DefaultHandler {
       }
     }
 
-    return bioText.substring(0, 128).trim()
+    return BioHandler.shortenText(bioText, 128)
   }
 
   public async onServerResponse ({ channelTwitch, userTwitch, result }: BASE): Promise<void> {
@@ -60,6 +60,6 @@ export default class BioHandler extends DefaultHandler {
   }
 
   public static shortenText (str: string, max = 32): string {
-    return str.length > max ? `${str.substring(0, max)}...` : str
+    return (str.length > max ? `${str.substring(0, max)}...` : str).trim()
   }
 }
