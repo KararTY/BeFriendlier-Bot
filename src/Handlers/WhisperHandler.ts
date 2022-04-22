@@ -14,6 +14,15 @@ export default class WhisperHandler extends DefaultHandler {
     await this.twitch.sendWhisper(userTwitch, message).catch(error => {
       this.logger.error({ err: error }, 'WhisperHandler.onServerResponse() -> Twitch.sendWhisper()')
 
+      // We don't want to send these, gets too spammy.
+      if ([
+        MessageType.ROLLMATCH,
+        MessageType.MATCH,
+        MessageType.MISMATCH
+      ].includes(result.originalType)) {
+        return
+      }
+
       void this.twitch.sendMessage(
         channelTwitch,
         userTwitch,
