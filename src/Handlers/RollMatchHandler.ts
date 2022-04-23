@@ -107,7 +107,9 @@ export async function matchText (
       checkMessages.push('[BANPHRASE v2]')
     }
 
-    bio = checkMessages.join(' ')
+    if (checkMessages.length > 0) {
+      bio = checkMessages.join(' ')
+    }
   }
 
   const globalStr = foundUserRoll.global ? 'global ' : ''
