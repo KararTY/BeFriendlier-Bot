@@ -15,6 +15,7 @@ export default class DefaultHandler {
   public messageType = 'DEFAULT'
   public prefix: string[] = []
   public adminOnly = false
+  public instantResponse = false
 
   public cachedTwitch = {
     nextUpdate: Date.now(),

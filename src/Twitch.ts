@@ -243,7 +243,9 @@ export default class Client {
 
     const checkMessages: string[] = []
 
-    const pajbotCheck = await this.pajbotAPI.check(foundChannel.name, this.filterMsg(message))
+    const filteredMessage = this.filterMsg(message)
+
+    const pajbotCheck = await this.pajbotAPI.check(foundChannel.name, filteredMessage)
     if (pajbotCheck === null) {
       checkMessages.push('Banphrase API is offline.')
     } else if (pajbotCheck.banned) {
@@ -253,7 +255,7 @@ export default class Client {
       checkMessages.push('(v1) message contains banned phrases.')
     }
 
-    const pajbot2Check = await this.pajbotAPI.checkVersion2(foundChannel.name, this.filterMsg(message))
+    const pajbot2Check = await this.pajbotAPI.checkVersion2(foundChannel.name, filteredMessage)
     if (pajbot2Check === null) {
       checkMessages.push('Banphrase v2 API is offline.')
     } else if (pajbot2Check.banned) {
@@ -343,6 +345,16 @@ export default class Client {
       return
     }
 
+    const filteredMsg = this.filterMsg(msg.messageText)
+
+    const foundInstantCommand = this.handlers
+      .find(command => command.prefix.includes(filteredMsg) && command.instantResponse)
+
+    if (foundInstantCommand !== undefined) {
+      await foundInstantCommand.onCommand({ ...msg, messageText: filteredMsg } as unknown as PrivmsgMessage)
+      return
+    }
+
     // TODO: REFACTOR THIS LATER.
     if (msg.messageText === `!${this.name}`) {
       const msgBot = { ...msg }
@@ -365,7 +377,7 @@ export default class Client {
 
     if (hasSetCooldown) {
       // Message class has a "clientRef" to "this" so it can call clientRef.onMessage().
-      const m: PrivmsgMessage = { ...msg, messageText: this.filterMsg(msg.messageText) } as unknown as PrivmsgMessage
+      const m = { ...msg, messageText: filteredMsg } as unknown as PrivmsgMessage
       this.msgs.set(msg.messageID, new Message(m, this))
     }
   }
