@@ -6,7 +6,7 @@ const messagesText = {
   takeABreak: 'take a break! You\'re currently on a cooldown period.',
   unregistered: 'you\'re not registered! DM me "%prefix%register" for more information.',
   noHoroscope: 'no horoscope today! Check back tomorrow?',
-  sameUser: 'recipient user is the same user as you.',
+  sameUser: 'no I don\'t think so, recipient user is the same user as you.',
   noEmotes: 'you\'ve not entered any Twitch emotes in your message.',
   registrationDisclaimer: 'By registering, you accept BeFriendlier\'s Privacy Policy https://befriendlier.app/privacy and Terms of Service https://befriendlier.app/terms' +
     ' We save some of your public Twitch data on BeFriendlier\'s server, and by registering you\'re creating an account on the website. Reply with "%prefix%register accept"' +
