@@ -22,7 +22,7 @@ export default class DefaultHandler {
     emotes: [] as Emote[]
   }
 
-  public helpText = (): string => this.i18n(this.messagesText.helpText.none)
+  public helpText = (): string | null => this.i18n(this.messagesText.helpText.none)
 
   constructor (twitch: Client, ws: Ws, pajbotAPI: PajbotAPI, logger: Logger) {
     this.twitch = twitch
@@ -93,6 +93,6 @@ export default class DefaultHandler {
   }
 
   public getHelpMessage (): string {
-    return `${this.prefix[0]}: ${this.helpText()}`
+    return `${this.prefix[0]}: ${String(this.helpText())}`
   }
 }
