@@ -34,7 +34,7 @@ export default class HelpHandler extends DefaultHandler {
 
     let message: string = ''
     if (words.length === 0) {
-      const commandsStr = commands.filter(command => command.helpText !== null)
+      const commandsStr = commands.filter(command => command.helpText() !== null)
         .map(command => command.prefix[0]).join(', ')
 
       message = `prepend ${this.twitch.commandPrefix} to commands: ${commandsStr}. More help in the profile page.`
