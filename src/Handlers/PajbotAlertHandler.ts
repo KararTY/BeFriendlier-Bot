@@ -10,7 +10,7 @@ export default class MiscHandler extends DefaultHandler {
 
   public async onCommand (msg: PrivmsgMessage): Promise<void> {
     if (msg.senderUserID === '82008718' && msg.channelID === '11148817') {
-      void this.twitch.ircClient.say(msg.channelName, 'monkaPickle 🚨 VARNING')
+      void this.twitch.ircClient.me(msg.channelName, 'monkaPickle 🚨 VARNING')
     }
   }
 }
