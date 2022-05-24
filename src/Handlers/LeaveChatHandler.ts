@@ -1,5 +1,5 @@
 import { PrivmsgMessage } from '@kararty/dank-twitch-irc'
-import { LEAVECHAT, MessageType } from 'befriendlier-shared'
+import { LEAVECHAT, MessageType, NameAndId } from 'befriendlier-shared'
 import DefaultHandler from './DefaultHandler'
 
 export default class LeaveChannelHandler extends DefaultHandler {
@@ -9,7 +9,6 @@ export default class LeaveChannelHandler extends DefaultHandler {
   public adminOnly = true
 
   public async onCommand (msg: PrivmsgMessage, words: string[]): Promise<void> {
-    // When the bot gets banned, the userTwitch's variables are empty.
     const responseMessage = this.getNameAndIds(msg) as LEAVECHAT
 
     // if (words[0] === undefined) {
@@ -18,8 +17,8 @@ export default class LeaveChannelHandler extends DefaultHandler {
     //   return
     // }
 
-    // // Letters, numbers, underscore.
-    // words[0] = encodeURIComponent(words[0].replace(/[^\w]/g, ''))
+    // Letters, numbers, underscore.
+    words[0] = encodeURIComponent(words[0].replace(/[^\w]/g, ''))
 
     // Get user details for provided user.
     const res = await this.twitch.api.getUser(this.twitch.token.superSecret, [words[0]])
@@ -37,15 +36,27 @@ export default class LeaveChannelHandler extends DefaultHandler {
     this.ws.sendMessage(this.messageType, JSON.stringify(responseMessage))
   }
 
-  public async onServerResponse ({ channelTwitch, userTwitch, leaveUserTwitch }: LEAVECHAT): Promise<void> {
-    // When the bot gets banned, it doesn't need to announce that it's leaving, so userTwitch's variables are empty.
-    if (userTwitch.name.length > 0 && userTwitch.id.length > 0) {
-      void this.twitch.sendMessage(
-        leaveUserTwitch,
-        userTwitch,
-        `from channel @${channelTwitch.name}, has issued me to leave this channel. FeelsBadMan Good bye!`
-      )
+  public async onBanned ({ id, name }: NameAndId): Promise<void> {
+    const responseMessage = {
+      userTwitch: { name: '', id: '' },
+      leaveUserTwitch: {
+        name,
+        id
+      }
     }
+
+    this.ws.sendMessage(this.messageType, JSON.stringify(responseMessage))
+  }
+
+  public async onServerResponse ({ /* channelTwitch, userTwitch, */ leaveUserTwitch }: LEAVECHAT): Promise<void> {
+    // When the bot gets banned, it doesn't need to announce that it's leaving, so userTwitch's variables are empty.
+    // if (userTwitch.name.length > 0 && userTwitch.id.length > 0) {
+    //   void this.twitch.sendMessage(
+    //     leaveUserTwitch,
+    //     userTwitch,
+    //     `from channel @${channelTwitch.name}, has issued me to leave this channel. FeelsBadMan Good bye!`
+    //   )
+    // }
 
     this.twitch.leaveChannel(leaveUserTwitch)
   }

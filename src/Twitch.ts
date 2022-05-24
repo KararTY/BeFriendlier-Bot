@@ -4,6 +4,7 @@ import {
   ChatClient,
   ClearchatMessage,
   ClearmsgMessage,
+  NoticeMessage,
   PrivmsgMessage,
   PrivmsgMessageRateLimiter,
   SlowModeRateLimiter,
@@ -13,6 +14,7 @@ import { BASE, Emote, MessageType, More, NameAndId, PajbotAPI, TwitchAuth } from
 import PQueue from 'p-queue'
 import TwitchConfig from '../config/Twitch'
 import DefaultHandler from './Handlers/DefaultHandler'
+import LeaveChannelHandler from './Handlers/LeaveChatHandler'
 import Ws, { WsRes } from './Ws'
 
 interface Token {
@@ -234,6 +236,8 @@ export default class Client {
     this.ircClient.on('CLEARCHAT', (msg) => this.deleteMessage(msg))
     this.ircClient.on('CLEARMSG', (msg) => this.deleteMessage(msg))
 
+    this.ircClient.on('NOTICE', (msg) => void this.noticeMsg(msg))
+
     // Finally, connect to Twitch IRC.
     return await this.ircClient.connect()
   }
@@ -323,7 +327,7 @@ export default class Client {
       return
     }
 
-    const words = m.msg.messageText.substring(this.commandPrefix.length).split(' ')
+    const words = m.msg.messageText.substring(this.commandPrefix.length).split(/ +/gm)
 
     const foundCommand = this.handlers.filter(command => command.prefix.length !== 0)
       .find(command => command.prefix.includes(words[0].toLowerCase()))
@@ -434,6 +438,23 @@ export default class Client {
     } else return false
   }
 
+  public async noticeMsg (msg: NoticeMessage): Promise<void> {
+    let { name, id } =
+      [...this.channels].find(([_id, channel]) => channel.name === msg.channelName)?.[1] as Channel
+
+    // Might not always exist in cache, like when we initially join.
+    name = name ?? msg.channelName
+
+    switch (msg.messageID) {
+      case 'msg_banned':
+      case 'tos_banned':
+      case 'msg_channel_banned':
+        // Unhost channel.
+        void (this.handlers.find(command => command.messageType === MessageType.LEAVECHAT) as LeaveChannelHandler).onBanned({ name, id })
+        break
+    }
+  }
+
   private onServerResponse (res: WsRes): void {
     const command = this.handlers.find(command => command.messageType === res.type)
 
@@ -467,26 +488,19 @@ export default class Client {
   private deleteMessage (msg: ClearchatMessage | ClearmsgMessage): void {
     if (msg instanceof ClearchatMessage) {
       if (typeof msg.targetUsername === 'string' && msg.targetUsername === this.name) {
-        const channelFound =
+        let { name, id } =
           [...this.channels].find(([_id, channel]) => channel.name === msg.channelName)?.[1] as Channel
 
-        if (msg.banDuration === undefined) {
-          // We've been banned, leave chat.
-          // When the bot gets banned, the senderUsername & senderUserID variables must be empty.
-          const leaveChat = {
-            senderUsername: '', // These will make userTwitch's variables empty strings.
-            senderUserID: '', // =/= Same as above.
-            channelName: msg.channelName,
-            channelID: channelFound.id
-          }
+        name = name ?? msg.channelName
 
-          void this.handlers
-            .find(command => command.messageType === MessageType.LEAVECHAT)?.onCommand(leaveChat as PrivmsgMessage)
+        if (msg.banDuration === undefined) {
+          void (this.handlers
+            .find(command => command.messageType === MessageType.LEAVECHAT) as LeaveChannelHandler).onBanned({ name, id })
 
           return
         }
 
-        this.channels.get(channelFound.id)?.cooldown.setTime(Date.now() + msg.banDuration)
+        this.channels.get(id)?.cooldown.setTime(Date.now() + msg.banDuration)
         return
       }
     }

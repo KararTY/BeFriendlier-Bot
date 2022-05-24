@@ -22,6 +22,7 @@
   ],
   "rules": {
     "@typescript-eslint/class-name-casing": "off",
-    "@typescript-eslint/interface-name-prefix": "off"
+    "@typescript-eslint/interface-name-prefix": "off",
+    "space-before-function-paren": "error"
   }
 }
