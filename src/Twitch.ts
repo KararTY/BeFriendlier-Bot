@@ -419,7 +419,7 @@ export default class Client {
       if (msg instanceof PrivmsgMessage) {
         this.leaveChannel({ id: msg.channelID, name: msg.channelName })
       } else {
-        this.logger.error({}, 'Twitch.cooldown() -> Could not find "BeFriendlier" channel in channels array.')
+        this.logger.error({}, `Twitch.cooldown() -> Could not find "${this.name}" channel in channels array.`)
       }
       return false
     }
@@ -439,11 +439,22 @@ export default class Client {
   }
 
   public async noticeMsg (msg: NoticeMessage): Promise<void> {
-    let { name, id } =
-      [...this.channels].find(([_id, channel]) => channel.name === msg.channelName)?.[1] as Channel
+    const channel =
+      [...this.channels].find(([_id, channel]) => channel.name === msg.channelName)
 
-    // Might not always exist in cache, like when we initially join.
-    name = name ?? msg.channelName
+    let name = msg.channelName
+    let id = ''
+
+    if (typeof channel !== 'undefined') {
+      // Might not always exist in cache, like when we initially join.
+      name = channel[1].name
+      id = channel[1].id
+    }
+
+    if (typeof name === 'undefined') {
+      this.logger.warn('Got a NoticeMessage for an unknown user (%s): %s', msg.channelName, JSON.stringify(msg))
+      return
+    }
 
     switch (msg.messageID) {
       case 'msg_banned':
