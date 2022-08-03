@@ -13,6 +13,7 @@ export default class ProfileHandler extends DefaultHandler {
 
   public async onCommand (msg: PrivmsgMessage, words: string[]): Promise<void> {
     const responseMessage = this.getNameAndIds(msg) as PROFILE
+    responseMessage.messageID = msg.messageID
 
     responseMessage.global = this.isGlobal(responseMessage.channelTwitch, words)
 
@@ -31,28 +32,31 @@ export default class ProfileHandler extends DefaultHandler {
           void this.twitch.sendMessage(
             responseMessage.channelTwitch,
             responseMessage.userTwitch,
-            this.i18n(this.messagesText.bannedPhrases)
+            this.i18n(this.messagesText.bannedPhrases),
+            responseMessage.messageID
           )
           break
         case 'BIO_TOO_LONG':
           void this.twitch.sendMessage(
             responseMessage.channelTwitch,
             responseMessage.userTwitch,
-            this.i18n(this.messagesText.bioTooLong)
+            this.i18n(this.messagesText.bioTooLong),
+            responseMessage.messageID
           )
           break
         case 'BIO_TOO_SHORT':
           void this.twitch.sendMessage(
             responseMessage.channelTwitch,
             responseMessage.userTwitch,
-            this.i18n(this.messagesText.bioTooShort)
+            this.i18n(this.messagesText.bioTooShort),
+            responseMessage.messageID
           )
           break
       }
     }
   }
 
-  public async onServerResponse ({ channelTwitch, userTwitch, result }: BASE): Promise<void> {
+  public async onServerResponse ({ channelTwitch, userTwitch, messageID, result }: BASE): Promise<void> {
     const emotes = await this.getEmotes()
 
     emotes.push(...result.value.emotes)
@@ -65,6 +69,6 @@ export default class ProfileHandler extends DefaultHandler {
       128
     )
 
-    void this.twitch.sendMessage(channelTwitch, userTwitch, `your profile bio: ${bio}`)
+    void this.twitch.sendMessage(channelTwitch, userTwitch, `your profile bio: ${bio}`, messageID)
   }
 }

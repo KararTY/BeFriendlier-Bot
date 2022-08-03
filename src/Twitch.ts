@@ -242,7 +242,7 @@ export default class Client {
     return await this.ircClient.connect()
   }
 
-  public async sendMessage (channel: NameAndId, user: NameAndId, message: string): Promise<void> {
+  public async sendMessage (channel: NameAndId, user: NameAndId, message: string, messageID?: string): Promise<void> {
     const foundChannel = this.channels.get(channel.id) as Channel
 
     const checkMessages: string[] = []
@@ -251,7 +251,7 @@ export default class Client {
 
     const pajbotCheck = await this.pajbotAPI.check(foundChannel.name, filteredMessage)
     if (pajbotCheck === null) {
-      checkMessages.push('Banphrase API is offline.')
+      checkMessages.push('Banphrase v1 API is offline.')
     } else if (pajbotCheck.banned) {
       // banphrase_data appears on banned === true
       // const banphraseData = pajbotCheck.banphrase_data as { phrase: string }
@@ -270,7 +270,7 @@ export default class Client {
     }
 
     if (checkMessages.length > 0) {
-      checkMessages.push('Ignoring you for 1 minute.')
+      checkMessages.push('Ignoring you for a minute.')
       message = checkMessages.join(' ')
       this.userCooldowns.set(user.id, new Date(Date.now() + 60000))
       // this.removeUserInstance({ channelTwitch: channel, userTwitch: user })
@@ -278,8 +278,14 @@ export default class Client {
 
     foundChannel.addInvisibleSuffix = !foundChannel.addInvisibleSuffix // Flip
 
-    this.ircClient.say(channel.name, `@${user.name}, ${message}${(foundChannel.addInvisibleSuffix) ? this.invisibleSuffix : ''}`)
-      .catch(error => this.logger.error({ err: error }, 'Twitch.sendMessage()'))
+    const replyStr = `${message}${(foundChannel.addInvisibleSuffix) ? this.invisibleSuffix : ''}`
+
+    let promise: Promise<void>
+    if (messageID !== undefined) promise = this.ircClient.reply(channel.name, messageID, replyStr)
+    else promise = this.ircClient.say(channel.name, `@${user.name}, ${replyStr}`)
+
+    promise
+      .catch(error => this.logger.error({ err: error }, `Twitch.sendMessage(${(messageID !== undefined) ? 'messageID' : ''})`))
   }
 
   public async sendWhisper (user: NameAndId, message: string): Promise<void> {
@@ -491,7 +497,7 @@ export default class Client {
 
     const res: BASE = JSON.parse(data.data)
 
-    void this.sendMessage(res.channelTwitch, res.userTwitch, responseMessage)
+    void this.sendMessage(res.channelTwitch, res.userTwitch, responseMessage, res.messageID)
 
     this.removeUserInstance(res)
   }

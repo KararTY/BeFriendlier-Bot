@@ -11,6 +11,7 @@ export default class PingHandler extends DefaultHandler {
 
   public async onCommand (msg: PrivmsgMessage): Promise<void> {
     const responseMessage = this.getNameAndIds(msg)
+    responseMessage.messageID = msg.messageID
 
     const dateNow = Date.now()
     await this.twitch.ircClient.ping()
@@ -26,7 +27,8 @@ export default class PingHandler extends DefaultHandler {
         data.channelTwitch,
         data.userTwitch,
         `ping from Bot to Twitch: ~${String(data.result.pingFromBotToTwitch)} ms. ` +
-        (websitePingDiff > 10 ? `Ping from Bot to Website: ~${String(Date.now() - res.timestamp)} ms.` : '')
+        (websitePingDiff > 10 ? `Ping from Bot to Website: ~${String(Date.now() - res.timestamp)} ms.` : ''),
+        data.messageID
       )
     } else {
       // TODO: Looks like this is a healthcheck!

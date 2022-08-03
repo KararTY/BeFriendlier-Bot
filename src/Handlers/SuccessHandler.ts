@@ -8,7 +8,7 @@ export default class SuccessHandler extends DefaultHandler {
 
   // public async onCommand (msg: PrivmsgMessage) {}
 
-  public async onServerResponse ({ channelTwitch, userTwitch, result }: BASE): Promise<void> {
+  public async onServerResponse ({ channelTwitch, userTwitch, messageID, result }: BASE): Promise<void> {
     // This is a match "success".
     if (result.matchUsername !== undefined) {
       // Send to this user.
@@ -16,19 +16,21 @@ export default class SuccessHandler extends DefaultHandler {
         userTwitch,
         String(result.value).replace('%s%', `@${String(result.matchUsername)}`)
       ).then(() => {
-        void this.twitch.sendMessage(channelTwitch, userTwitch, '🦆 rubber ducky says: A match! Check your whispers.')
+        void this.twitch.sendMessage(channelTwitch, userTwitch, '🦆 rubber ducky says: A match! Check your whispers.', messageID)
       }).catch(error => {
         this.logger.error({ err: error }, 'SuccessHandler.onServerResponse() -> Twitch.sendWhisper()')
 
         void this.twitch.sendMessage(
           channelTwitch,
           userTwitch,
-          `whispers disabled, ${String(result.value).replace('%s%', `@${String(result.matchUsername)}`)}`
+          `whispers disabled, ${String(result.value).replace('%s%', `@${String(result.matchUsername)}`)}`,
+          messageID
         )
       })
 
       // Send to matched user.
-      await this.twitch.sendWhisper({ name: result.matchUsername, id: '_' }, String(result.value).replace('%s%', `@${String(userTwitch.name)}`)
+      await this.twitch.sendWhisper(
+        { name: result.matchUsername, id: '_' }, String(result.value).replace('%s%', `@${String(userTwitch.name)}`)
       ).catch(error => {
         this.logger.error({ err: error }, 'SuccessHandler.onServerResponse() -> #2 Twitch.sendWhisper()')
       })
@@ -36,7 +38,7 @@ export default class SuccessHandler extends DefaultHandler {
       this.twitch.removeUserInstance({ channelTwitch, userTwitch })
     } else {
       // This is a general acknowledgement message from the server.
-      void this.twitch.sendMessage(channelTwitch, userTwitch, String(result.value))
+      void this.twitch.sendMessage(channelTwitch, userTwitch, String(result.value), messageID)
     }
   }
 }

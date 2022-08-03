@@ -13,10 +13,15 @@ export default class UnmatchHandler extends DefaultHandler {
 
   public async onCommand (msg: PrivmsgMessage, words: string[]): Promise<void> {
     const responseMessage = this.getNameAndIds(msg) as UNMATCH
+    responseMessage.messageID = msg.messageID
 
     if (words[0] === undefined) {
       void this.twitch.sendMessage(
-        responseMessage.channelTwitch, responseMessage.userTwitch, this.getHelpMessage())
+        responseMessage.channelTwitch,
+        responseMessage.userTwitch,
+        this.getHelpMessage(),
+        responseMessage.messageID
+      )
       return
     }
 
@@ -27,7 +32,11 @@ export default class UnmatchHandler extends DefaultHandler {
     const res = await this.twitch.api.getUser(this.twitch.token.superSecret, [words[0]])
     if (res === null || res.length === 0) {
       void this.twitch.sendMessage(
-        responseMessage.channelTwitch, responseMessage.userTwitch, this.i18n(this.messagesText.twitchUserNotFound))
+        responseMessage.channelTwitch,
+        responseMessage.userTwitch,
+        this.i18n(this.messagesText.twitchUserNotFound),
+        responseMessage.messageID
+      )
       return
     }
 
@@ -39,7 +48,7 @@ export default class UnmatchHandler extends DefaultHandler {
     this.ws.sendMessage(this.messageType, JSON.stringify(responseMessage))
   }
 
-  public async onServerResponse ({ channelTwitch, userTwitch, result }: UNMATCH): Promise<void> {
-    void this.twitch.sendMessage(channelTwitch, userTwitch, String(result.value))
+  public async onServerResponse ({ channelTwitch, userTwitch, messageID, result }: UNMATCH): Promise<void> {
+    void this.twitch.sendMessage(channelTwitch, userTwitch, String(result.value), messageID)
   }
 }

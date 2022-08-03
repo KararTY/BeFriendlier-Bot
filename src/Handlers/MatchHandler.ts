@@ -11,6 +11,7 @@ export default class MatchHandler extends DefaultHandler {
 
   public async onCommand (msg: PrivmsgMessage): Promise<void> {
     const responseMessage = this.getNameAndIds(msg)
+    responseMessage.messageID = msg.messageID
 
     const foundUserRoll = this.twitch.getUserInstance(msg)
 
@@ -18,7 +19,8 @@ export default class MatchHandler extends DefaultHandler {
       void this.twitch.sendMessage(
         responseMessage.channelTwitch,
         responseMessage.userTwitch,
-        this.i18n(this.messagesText.notInitializedARoll)
+        this.i18n(this.messagesText.notInitializedARoll),
+        responseMessage.messageID
       )
       return
     }
@@ -30,8 +32,8 @@ export default class MatchHandler extends DefaultHandler {
     this.ws.sendMessage(this.messageType, JSON.stringify(responseMessage))
   }
 
-  public async onServerResponse ({ channelTwitch, userTwitch, result }: BASE): Promise<void> {
-    void this.twitch.sendMessage(channelTwitch, userTwitch, String(result.value))
+  public async onServerResponse ({ channelTwitch, userTwitch, messageID, result }: BASE): Promise<void> {
+    void this.twitch.sendMessage(channelTwitch, userTwitch, String(result.value), messageID)
 
     this.twitch.removeUserInstance({ channelTwitch, userTwitch })
   }

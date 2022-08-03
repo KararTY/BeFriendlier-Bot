@@ -11,6 +11,7 @@ export default class NoHandler extends DefaultHandler {
 
   public async onCommand (msg: PrivmsgMessage): Promise<void> {
     const responseMessage = this.getNameAndIds(msg)
+    responseMessage.messageID = msg.messageID
 
     const foundUserRoll = this.twitch.getUserInstance(msg)
 
@@ -18,7 +19,8 @@ export default class NoHandler extends DefaultHandler {
       void this.twitch.sendMessage(
         responseMessage.channelTwitch,
         responseMessage.userTwitch,
-        this.i18n(this.messagesText.notInitializedARoll)
+        this.i18n(this.messagesText.notInitializedARoll),
+        responseMessage.messageID
       )
       return
     }

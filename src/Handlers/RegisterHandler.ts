@@ -12,7 +12,7 @@ export default class RegisterHandler extends DefaultHandler {
   public async onCommand (msg: PrivmsgMessage): Promise<void> {
     const base = this.getNameAndIds(msg)
 
-    void this.twitch.sendMessage(base.channelTwitch, base.userTwitch, this.i18n(this.messagesText.whispersOnly))
+    void this.twitch.sendMessage(base.channelTwitch, base.userTwitch, this.i18n(this.messagesText.whispersOnly), msg.messageID)
   }
 
   public async onWhisperCommand (whMsg: WhisperMessage, words: string[]): Promise<void> {

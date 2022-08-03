@@ -44,6 +44,7 @@ export default class DailyHoroscopeHandler extends DefaultHandler {
 
   public async onCommand (msg: PrivmsgMessage, words: string[]): Promise<void> {
     const responseMessage = this.getNameAndIds(msg)
+    responseMessage.messageID = msg.messageID
 
     let horoscopeName = this.randomSign().toString()
 
@@ -73,7 +74,8 @@ export default class DailyHoroscopeHandler extends DefaultHandler {
           void this.twitch.sendMessage(
             responseMessage.channelTwitch,
             responseMessage.userTwitch,
-            this.i18n(this.messagesText.noHoroscope)
+            this.i18n(this.messagesText.noHoroscope),
+            responseMessage.messageID
           )
           return
         }
@@ -94,7 +96,8 @@ export default class DailyHoroscopeHandler extends DefaultHandler {
         void this.twitch.sendMessage(
           responseMessage.channelTwitch,
           responseMessage.userTwitch,
-          this.i18n(this.messagesText.noHoroscope)
+          this.i18n(this.messagesText.noHoroscope),
+          responseMessage.messageID
         )
         return
       }
@@ -102,7 +105,7 @@ export default class DailyHoroscopeHandler extends DefaultHandler {
 
     const message = BioHandler.shortenText(`${horoscope.sign} horoscope for date ${horoscope.date}: ${horoscope.horoscope.split('. ')[0]}`, 192)
 
-    void this.twitch.sendMessage(responseMessage.channelTwitch, responseMessage.userTwitch, message)
+    void this.twitch.sendMessage(responseMessage.channelTwitch, responseMessage.userTwitch, message, responseMessage.messageID)
   }
 
   private async requestHoroscope (sign: string): Promise<null | Horoscope> {

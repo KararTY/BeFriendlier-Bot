@@ -8,7 +8,7 @@ export default class WhisperHandler extends DefaultHandler {
 
   // public async onCommand (msg: PrivmsgMessage) {}
 
-  public async onServerResponse ({ channelTwitch, userTwitch, result }: BASE): Promise<void> {
+  public async onServerResponse ({ channelTwitch, userTwitch, messageID, result }: BASE): Promise<void> {
     const message = result.value.replace(/%prefix%/g, this.twitch.commandPrefix) as string
 
     await this.twitch.sendWhisper(userTwitch, message).catch(error => {
@@ -26,7 +26,8 @@ export default class WhisperHandler extends DefaultHandler {
       void this.twitch.sendMessage(
         channelTwitch,
         userTwitch,
-        `[whispers disabled] ${message}`
+        `[whispers disabled] ${message}`,
+        messageID
       )
     })
   }

@@ -11,10 +11,11 @@ export default class GiveEmotesHandler extends DefaultHandler {
 
   public async onCommand (msg: PrivmsgMessage, words: string[]): Promise<void> {
     const responseMessage = this.getNameAndIds(msg) as GIVEEMOTES
+    responseMessage.messageID = msg.messageID
 
     if (words[0] === undefined) {
       void this.twitch.sendMessage(
-        responseMessage.channelTwitch, responseMessage.userTwitch, this.getHelpMessage())
+        responseMessage.channelTwitch, responseMessage.userTwitch, this.getHelpMessage(), responseMessage.messageID)
       return
     }
 
@@ -25,7 +26,11 @@ export default class GiveEmotesHandler extends DefaultHandler {
     const res = await this.twitch.api.getUser(this.twitch.token.superSecret, [words[0]])
     if (res === null || res.length === 0) {
       void this.twitch.sendMessage(
-        responseMessage.channelTwitch, responseMessage.userTwitch, this.i18n(this.messagesText.twitchUserNotFound))
+        responseMessage.channelTwitch,
+        responseMessage.userTwitch,
+        this.i18n(this.messagesText.twitchUserNotFound),
+        responseMessage.messageID
+      )
       return
     }
 
@@ -36,7 +41,11 @@ export default class GiveEmotesHandler extends DefaultHandler {
 
     if (responseMessage.recipientUserTwitch.id === responseMessage.userTwitch.id) {
       void this.twitch.sendMessage(
-        responseMessage.channelTwitch, responseMessage.userTwitch, this.i18n(this.messagesText.sameUser))
+        responseMessage.channelTwitch,
+        responseMessage.userTwitch,
+        this.i18n(this.messagesText.sameUser),
+        responseMessage.messageID
+      )
       return
     }
 
@@ -44,15 +53,19 @@ export default class GiveEmotesHandler extends DefaultHandler {
 
     if (responseMessage.emotes.length === 0) {
       void this.twitch.sendMessage(
-        responseMessage.channelTwitch, responseMessage.userTwitch, this.i18n(this.messagesText.noEmotes))
+        responseMessage.channelTwitch,
+        responseMessage.userTwitch,
+        this.i18n(this.messagesText.noEmotes),
+        responseMessage.messageID
+      )
       return
     }
 
     this.ws.sendMessage(this.messageType, JSON.stringify(responseMessage))
   }
 
-  public async onServerResponse ({ channelTwitch, userTwitch, result }: GIVEEMOTES): Promise<void> {
-    void this.twitch.sendMessage(channelTwitch, userTwitch, String(result.value))
+  public async onServerResponse ({ channelTwitch, userTwitch, messageID, result }: GIVEEMOTES): Promise<void> {
+    void this.twitch.sendMessage(channelTwitch, userTwitch, String(result.value), messageID)
   }
 
   public parseEmotes (msg: PrivmsgMessage, words: string[]): Emote[] {

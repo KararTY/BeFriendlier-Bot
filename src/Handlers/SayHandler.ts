@@ -8,9 +8,9 @@ export default class SayHandler extends DefaultHandler {
   public adminOnly = true
 
   public async onCommand (msg: PrivmsgMessage, words: string[]): Promise<void> {
-    const responseMessage = this.getNameAndIds(msg)
+    const base = this.getNameAndIds(msg)
 
-    void this.twitch.sendMessage(responseMessage.channelTwitch, responseMessage.userTwitch, words.join(' '))
+    void this.twitch.sendMessage(base.channelTwitch, base.userTwitch, words.join(' '), msg.messageID)
   }
 
   // public async onServerResponse () {}

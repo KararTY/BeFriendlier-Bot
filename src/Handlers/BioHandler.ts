@@ -47,12 +47,12 @@ export default class BioHandler extends DefaultHandler {
     return BioHandler.shortenText(bioText, 128)
   }
 
-  public async onServerResponse ({ channelTwitch, userTwitch, result }: BASE): Promise<void> {
+  public async onServerResponse ({ channelTwitch, userTwitch, messageID, result }: BASE): Promise<void> {
     const emotes = await this.getEmotes()
 
     const bio = result.value.split(' ').map((word: string) => emotes.some(ee => ee.name === word) ? word : this.noPingsStr(word)).join(' ')
 
-    void this.twitch.sendMessage(channelTwitch, userTwitch, bio)
+    void this.twitch.sendMessage(channelTwitch, userTwitch, bio, messageID)
   }
 
   private escapeRegExp (text: string): string {

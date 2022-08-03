@@ -8,8 +8,8 @@ export default class MismatchHandler extends DefaultHandler {
 
   // public async onCommand (msg: PrivmsgMessage) {}
 
-  public async onServerResponse ({ channelTwitch, userTwitch, result }: BASE): Promise<void> {
-    void this.twitch.sendMessage(channelTwitch, userTwitch, String(result.value))
+  public async onServerResponse ({ channelTwitch, userTwitch, messageID, result }: BASE): Promise<void> {
+    void this.twitch.sendMessage(channelTwitch, userTwitch, String(result.value), messageID)
 
     this.twitch.removeUserInstance({ channelTwitch, userTwitch })
   }

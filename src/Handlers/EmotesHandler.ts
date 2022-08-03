@@ -11,6 +11,7 @@ export default class EmotesHandler extends DefaultHandler {
 
   public async onCommand (msg: PrivmsgMessage, words: string[]): Promise<void> {
     const responseMessage = this.getNameAndIds(msg) as EMOTES
+    responseMessage.messageID = msg.messageID
 
     // If user is trying to see their global emotes.
     responseMessage.global = this.isGlobal(responseMessage.channelTwitch, words)
@@ -33,7 +34,7 @@ export default class EmotesHandler extends DefaultHandler {
     }).slice(0, maxEmotes)
   }
 
-  public async onServerResponse ({ channelTwitch, userTwitch, result }: BASE): Promise<void> {
-    void this.twitch.sendMessage(channelTwitch, userTwitch, String(result.value))
+  public async onServerResponse ({ channelTwitch, userTwitch, messageID, result }: BASE): Promise<void> {
+    void this.twitch.sendMessage(channelTwitch, userTwitch, String(result.value), messageID)
   }
 }

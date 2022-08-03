@@ -16,11 +16,17 @@ export default class RollMatchHandler extends DefaultHandler {
 
   public async onCommand (msg: PrivmsgMessage, words: string[]): Promise<void> {
     const responseMessage = this.getNameAndIds(msg) as ROLLMATCH
+    responseMessage.messageID = msg.messageID
 
     const foundUserRoll = this.twitch.getUserInstance(msg)
 
     if (foundUserRoll !== undefined) {
-      await this.twitch.sendMessage(responseMessage.channelTwitch, responseMessage.userTwitch, this.i18n(this.messagesText.alreadyRolling))
+      await this.twitch.sendMessage(
+        responseMessage.channelTwitch,
+        responseMessage.userTwitch,
+        this.i18n(this.messagesText.alreadyRolling),
+        responseMessage.messageID
+      )
       return
     }
 
@@ -33,7 +39,7 @@ export default class RollMatchHandler extends DefaultHandler {
     this.ws.sendMessage(this.messageType, JSON.stringify(responseMessage))
   }
 
-  public async onServerResponse ({ channelTwitch, userTwitch, result, more, global }: ROLLMATCH): Promise<void> {
+  public async onServerResponse ({ channelTwitch, userTwitch, messageID, result, more, global }: ROLLMATCH): Promise<void> {
     const { profile, user } = result.value
 
     const userRoll = this.twitch.setUserInstance(
@@ -42,7 +48,7 @@ export default class RollMatchHandler extends DefaultHandler {
     userRoll.type = more ?? More.NONE
 
     void matchText(
-      { channelTwitch, userTwitch },
+      { channelTwitch, userTwitch, messageID },
       {
         pajbotAPI: this.pajbotAPI,
         logger: this.logger,
@@ -57,7 +63,7 @@ export default class RollMatchHandler extends DefaultHandler {
 }
 
 export async function matchText (
-  { channelTwitch, userTwitch, global }: ROLLMATCH,
+  { channelTwitch, userTwitch, messageID, global }: ROLLMATCH,
   { pajbotAPI, logger, twitch, getEmotes, i18n, noPingsStr }: { pajbotAPI: PajbotAPI, logger: Logger, twitch: Client, getEmotes: () => Promise<Emote[]>, i18n: { messagesText: any, parse: (str: string) => string }, noPingsStr: (str: string) => string },
   roll?: RollInstance
 ): Promise<void> {
@@ -135,7 +141,12 @@ export async function matchText (
   }
 
   if (foundUserRoll.type === foundUserRoll.lastType) {
-    void twitch.sendMessage(channelTwitch, userTwitch, i18n.parse(String(i18n.messagesText.ood) + ' Reply with %prefix%match or %prefix%no'))
+    void twitch.sendMessage(
+      channelTwitch,
+      userTwitch,
+      i18n.parse(String(i18n.messagesText.ood) + ' Reply with %prefix%match or %prefix%no'),
+      messageID
+    )
     return
   }
 
@@ -149,5 +160,5 @@ export async function matchText (
     }
   }, foundUserRoll.global)
 
-  void twitch.sendMessage(channelTwitch, userTwitch, message)
+  void twitch.sendMessage(channelTwitch, userTwitch, message, messageID)
 }
