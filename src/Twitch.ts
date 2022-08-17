@@ -10,9 +10,10 @@ import {
   SlowModeRateLimiter,
   WhisperMessage
 } from '@kararty/dank-twitch-irc'
-import { BASE, Emote, MessageType, More, NameAndId, PajbotAPI, TwitchAuth } from 'befriendlier-shared'
+import { BASE, Emote, MessageType, More, NameAndId, TwitchAuth } from 'befriendlier-shared'
 import PQueue from 'p-queue'
 import TwitchConfig from '../config/Twitch'
+import pajbotBanphraseCheck from './banphrase'
 import DefaultHandler from './Handlers/DefaultHandler'
 import LeaveChannelHandler from './Handlers/LeaveChatHandler'
 import Ws, { WsRes } from './Ws'
@@ -143,7 +144,6 @@ export default class Client {
   private readonly invisibleSuffix = ' \u{000e0000}'
 
   public readonly api: TwitchAuth
-  public readonly pajbotAPI: PajbotAPI
   public readonly packageJSON: any
   public token: Token
 
@@ -158,7 +158,7 @@ export default class Client {
   public readonly admins: string[] | undefined
   public readonly headers: { 'user-agent': string }
 
-  constructor (config: TwitchConfig, ws: Ws, api: TwitchAuth, pajbotAPI: PajbotAPI, packageJSON: any, logger: Logger) {
+  constructor (config: TwitchConfig, ws: Ws, api: TwitchAuth, packageJSON: any, logger: Logger) {
     this.name = config.user.name
     this.id = config.user.id
     this.commandPrefix = config.commandPrefix
@@ -168,8 +168,6 @@ export default class Client {
     this.ws = ws
 
     this.api = api
-
-    this.pajbotAPI = pajbotAPI
 
     this.packageJSON = packageJSON
 
@@ -245,29 +243,9 @@ export default class Client {
   public async sendMessage (channel: NameAndId, user: NameAndId, message: string, messageID?: string): Promise<void> {
     const foundChannel = this.channels.get(channel.id) as Channel
 
-    const checkMessages: string[] = []
-
     const filteredMessage = this.filterMsg(message)
 
-    const pajbotCheck = await this.pajbotAPI.check(foundChannel.name, filteredMessage)
-    if (pajbotCheck === null) {
-      checkMessages.push('Banphrase v1 API is offline.')
-    } else if (pajbotCheck.banned) {
-      // banphrase_data appears on banned === true
-      // const banphraseData = pajbotCheck.banphrase_data as { phrase: string }
-      this.logger.warn('"%s" contains bad words (%s)', message, JSON.stringify(pajbotCheck.banphrase_data))
-      checkMessages.push('(v1) message contains banned phrases.')
-    }
-
-    const pajbot2Check = await this.pajbotAPI.checkVersion2(foundChannel.name, filteredMessage)
-    if (pajbot2Check === null) {
-      checkMessages.push('Banphrase v2 API is offline.')
-    } else if (pajbot2Check.banned) {
-      // banphrase_data appears on banned === true
-      // const banphraseData = pajbotCheck.banphrase_data as { phrase: string }
-      this.logger.warn('"%s" contains bad words (%s)', message, JSON.stringify(pajbot2Check.filter_data))
-      checkMessages.push('(v2) message contains banned phrases.')
-    }
+    const checkMessages = await pajbotBanphraseCheck(foundChannel.name, filteredMessage)
 
     if (checkMessages.length > 0) {
       checkMessages.push('Ignoring you for a minute.')
@@ -457,18 +435,20 @@ export default class Client {
       id = channel[1].id
     }
 
-    if (typeof name === 'undefined') {
-      this.logger.warn('Got a NoticeMessage for an unknown user (%s): %s', msg.channelName, JSON.stringify(msg))
-      return
-    }
-
     switch (msg.messageID) {
       case 'msg_banned':
       case 'tos_banned':
-      case 'msg_channel_banned':
+      case 'msg_channel_banned': {
+        if (typeof name === 'undefined') {
+          this.logger.warn('[NoticeMessage] Unknown user (%s): %s', msg.channelName, JSON.stringify(msg))
+          return
+        }
         // Unhost channel.
         void (this.handlers.find(command => command.messageType === MessageType.LEAVECHAT) as LeaveChannelHandler).onBanned({ name, id })
         break
+      }
+      default:
+        this.logger.info('[NoticeMessage] %s', msg.messageID)
     }
   }
 

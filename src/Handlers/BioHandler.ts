@@ -1,5 +1,6 @@
 import { PrivmsgMessage } from '@kararty/dank-twitch-irc'
 import { BASE, BIO } from 'befriendlier-shared'
+import pajbotBanphraseCheck from '../banphrase'
 import DefaultHandler from './DefaultHandler'
 
 export default class BioHandler extends DefaultHandler {
@@ -27,10 +28,9 @@ export default class BioHandler extends DefaultHandler {
     if (message.messageText.length === 0) return ''
 
     // Check pajbots.
-    const pajbotCheck = await this.twitch.pajbotAPI.check(responseMessage.channelTwitch.name, this.twitch.filterMsg(message.messageText))
-    const pajbot2Check = await this.twitch.pajbotAPI.checkVersion2(responseMessage.channelTwitch.name, this.twitch.filterMsg(message.messageText))
+    const checkMessages = await pajbotBanphraseCheck(responseMessage.channelTwitch.name, this.twitch.filterMsg(message.messageText))
 
-    if (pajbotCheck === null || pajbot2Check === null || pajbotCheck.banned || pajbot2Check.banned) {
+    if (checkMessages.length > 0) {
       throw new Error('BANNED_PHRASES')
     }
 

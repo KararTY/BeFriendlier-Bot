@@ -1,6 +1,7 @@
 import { Logger } from '@adonisjs/logger'
 import { PrivmsgMessage } from '@kararty/dank-twitch-irc'
-import { Emote, MessageType, More, PajbotAPI, ROLLMATCH } from 'befriendlier-shared'
+import { Emote, MessageType, More, ROLLMATCH } from 'befriendlier-shared'
+import pajbotBanphraseCheck from '../banphrase'
 import Client, { RollInstance, User } from '../Twitch'
 import BioHandler from './BioHandler'
 import DefaultHandler from './DefaultHandler'
@@ -50,7 +51,6 @@ export default class RollMatchHandler extends DefaultHandler {
     void matchText(
       { channelTwitch, userTwitch, messageID },
       {
-        pajbotAPI: this.pajbotAPI,
         logger: this.logger,
         twitch: this.twitch,
         getEmotes: async () => await this.getEmotes(),
@@ -64,7 +64,7 @@ export default class RollMatchHandler extends DefaultHandler {
 
 export async function matchText (
   { channelTwitch, userTwitch, messageID, global }: ROLLMATCH,
-  { pajbotAPI, logger, twitch, getEmotes, i18n, noPingsStr }: { pajbotAPI: PajbotAPI, logger: Logger, twitch: Client, getEmotes: () => Promise<Emote[]>, i18n: { messagesText: any, parse: (str: string) => string }, noPingsStr: (str: string) => string },
+  { logger, twitch, getEmotes, i18n, noPingsStr }: { logger: Logger, twitch: Client, getEmotes: () => Promise<Emote[]>, i18n: { messagesText: any, parse: (str: string) => string }, noPingsStr: (str: string) => string },
   roll?: RollInstance
 ): Promise<void> {
   let message = ''
@@ -94,24 +94,10 @@ export async function matchText (
   let bio = profile.bio.split(' ').map(word => emotes.findIndex(ee => ee.name === word) > -1 ? word : noPingsStr(word)).join(' ')
 
   // CHECK BANPHRASE FOR BIO
-  const checkMessages: string[] = []
+  let checkMessages: string[] = []
 
   if (foundUserRoll.type !== More.FAVORITESTREAMERS) {
-    const pajbotCheck = await pajbotAPI.check(channelTwitch.name, twitch.filterMsg(bio))
-    if (pajbotCheck === null) {
-      checkMessages.push('Banphrase API is offline.')
-    } else if (pajbotCheck.banned) {
-      logger.warn('"%s" contains bad words (%s)', bio, JSON.stringify(pajbotCheck.banphrase_data))
-      checkMessages.push('[BANPHRASE v1]')
-    }
-
-    const pajbot2Check = await pajbotAPI.checkVersion2(channelTwitch.name, twitch.filterMsg(bio))
-    if (pajbot2Check === null) {
-      checkMessages.push('Banphrase v2 API is offline.')
-    } else if (pajbot2Check.banned) {
-      logger.warn('"%s" contains bad words (%s)', bio, JSON.stringify(pajbot2Check.filter_data))
-      checkMessages.push('[BANPHRASE v2]')
-    }
+    checkMessages = await pajbotBanphraseCheck(channelTwitch.name, twitch.filterMsg(bio))
 
     if (checkMessages.length > 0) {
       bio = checkMessages.join(' ')

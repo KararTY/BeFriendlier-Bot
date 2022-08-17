@@ -28,7 +28,7 @@ export default class MoreHandler extends DefaultHandler {
 
     void matchText(
       { ...responseMessage },
-      { pajbotAPI: this.pajbotAPI, logger: this.logger, twitch: this.twitch, getEmotes: async () => await this.getEmotes(), i18n: { messagesText: this.messagesText, parse: (str) => this.i18n(str) }, noPingsStr: this.noPingsStr },
+      { logger: this.logger, twitch: this.twitch, getEmotes: async () => await this.getEmotes(), i18n: { messagesText: this.messagesText, parse: (str) => this.i18n(str) }, noPingsStr: this.noPingsStr },
       foundUserRoll
     )
   }
