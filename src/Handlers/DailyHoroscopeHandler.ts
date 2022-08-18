@@ -44,7 +44,6 @@ export default class DailyHoroscopeHandler extends DefaultHandler {
 
   public async onCommand (msg: PrivmsgMessage, words: string[]): Promise<void> {
     const responseMessage = this.getNameAndIds(msg)
-    responseMessage.messageID = msg.messageID
 
     let horoscopeName = this.randomSign().toString()
 

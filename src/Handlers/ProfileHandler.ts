@@ -13,7 +13,6 @@ export default class ProfileHandler extends DefaultHandler {
 
   public async onCommand (msg: PrivmsgMessage, words: string[]): Promise<void> {
     const responseMessage = this.getNameAndIds(msg) as PROFILE
-    responseMessage.messageID = msg.messageID
 
     responseMessage.global = this.isGlobal(responseMessage.channelTwitch, words)
 

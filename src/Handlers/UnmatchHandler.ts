@@ -13,7 +13,6 @@ export default class UnmatchHandler extends DefaultHandler {
 
   public async onCommand (msg: PrivmsgMessage, words: string[]): Promise<void> {
     const responseMessage = this.getNameAndIds(msg) as UNMATCH
-    responseMessage.messageID = msg.messageID
 
     if (words[0] === undefined) {
       void this.twitch.sendMessage(

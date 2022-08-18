@@ -11,7 +11,6 @@ export default class EmotesHandler extends DefaultHandler {
 
   public async onCommand (msg: PrivmsgMessage, words: string[]): Promise<void> {
     const responseMessage = this.getNameAndIds(msg) as EMOTES
-    responseMessage.messageID = msg.messageID
 
     // If user is trying to see their global emotes.
     responseMessage.global = this.isGlobal(responseMessage.channelTwitch, words)

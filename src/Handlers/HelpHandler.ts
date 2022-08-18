@@ -9,7 +9,6 @@ export default class HelpHandler extends DefaultHandler {
 
   public async onCommand (msg: PrivmsgMessage, words: string[]): Promise<void> {
     const responseMessage = this.getNameAndIds(msg)
-    responseMessage.messageID = msg.messageID
 
     const message = this.makeMessage(words)
 

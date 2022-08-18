@@ -44,7 +44,8 @@ export default class DefaultHandler {
         : {
             name: msg.channelName,
             id: msg.channelID
-          }
+          },
+      messageID: msg.messageID
     }
   }
 

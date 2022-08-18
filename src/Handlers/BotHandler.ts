@@ -13,7 +13,6 @@ export default class BotHandler extends DefaultHandler {
 
   public async onCommand (msg: PrivmsgMessage): Promise<void> {
     const responseMessage = this.getNameAndIds(msg)
-    responseMessage.messageID = msg.messageID
 
     const message = `${String(this.twitch.packageJSON.description)} By N\u{E0000}otKarar. Version: ${String(this.twitch.packageJSON.version)}`
 

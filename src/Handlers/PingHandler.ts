@@ -11,7 +11,6 @@ export default class PingHandler extends DefaultHandler {
 
   public async onCommand (msg: PrivmsgMessage): Promise<void> {
     const responseMessage = this.getNameAndIds(msg)
-    responseMessage.messageID = msg.messageID
 
     const dateNow = Date.now()
     await this.twitch.ircClient.ping()

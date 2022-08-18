@@ -11,7 +11,6 @@ export default class BattleHandler extends DefaultHandler {
 
   public async onCommand (msg: PrivmsgMessage, words: string[]): Promise<void> {
     const responseMessage = this.getNameAndIds(msg) as BATTLE
-    responseMessage.messageID = msg.messageID
 
     if (words[0] === undefined) {
       void this.twitch.sendMessage(
