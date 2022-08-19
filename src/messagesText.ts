@@ -36,8 +36,11 @@ const messagesText = {
     giveEmotes: 'lets you trade your emotes with another BeFriendlier user. (<recipient name> <amount> <emote name>)',
     register: 'creates an account for you on BeFriendlier\'s website befriendlier(dot)app and allows you to use the bot.' +
       ' Can only be used via whisper.',
-    battle: 'use your battle emotes to fight your matched friends. You must have battle emotes that are still alive. (<opponent name>)'
-  }
+    battle: 'use your battle emotes to fight your matched friends. You must have battle emotes that are still alive. (<opponent name>)',
+    profiles: 'shows how many profiles are in the channel.'
+  },
+  amountOfProfilesInChannel: 'there\'s %s profiles in %s channel.',
+  notHosted: 'that channel isn\'t hosted.'
 }
 
 export default messagesText
