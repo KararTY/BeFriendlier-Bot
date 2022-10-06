@@ -2,6 +2,43 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.5](https://github.com/KararTY/BeFriendlier-Bot/compare/v0.0.4...v0.0.5) (2022-10-06)
+
+
+### Features
+
+* Add PajbotAPI to handlers. ([82554e3](https://github.com/KararTY/BeFriendlier-Bot/commit/82554e3faec8291b400e324da435aa2ce3baeb0d))
+* Add secret ([8d52468](https://github.com/KararTY/BeFriendlier-Bot/commit/8d5246837ba1a311ebf44b7a7992278379661bf7))
+* another easterino eggerino ([1389982](https://github.com/KararTY/BeFriendlier-Bot/commit/1389982e04d84b41f24c4db566871482d898b3de))
+* Censor match bio before final checks. ([ed406db](https://github.com/KararTY/BeFriendlier-Bot/commit/ed406db5e8dc89a75ed783192793ddf9699aac67))
+* Ignore failed whispers for channel chats ([e7471b9](https://github.com/KararTY/BeFriendlier-Bot/commit/e7471b993e474873777fe0ed277b56fbf203b285))
+* Profiles command. ([0734103](https://github.com/KararTY/BeFriendlier-Bot/commit/0734103735df570fd9509c0dfd6da179cdfda343))
+
+
+### Bug Fixes
+
+* Add NOTICEs. For unhosting a banned channel. ([5f91a69](https://github.com/KararTY/BeFriendlier-Bot/commit/5f91a699d9c0060ae6f72fc6c6849ef9435ceca6))
+* Add reply functionality. ([c33f1e2](https://github.com/KararTY/BeFriendlier-Bot/commit/c33f1e23350fe0f3e8f62cf35ba7eaed9b337bd7))
+* Allow some commands to be hidden from help. ([37ee394](https://github.com/KararTY/BeFriendlier-Bot/commit/37ee394325459a4b41561e84caa8cb001fe52c0f))
+* **Banphrase:** DRY and move to a separate file. ([a977209](https://github.com/KararTY/BeFriendlier-Bot/commit/a9772097127b29c1bb8452447832be874f328bc4))
+* Clean user input when they send a username ([b0e49c5](https://github.com/KararTY/BeFriendlier-Bot/commit/b0e49c5be9dbb44a17b2181214496ef3eff9c537))
+* don't use /me ([dd7613a](https://github.com/KararTY/BeFriendlier-Bot/commit/dd7613ad086a8a23e403cf24bf6dd40d2edbb962))
+* easter egg ([d68d664](https://github.com/KararTY/BeFriendlier-Bot/commit/d68d6642451f6bd3a10f544db2b36e13eddb4db4))
+* I looove case insensitive OSes ([357b9f0](https://github.com/KararTY/BeFriendlier-Bot/commit/357b9f0f04ffea416ed1adafc84be5be50715e2e))
+* Make sure bio actually displays. ([4393067](https://github.com/KararTY/BeFriendlier-Bot/commit/439306730e075a1320eb9fe4c5ed4e757ffd24b9))
+* Make sure to call helpText in the filter. ([874dd90](https://github.com/KararTY/BeFriendlier-Bot/commit/874dd90e439455e76edf03c51df31860023242fe))
+* npm run start Index -> index ([140b4d7](https://github.com/KararTY/BeFriendlier-Bot/commit/140b4d76070b66e1ea5a5c4c60a444758bab89bd))
+* Put messageID into getNameAndIds. ([6497e1a](https://github.com/KararTY/BeFriendlier-Bot/commit/6497e1abc902b07881e2bce757e7f81090f5a0ea))
+* Run ts-standard ([c340918](https://github.com/KararTY/BeFriendlier-Bot/commit/c3409188e2938502173a0bd77f76ade08f215257))
+* shortenText now uses  ma argument. ([3a6a25f](https://github.com/KararTY/BeFriendlier-Bot/commit/3a6a25fbf8f2aeaaf898cf87b793cb790f63475f))
+* Show full bio. ([08af7dc](https://github.com/KararTY/BeFriendlier-Bot/commit/08af7dcd0d6631fbd1d94a4bdbee439569c0dcd5))
+* Show NoticeMessage failures. ([56d46fc](https://github.com/KararTY/BeFriendlier-Bot/commit/56d46fc3a26110838cfadb25e51705cd52889c78))
+* Simplify secret. ([da3bbd9](https://github.com/KararTY/BeFriendlier-Bot/commit/da3bbd9883a8246afdbf9fbe0b2ed14eaf35819a))
+* Tell user they've been ignored on banphrase ([aac658c](https://github.com/KararTY/BeFriendlier-Bot/commit/aac658c055c1cd48b333d051e1eb14a5c79bbee0))
+* Trim shortened texts. ([13bea46](https://github.com/KararTY/BeFriendlier-Bot/commit/13bea46f9d7dabc29a7670bac50e368e3a8c569c))
+* use /me for pajbot alert ([ba06545](https://github.com/KararTY/BeFriendlier-Bot/commit/ba0654510962562d21a4c4da9d90ef1d45770af8))
+* Windows shit ([9e36a4b](https://github.com/KararTY/BeFriendlier-Bot/commit/9e36a4bccc670f69048a7529bb5825128eb84f8d))
+
 ### 0.0.4 (2022-04-16)
 
 
