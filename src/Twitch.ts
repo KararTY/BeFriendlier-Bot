@@ -154,7 +154,7 @@ export default class Client {
   public readonly packageJSON: any
   public token: Token
 
-  public ircClient: ChatClient | undefined
+  public ircClient: ChatClient
 
   public readonly msgs: Map<string, Message | WhMessage> = new Map()
   public readonly channels: Map<string, Channel> = new Map()
@@ -207,7 +207,6 @@ export default class Client {
     if (this.ircClient !== undefined) {
       this.ircClient.removeAllListeners()
       this.ircClient.close()
-      this.ircClient = undefined
     }
 
     // Relogin to chat!
@@ -233,7 +232,7 @@ export default class Client {
     this.ircClient.once('ready', () => {
       this.logger.info('Twitch.READY: Successfully connected to Twitch IRC.')
       this.ready = true
-      this.ircClient?.removeListener('ready')
+      this.ircClient.removeListener('ready')
     })
 
     this.ircClient.on('close', (error) => this.onClose(error))
@@ -297,7 +296,7 @@ export default class Client {
   }
 
   public async sendWhisper (user: NameAndId, message: string): Promise<void> {
-    return await (this.ircClient as ChatClient).whisper(user.name, `${message}`)
+    return await this.ircClient.whisper(user.name, `${message}`)
   }
 
   public joinChannel ({ id, name }: NameAndId): void {
@@ -311,9 +310,9 @@ export default class Client {
   }
 
   public leaveChannel ({ id, name }: NameAndId): void {
-    this.channels.delete(id);
+    this.channels.delete(id)
 
-    (this.ircClient as ChatClient)
+    this.ircClient
       .part(name)
       .then(() =>
         this.logger.info(`Twitch.leaveChannel() -> Twitch.PART: ${name}`)
