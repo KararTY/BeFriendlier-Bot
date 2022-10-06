@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.6](https://github.com/KararTY/BeFriendlier-Bot/compare/v0.0.5...v0.0.6) (2022-10-06)
+
+
+### Bug Fixes
+
+* ChatClient undefined ([8077439](https://github.com/KararTY/BeFriendlier-Bot/commit/80774397733f0f9260e6f8fd9be991e70a9a0d2d))
+
 ### [0.0.5](https://github.com/KararTY/BeFriendlier-Bot/compare/v0.0.4...v0.0.5) (2022-10-06)
 
 
