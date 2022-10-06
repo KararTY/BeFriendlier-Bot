@@ -114,7 +114,7 @@ export default class Bot {
   }
 
   private socketMessage (type: MessageType, data: string): string {
-    return JSON.stringify({ type: type, data: data, timestamp: Date.now() })
+    return JSON.stringify({ type, data, timestamp: Date.now() })
   }
 
   private readonly validationSchema = schema.create({
